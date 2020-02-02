@@ -60,8 +60,8 @@ def merge(this_notebook, studentfolder='./', tags={}):
         month=int(NEW_ASSIGNMENT[0:2])
         day=int(NEW_ASSIGNMENT[2:4])
         
-        print(f"TESTING {day} {month}")
-        my_date = datetime.datetime(2019, month, day)
+        print(f"TESTING {day} {month} {tags['YEAR']}")
+        my_date = datetime.datetime(int(tags['YEAR']), month, day)
         #my_date = date.today()
         weekday=calendar.day_name[my_date.weekday()];
         
