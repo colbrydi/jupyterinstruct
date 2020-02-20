@@ -1,6 +1,38 @@
 import IPython.core.display as IP
+import os
+from IPython.core.display import Javascript, HTML
+from IPython.display import display
+import csv
+import datetime
+import calendar
+import pathlib
+import shutil
+import subprocess
 
+def usenbgrader(this_notebook, studentfolder='./', tags={}):
+    # Calculate Destination name
+    ASSIGNMENT = this_notebook
+    ind = ASSIGNMENT.index("INST")-1
+    ext = ASSIGNMENT.index(".ipynb")
+    NEW_ASSIGNMENT = ASSIGNMENT[:ind] + ASSIGNMENT[ext:]
+    
+    ASSIGNMENT_FOLDER = './source/'+ASSIGNMENT[:ind]
+    SOURCE_ASSIGNMENT = ASSIGNMENT_FOLDER+'/'+ASSIGNMENT[:ind] + '_STUDENT' + ASSIGNMENT[ext:]
+    RELEASE_ASSIGNMENT = './release/'+ASSIGNMENT[:ind]+'/'+ ASSIGNMENT[:ind]+'_STUDENT'+ASSIGNMENT[ext:]
+    
+    pathlib.Path(ASSIGNMENT_FOLDER).mkdir(parents=True, exist_ok=True)
+    
+    shutil.copy(studentfolder+'./'+NEW_ASSIGNMENT, SOURCE_ASSIGNMENT)
+    #pathlib.Path(RELEASE_ASSIGNMENT).unlink()
+    
+    command = f'~/.local/bin/nbgrader generate_assignment {ASSIGNMENT[:ind]}'
+    print(command)
+    returned_output = subprocess.check_output(command, shell=True)
+    print(f"Output: {returned_output}")
 
+    # Make a link for review
+    display(HTML(f"<a href={RELEASE_ASSIGNMENT} target=\"blank\">{RELEASE_ASSIGNMENT}</a>"))
+                        
 def getname():
     IP.display(IP.Javascript('Jupyter.notebook.kernel.execute("this_notebook = " + "\'"+Jupyter.notebook.notebook_name+"\'");'))
 
@@ -42,12 +74,6 @@ def convert(this_notebook, studentfolder='./'):
 
 
 def merge(this_notebook, studentfolder='./', tags={}):
-    import os
-    from IPython.core.display import Javascript, HTML
-    from IPython.display import display
-    import csv
-    import datetime
-    import calendar
 
     IP.display(IP.Javascript("IPython.notebook.save_notebook()"), include=['application/javascript'])
 
