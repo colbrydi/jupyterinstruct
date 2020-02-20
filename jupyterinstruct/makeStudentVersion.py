@@ -101,6 +101,6 @@ with open(NEW_ASSIGNMENT, 'w+', encoding="utf-8") as f:
         f.write(l)
 
 for line in new_lines:
-	if "ANSWER" in line:
-		print("WARNING! Some answer content may remain in the file. Please double check file contents before administering to students.")
-		break
+    if "ANSWER" in line:
+        print("WARNING! Some answer content may remain in the file. Please double check file contents before administering to students.")
+        break

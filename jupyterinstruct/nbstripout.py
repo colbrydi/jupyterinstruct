@@ -155,8 +155,8 @@ def install(attrfile=None):
         print('Installation failed: not a git repository!', file=sys.stderr)
         sys.exit(1)
     check_call(['git', 'config', 'filter.nbstripout.clean', '%s %s' %
-               (sys.executable.replace('\\', '/'),
-                path.abspath(__file__).replace('\\', '/'))])
+                (sys.executable.replace('\\', '/'),
+                 path.abspath(__file__).replace('\\', '/'))])
     check_call(['git', 'config', 'filter.nbstripout.smudge', 'cat'])
     check_call(['git', 'config', 'filter.nbstripout.required', 'true'])
     if not attrfile:
@@ -196,11 +196,16 @@ def status(verbose=False):
     from os import path
     from subprocess import check_output, CalledProcessError
     try:
-        git_dir = path.dirname(path.abspath(check_output(['git', 'rev-parse', '--git-dir']).strip()))
-        clean = check_output(['git', 'config', 'filter.nbstripout.clean']).strip()
-        smudge = check_output(['git', 'config', 'filter.nbstripout.smudge']).strip()
-        required = check_output(['git', 'config', 'filter.nbstripout.required']).strip()
-        attributes = check_output(['git', 'check-attr', 'filter', '--', '*.ipynb']).strip()
+        git_dir = path.dirname(path.abspath(check_output(
+            ['git', 'rev-parse', '--git-dir']).strip()))
+        clean = check_output(
+            ['git', 'config', 'filter.nbstripout.clean']).strip()
+        smudge = check_output(
+            ['git', 'config', 'filter.nbstripout.smudge']).strip()
+        required = check_output(
+            ['git', 'config', 'filter.nbstripout.required']).strip()
+        attributes = check_output(
+            ['git', 'check-attr', 'filter', '--', '*.ipynb']).strip()
         if attributes.endswith(b'unspecified'):
             if verbose:
                 print('nbstripout is not installed in repository', git_dir)
@@ -220,7 +225,8 @@ def status(verbose=False):
 
 
 def main():
-    parser = ArgumentParser(epilog=__doc__, formatter_class=RawDescriptionHelpFormatter)
+    parser = ArgumentParser(
+        epilog=__doc__, formatter_class=RawDescriptionHelpFormatter)
     task = parser.add_mutually_exclusive_group()
     task.add_argument('--install', action='store_true',
                       help="""Install nbstripout in the current repository (set
@@ -269,6 +275,7 @@ def main():
             raise
     if not args.files:
         write(strip_output(read(input_stream, as_version=NO_CONVERT)), output_stream)
+
 
 if __name__ == '__main__':
     main()
