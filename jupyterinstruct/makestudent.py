@@ -5,10 +5,72 @@ from IPython.display import display
 import csv
 import datetime
 import calendar
+import glob
 import pathlib
 import shutil
 import subprocess
 
+def showsubmitted(this_notebook):
+    
+    ind = this_notebook.index("INST")-1
+    assignment = this_notebook[:ind]
+    
+    directories = glob.glob(f'./submitted/*')
+
+    Links = ''
+    for d in directories:
+        files = glob.glob(f"{d}/{assignment}/*.ipynb")
+        myfile=f"{files[0]}"
+        Links += f"<a href={myfile} target=\"_blank\">{d}</a></br>"
+    # Make a link for review
+
+    display(HTML(Links))
+
+
+def showfeedback(this_notebook):
+    
+    ind = this_notebook.index("INST")-1
+    assignment = this_notebook[:ind]
+    
+    directories = glob.glob(f'./feedback/*')
+
+    Links = ''
+    for d in directories:
+        files = glob.glob(f"{d}/{assignment}/*.html")
+        myfile=f"{files[0]}"
+        Links += f"<a href={myfile} target=\"_blank\">{d}</a></br>"
+    # Make a link for review
+
+    display(HTML(Links))
+
+def unpackD2L(filename,this_notebook ,destination='temp_folder'):
+    from pathlib import Path
+    from urllib.request import urlretrieve
+    import zipfile
+    import pathlib
+
+
+    ind = this_notebook.index("INST")-1
+    assignment = this_notebook[:ind]
+    
+    zfile = Path(filename)
+
+    print(f"Unzipping {filename}")
+    with zipfile.ZipFile(filename, 'r') as zip_ref:
+        zip_ref.extractall(destination)
+
+
+    files = glob.glob(f'{destination}/*.ipynb')
+
+
+    SUBMITTED_ASSIGNMENT = './submitted/'
+    for f in files:
+        name = f.split(' - ')
+        directory = name[1].replace(' ','_')
+        myfolder = SUBMITTED_ASSIGNMENT+directory+'/'+assignment
+        pathlib.Path(myfolder).mkdir(parents=True, exist_ok=True)
+        pathlib.os.rename(f, myfolder+'/'+name[-1])
+    
 
 def usenbgrader(this_notebook, studentfolder='./', tags={}):
     # Calculate Destination name
@@ -28,7 +90,7 @@ def usenbgrader(this_notebook, studentfolder='./', tags={}):
     shutil.copy(studentfolder+'./'+NEW_ASSIGNMENT, SOURCE_ASSIGNMENT)
     # pathlib.Path(RELEASE_ASSIGNMENT).unlink()
 
-    command = f'~/.local/bin/nbgrader generate_assignment {ASSIGNMENT[:ind]}'
+    command = f'~/.local/bin/nbgrader generate_assignment --force {ASSIGNMENT[:ind]}'
     print(command)
     returned_output = subprocess.check_output(command, shell=True)
     print(f"Output: {returned_output}")
