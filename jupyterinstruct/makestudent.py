@@ -8,19 +8,21 @@ import calendar
 import glob
 import pathlib
 import shutil
+import time
 import subprocess
 
+
 def showsubmitted(this_notebook):
-    
+
     ind = this_notebook.index("INST")-1
     assignment = this_notebook[:ind]
-    
+
     directories = glob.glob(f'./submitted/*')
 
     Links = ''
     for d in directories:
         files = glob.glob(f"{d}/{assignment}/*.ipynb")
-        myfile=f"{files[0]}"
+        myfile = f"{files[0]}"
         Links += f"<a href={myfile} target=\"_blank\">{d}</a></br>"
     # Make a link for review
 
@@ -28,69 +30,66 @@ def showsubmitted(this_notebook):
 
 
 def showfeedback(this_notebook):
-    
+
     ind = this_notebook.index("INST")-1
     assignment = this_notebook[:ind]
-    
+
     directories = glob.glob(f'./feedback/*')
 
     Links = ''
     for d in directories:
         files = glob.glob(f"{d}/{assignment}/*.html")
-        myfile=f"{files[0]}"
+        myfile = f"{files[0]}"
         Links += f"<a href={myfile} target=\"_blank\">{d}</a></br>"
     # Make a link for review
 
     display(HTML(Links))
 
-def unpackD2L(filename,this_notebook ,destination='temp_folder'):
+
+def unpackD2L(filename, this_notebook, coursefolder='./', destination='upziptemp'):
     from pathlib import Path
     from urllib.request import urlretrieve
     import zipfile
     import pathlib
 
-
     ind = this_notebook.index("INST")-1
     assignment = this_notebook[:ind]
-    
+
     zfile = Path(filename)
 
     print(f"Unzipping {filename}")
     with zipfile.ZipFile(filename, 'r') as zip_ref:
-        zip_ref.extractall(destination)
+        zip_ref.extractall(f"./{coursefolder}/{destination}")
 
+    files = glob.glob(f'./{coursefolder}/{destination}/*.ipynb')
 
-    files = glob.glob(f'{destination}/*.ipynb')
-
-
-    SUBMITTED_ASSIGNMENT = './submitted/'
+    SUBMITTED_ASSIGNMENT = f'./{coursefolder}/submitted/'
     for f in files:
         name = f.split(' - ')
-        directory = name[1].replace(' ','_')
+        directory = name[1].replace(' ', '_')
         myfolder = SUBMITTED_ASSIGNMENT+directory+'/'+assignment
         pathlib.Path(myfolder).mkdir(parents=True, exist_ok=True)
         pathlib.os.rename(f, myfolder+'/'+name[-1])
-    
 
-def usenbgrader(this_notebook, studentfolder='./', tags={}):
+
+def usenbgrader(this_notebook, coursefolder='./', tags={}):
     # Calculate Destination name
     ASSIGNMENT = this_notebook
     ind = ASSIGNMENT.index("INST")-1
     ext = ASSIGNMENT.index(".ipynb")
     NEW_ASSIGNMENT = ASSIGNMENT[:ind] + ASSIGNMENT[ext:]
 
-    ASSIGNMENT_FOLDER = './source/'+ASSIGNMENT[:ind]
-    SOURCE_ASSIGNMENT = ASSIGNMENT_FOLDER+'/' + \
-        ASSIGNMENT[:ind] + '_STUDENT' + ASSIGNMENT[ext:]
-    RELEASE_ASSIGNMENT = './release/' + \
-        ASSIGNMENT[:ind]+'/' + ASSIGNMENT[:ind]+'_STUDENT'+ASSIGNMENT[ext:]
+    ASSIGNMENT_FOLDER = f'./{coursefolder}/source/{ASSIGNMENT[:ind]}'
+    SOURCE_ASSIGNMENT = f'{ASSIGNMENT_FOLDER}/{ASSIGNMENT[:ind]}_STUDENT{ASSIGNMENT[ext:]}'
+    RELEASE_ASSIGNMENT = f'./{coursefolder}/release/{ASSIGNMENT[:ind]}/{ASSIGNMENT[:ind]}_STUDENT{ASSIGNMENT[ext:]}'
 
     pathlib.Path(ASSIGNMENT_FOLDER).mkdir(parents=True, exist_ok=True)
-
-    shutil.copy(studentfolder+'./'+NEW_ASSIGNMENT, SOURCE_ASSIGNMENT)
+    time.sleep(2)
+    print(coursefolder, NEW_ASSIGNMENT, SOURCE_ASSIGNMENT)
+    shutil.copy(f"./{coursefolder}/{NEW_ASSIGNMENT}", SOURCE_ASSIGNMENT)
     # pathlib.Path(RELEASE_ASSIGNMENT).unlink()
 
-    command = f'~/.local/bin/nbgrader generate_assignment --force {ASSIGNMENT[:ind]}'
+    command = f'cd ./{coursefolder}; ~/.local/bin/nbgrader generate_assignment --force {ASSIGNMENT[:ind]}'
     print(command)
     returned_output = subprocess.check_output(command, shell=True)
     print(f"Output: {returned_output}")
@@ -224,7 +223,15 @@ def merge(this_notebook, studentfolder='./', tags={}):
     for row in new_lines:
         for key in tags:
             if (key in row):
-                row = row.replace(f"###{key}###", tags[key])
+                if key == 'LINKS':
+                    linkstr = '\\n\",\n'
+                    for link in tags[key]:
+                        linkstr=linkstr+f'    \"- [{link}]({tags[link]})\\n\",\n'
+                    print("link found")
+                    linkstr=linkstr+f'    \"\\n'
+                    row = row.replace(f"###{key}###", linkstr)
+                else:
+                    row = row.replace(f"###{key}###", tags[key])
                 print(row)
         lines.append(row)
 
