@@ -69,7 +69,7 @@ def unpackD2L(filename, this_notebook, coursefolder='./', destination='upziptemp
         directory = name[1].replace(' ', '_')
         myfolder = SUBMITTED_ASSIGNMENT+directory+'/'+assignment
         pathlib.Path(myfolder).mkdir(parents=True, exist_ok=True)
-        pathlib.os.rename(f, myfolder+'/'+name[-1])
+        pathlib.os.rename(f, f"{myfolder}/{assignment}_STUDENT.ipynb")
 
 
 def usenbgrader(this_notebook, coursefolder='./', tags={}):
