@@ -154,6 +154,8 @@ def merge(this_notebook, studentfolder='./', tags={}):
     #NEW_ASSIGNMENT = ASSIGNMENT[:ind] + "STUDENT" + ASSIGNMENT[ext:]
     NEW_ASSIGNMENT = ASSIGNMENT[:ind] + ASSIGNMENT[ext:]
 
+    tags['NEW_ASSIGNMENT'] = NEW_ASSIGNMENT
+    
     try:
         month = int(NEW_ASSIGNMENT[0:2])
         day = int(NEW_ASSIGNMENT[2:4])
