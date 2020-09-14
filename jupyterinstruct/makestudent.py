@@ -78,25 +78,33 @@ def usenbgrader(this_notebook, coursefolder='./', tags={}):
     ind = ASSIGNMENT.index("INST")-1
     ext = ASSIGNMENT.index(".ipynb")
     NEW_ASSIGNMENT = ASSIGNMENT[:ind] + ASSIGNMENT[ext:]
+    GradingFolder = 'AutoGrader'
 
-    ASSIGNMENT_FOLDER = f'./{coursefolder}/source/{ASSIGNMENT[:ind]}'
+    ASSIGNMENT_FOLDER = f'./{GradingFolder}/source/{ASSIGNMENT[:ind]}'
     SOURCE_ASSIGNMENT = f'{ASSIGNMENT_FOLDER}/{ASSIGNMENT[:ind]}_STUDENT{ASSIGNMENT[ext:]}'
-    RELEASE_ASSIGNMENT = f'./{coursefolder}/release/{ASSIGNMENT[:ind]}/{ASSIGNMENT[:ind]}_STUDENT{ASSIGNMENT[ext:]}'
+    RELEASE_ASSIGNMENT = f'./{GradingFolder}/release/{ASSIGNMENT[:ind]}/{ASSIGNMENT[:ind]}_STUDENT{ASSIGNMENT[ext:]}'
 
     pathlib.Path(ASSIGNMENT_FOLDER).mkdir(parents=True, exist_ok=True)
     time.sleep(2)
     print(coursefolder, NEW_ASSIGNMENT, SOURCE_ASSIGNMENT)
-    shutil.copy(f"./{coursefolder}/{NEW_ASSIGNMENT}", SOURCE_ASSIGNMENT)
+    shutil.move(f"./{coursefolder}/{NEW_ASSIGNMENT}", SOURCE_ASSIGNMENT)
     # pathlib.Path(RELEASE_ASSIGNMENT).unlink()
 
-    command = f'cd ./{coursefolder}; ~/.local/bin/nbgrader generate_assignment --force {ASSIGNMENT[:ind]}'
-    print(command)
-    returned_output = subprocess.check_output(command, shell=True)
-    print(f"Output: {returned_output}")
 
-    # Make a link for review
-    display(
-        HTML(f"<a href={RELEASE_ASSIGNMENT} target=\"blank\">{RELEASE_ASSIGNMENT}</a>"))
+    #command = f'cd {GradingFolder}; nbgrader assign {ASSIGNMENT[:ind]}'
+    #print(command)
+    #returned_output = subprocess.check_output(command, shell=True)
+    #print(f"Output: {returned_output.decode('utf-8')}")
+#
+ #   command = f'cd {GradingFolder}; nbgrader validate {ASSIGNMENT[:ind]}'
+ #   print(command)
+ #   returned_output = subprocess.check_output(command, shell=True)
+ #   print(f"Output: {returned_output.decode('utf-8')}")
+
+
+ #   # Make a link for review
+ #   display(
+ #       HTML(f"<a href={RELEASE_ASSIGNMENT} target=\"blank\">{RELEASE_ASSIGNMENT}</a>"))
 
 
 def getname():
