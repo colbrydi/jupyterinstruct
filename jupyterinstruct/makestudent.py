@@ -45,6 +45,50 @@ def showfeedback(this_notebook):
 
     display(HTML(Links))
 
+def usenbgrader(this_notebook, coursefolder='./', tags={}):
+    # Calculate Destination name
+    ASSIGNMENT = this_notebook
+    ind = ASSIGNMENT.index("INST")-1
+    ext = ASSIGNMENT.index(".ipynb")
+    NEW_ASSIGNMENT = ASSIGNMENT[:ind] + ASSIGNMENT[ext:]
+    GradingFolder = 'AutoGrader'
+
+    ASSIGNMENT_FOLDER = f'./{GradingFolder}/source/{ASSIGNMENT[:ind]}'
+    SOURCE_ASSIGNMENT = f'{ASSIGNMENT_FOLDER}/{ASSIGNMENT[:ind]}_STUDENT{ASSIGNMENT[ext:]}'
+    RELEASE_ASSIGNMENT = f'./{GradingFolder}/release/{ASSIGNMENT[:ind]}/{ASSIGNMENT[:ind]}_STUDENT{ASSIGNMENT[ext:]}'
+
+    pathlib.Path(ASSIGNMENT_FOLDER).mkdir(parents=True, exist_ok=True)
+    time.sleep(2)
+    print(coursefolder, NEW_ASSIGNMENT, SOURCE_ASSIGNMENT)
+    shutil.move(f"./{coursefolder}/{NEW_ASSIGNMENT}", SOURCE_ASSIGNMENT)
+    # pathlib.Path(RELEASE_ASSIGNMENT).unlink()
+
+
+    command = f'cd {GradingFolder}; nbgrader db assignment add {ASSIGNMENT[:ind]}'
+    print(command)
+    returned_output = subprocess.check_output(command, shell=True)
+    print(f"Output: {returned_output.decode('utf-8')}")
+    
+    
+    command = f'cd {GradingFolder}; nbgrader generate_assignment {ASSIGNMENT[:ind]}'
+    print(command)
+    returned_output = subprocess.check_output(command, shell=True)
+    print(f"Output: {returned_output.decode('utf-8')}")
+    
+    #command = f'cd {GradingFolder}; nbgrader assign {ASSIGNMENT[:ind]}'
+    #print(command)
+    #returned_output = subprocess.check_output(command, shell=True)
+    #print(f"Output: {returned_output.decode('utf-8')}")
+#
+    command = f'cd {GradingFolder}; nbgrader validate {ASSIGNMENT[:ind]}'
+    print(command)
+    returned_output = subprocess.check_output(command, shell=True)
+    print(f"Output: {returned_output.decode('utf-8')}")
+
+    # Make a link for review
+    display(
+       HTML(f"<a href={RELEASE_ASSIGNMENT} target=\"blank\">{RELEASE_ASSIGNMENT}</a>"))
+
 
 def unpackD2L(filename, this_notebook, coursefolder='./', destination='upziptemp'):
     from pathlib import Path
@@ -66,38 +110,27 @@ def unpackD2L(filename, this_notebook, coursefolder='./', destination='upziptemp
     SUBMITTED_ASSIGNMENT = f'./{coursefolder}/submitted/'
     for f in files:
         name = f.split(' - ')
+        [first,last] = name[1].split(' ')
         directory = name[1].replace(' ', '_')
+        
+        command=f"cd {coursefolder}; nbgrader db student add {directory} --last-name=${last} --first-name=${first}"
+        print(command)
+        returned_output = subprocess.check_output(command, shell=True)
+        
         myfolder = SUBMITTED_ASSIGNMENT+directory+'/'+assignment
         pathlib.Path(myfolder).mkdir(parents=True, exist_ok=True)
-        pathlib.os.rename(f, myfolder+'/'+name[-1])
-
-
-def usenbgrader(this_notebook, coursefolder='./', tags={}):
-    # Calculate Destination name
-    ASSIGNMENT = this_notebook
-    ind = ASSIGNMENT.index("INST")-1
-    ext = ASSIGNMENT.index(".ipynb")
-    NEW_ASSIGNMENT = ASSIGNMENT[:ind] + ASSIGNMENT[ext:]
-
-    ASSIGNMENT_FOLDER = f'./{coursefolder}/source/{ASSIGNMENT[:ind]}'
-    SOURCE_ASSIGNMENT = f'{ASSIGNMENT_FOLDER}/{ASSIGNMENT[:ind]}_STUDENT{ASSIGNMENT[ext:]}'
-    RELEASE_ASSIGNMENT = f'./{coursefolder}/release/{ASSIGNMENT[:ind]}/{ASSIGNMENT[:ind]}_STUDENT{ASSIGNMENT[ext:]}'
-
-    pathlib.Path(ASSIGNMENT_FOLDER).mkdir(parents=True, exist_ok=True)
-    time.sleep(2)
-    print(coursefolder, NEW_ASSIGNMENT, SOURCE_ASSIGNMENT)
-    shutil.copy(f"./{coursefolder}/{NEW_ASSIGNMENT}", SOURCE_ASSIGNMENT)
-    # pathlib.Path(RELEASE_ASSIGNMENT).unlink()
-
-    command = f'cd ./{coursefolder}; ~/.local/bin/nbgrader generate_assignment --force {ASSIGNMENT[:ind]}'
+        pathlib.os.rename(f, f"{myfolder}/{assignment}_STUDENT.ipynb")
+        
+    command=f"cd {coursefolder}; nbgrader autograde {assignment}"
     print(command)
     returned_output = subprocess.check_output(command, shell=True)
-    print(f"Output: {returned_output}")
-
-    # Make a link for review
-    display(
-        HTML(f"<a href={RELEASE_ASSIGNMENT} target=\"blank\">{RELEASE_ASSIGNMENT}</a>"))
-
+        
+#            echo "folder name is ${d}"
+#    name=`echo $d | cut -d '/' -f3`
+#    first=`echo $name | cut -d '_' -f1`
+#    last=`echo $name | cut -d '_' -f2`
+#    echo nbgrader db student add ${name} --last-name=${last} --first-name=${first}
+#    nbgrader db student add ${name} --last-name=${last} --first-name=${first}
 
 def getname():
     IP.display(IP.Javascript(
@@ -154,6 +187,8 @@ def merge(this_notebook, studentfolder='./', tags={}):
     #NEW_ASSIGNMENT = ASSIGNMENT[:ind] + "STUDENT" + ASSIGNMENT[ext:]
     NEW_ASSIGNMENT = ASSIGNMENT[:ind] + ASSIGNMENT[ext:]
 
+    tags['NEW_ASSIGNMENT'] = NEW_ASSIGNMENT
+    
     try:
         month = int(NEW_ASSIGNMENT[0:2])
         day = int(NEW_ASSIGNMENT[2:4])
