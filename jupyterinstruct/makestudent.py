@@ -121,13 +121,13 @@ def unpackD2L(filename, this_notebook, coursefolder='./', destination='upziptemp
         pathlib.Path(myfolder).mkdir(parents=True, exist_ok=True)
         pathlib.os.rename(f, f"{myfolder}/{assignment}_STUDENT.ipynb")
     
-    command=f"cd {coursefolder}; ../upgrade.sh"
-    print(command)
-    returned_output = subprocess.check_output(command, shell=True)
+#     command=f"cd {coursefolder}; ../upgrade.sh"
+#     print(command)
+#     returned_output = subprocess.check_output(command, shell=True)
     
-    command=f"cd {coursefolder}; nbgrader autograde {assignment}"
-    print(command)
-    returned_output = subprocess.check_output(command, shell=True)
+#     command=f"cd {coursefolder}; nbgrader autograde {assignment}"
+#     print(command)
+#     returned_output = subprocess.check_output(command, shell=True)
         
 #            echo "folder name is ${d}"
 #    name=`echo $d | cut -d '/' -f3`
