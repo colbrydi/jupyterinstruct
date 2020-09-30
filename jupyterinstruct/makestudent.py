@@ -113,9 +113,9 @@ def unpackD2L(filename, this_notebook, coursefolder='./', destination='upziptemp
         [first,last] = name[1].split(' ')
         directory = name[1].replace(' ', '_')
         
-        command=f"cd {coursefolder}; nbgrader db student add {directory} --last-name=${last} --first-name=${first}"
-        print(command)
-        returned_output = subprocess.check_output(command, shell=True)
+#        command=f"cd {coursefolder}; nbgrader db student add {directory} --last-name=${last} --first-name=${first}"
+#        print(command)
+#        returned_output = subprocess.check_output(command, shell=True)
         
         myfolder = SUBMITTED_ASSIGNMENT+directory+'/'+assignment
         pathlib.Path(myfolder).mkdir(parents=True, exist_ok=True)
