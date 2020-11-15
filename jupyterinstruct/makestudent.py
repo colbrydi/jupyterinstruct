@@ -137,6 +137,7 @@ def unpackD2L(filename, this_notebook, coursefolder='./', destination='upziptemp
 #    nbgrader db student add ${name} --last-name=${last} --first-name=${first}
 
 def getname():
+    print("getting name")
     IP.display(IP.Javascript(
         'Jupyter.notebook.kernel.execute("this_notebook = " + "\'"+Jupyter.notebook.notebook_name+"\'");'))
 
@@ -296,3 +297,4 @@ def merge(this_notebook, studentfolder='./', tags={}):
     # Make a link for review
     display(HTML(
         f"<a href={studentfolder}{NEW_ASSIGNMENT} target=\"blank\">{NEW_ASSIGNMENT}</a>"))
+thisnotebook=getname()
