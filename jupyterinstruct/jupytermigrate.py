@@ -1,5 +1,7 @@
 import os
 import glob
+
+
 def renamefile(oldname, newname, MAKE_CHANGES=False):
     """Rename a file from oldname to newname. Search the current folder for any
     links in notebooks with the old filename and update them."""
@@ -26,7 +28,8 @@ def renamefile(oldname, newname, MAKE_CHANGES=False):
                         f.write(s)
                 else:
                     print(f"TEST: Student File Reference in {file}")
-                    
+
+
 def notebook(filename, datestr, MAKE_CHANGES=False):
     """Migrate a notebook from the filename to the new four digit date string"""
     files = glob.glob('*.ipynb')

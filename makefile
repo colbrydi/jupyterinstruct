@@ -36,5 +36,8 @@ doclint:
 test:
 	pytest -v tests
 
-.PHONY: init docs lint test 
+UML:
+	pyreverse -ASmy -o png $(MODULENAME)
+
+.PHONY: UML init docs lint test 
 
