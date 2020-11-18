@@ -12,21 +12,20 @@ class nbfilename():
     MMDD--TITLE_STRING_[pre,in]-class-assignment-INSTRUCTOR.ipynb
     """
 
-    prefix = ""
-    namestring = ""
-    attributes = set()
-    extention = 'ipynb'
-    isInstructor = False
-    isStudent = False
-    isInClass = False
-    isPreClass = False
-    isAssignment = False
-    isDate = False
-    date = ""
-    title = None
-
     def __init__(self, filename=""):
         """Input a filename and parse using above syntax"""
+        self.prefix = ""
+        self.namestring = ""
+        self.attributes = set()
+        self.extention = 'ipynb'
+        self.isInstructor = False
+        self.isStudent = False
+        self.isInClass = False
+        self.isPreClass = False
+        self.isAssignment = False
+        self.isDate = False
+        date = ""
+        title = None
         self.namestring = filename
         self.parsestr(filename)
 

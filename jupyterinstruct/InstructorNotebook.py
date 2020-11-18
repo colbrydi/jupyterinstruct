@@ -133,10 +133,6 @@ def init_thiscourse():
 
 class InstructorNB():
     """Class for instructor notebooks. Allows instructors to make student versions"""
-    contents = None
-    this_notebook = ""
-    student_folder = ""
-    Autograder_folder = ""
 
     def checklinks(self):
         pass
@@ -165,6 +161,10 @@ class InstructorNB():
                  Autograder_folder=None,
                  thiscourse=None):
 
+        self.this_notebook = ""
+        self.student_folder = ""
+        self.Autograder_folder = ""
+
         if filename:
             self.this_notebook = filename
 
@@ -172,6 +172,8 @@ class InstructorNB():
 
         if filename:
             self.contents = readnotebook(self.this_notebook)
+        else:
+            contents = None
 
     def writenotebook(self, filename=None):
         """Write this notebook to a file"""
