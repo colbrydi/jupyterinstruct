@@ -38,6 +38,7 @@ test:
 
 UML:
 	pyreverse -ASmy -o png $(MODULENAME)
+	mv *.png ./docs/images
 
 .PHONY: UML init docs lint test 
 
