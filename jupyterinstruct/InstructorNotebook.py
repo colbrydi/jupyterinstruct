@@ -10,8 +10,64 @@ from IPython.core.display import Javascript, HTML
 
 from jupyterinstruct.nbfilename import nbfilename
 
+def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
 
-def merge(this_notebook, studentfolder='./', tags={}):
+    old_nbfile = nbfilename(oldname)
+    if not oldname == str(old_nbfile):
+        print(f"ERROR: file {oldname} does not conform to naming standard")
+        if not force:
+            print(f"   Set force=True to change anyway")
+            return
+        
+    new_nbfile = nbfilename(newname)
+    if not newname == str(new_nbfile):
+        print(f"ERROR: file {newname} does not conform to naming standard")
+        print(f"       using {str(new_nbfile)}")
+        
+    cmd = f"git mv {oldname} {str(new_nbfile)} "
+    
+    old_nbfile.isInstructor = False
+    new_nbfile.isInstructor = False
+    
+    if MAKE_CHANGES:
+        os.system(cmd)
+    else:
+        print(f"TEST: {cmd}")
+    
+    directory = Path('.')
+    for file in directory.glob('*.ipynb'):
+        temp_np_file = nbfile(str(file))
+        if temp_np_file.isInstructor:
+            with open(file, encoding="utf-8") as f:
+                s = f.read()
+            if oldstudentversion in s:
+                s = s.replace(oldstudentversion, newstudentversion)
+                if MAKE_CHANGES:
+                    print("writing changed file")
+                    with open(file, "w", encoding="utf-8") as f:
+                        f.write(s)
+                else:
+                    print(f"TEST: Student File Reference in {file}")
+
+def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
+    """Migrate a notebook from the filename to the new four digit date string"""
+    
+    nbfile = nbfilename(filename)
+    if not nbfile.isDate:
+        print("ERROR: file not formated as a date file")
+        return 
+    
+    directory = Path('.')
+    files = directory.glob('*.ipynb')
+    if not Path(filename).isfile():
+        print(f"ERROR: File {filename} not found in directory")
+        return
+    oldname = filename
+    newname = f"{datestr}{oldname[4:]}"
+    renamefile(oldname, newname, MAKE_CHANGES, force)
+
+
+def makestudent(this_notebook, studentfolder='./', tags={}):
     IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
                include=['application/javascript'])
     nbfile = nbfilename(this_notebook)
@@ -23,10 +79,13 @@ def merge(this_notebook, studentfolder='./', tags={}):
         tags['MMDD'] = nbfile.prefix
 
     nb.removecells(searchstring="#ANSWER#")
-    nb.isInstructor = False
+    
+    #Remove INSTRUCTOR from name
+    nbfile.isInstructor = False
+    nb.filename = str(nbfile)
 
     tags['NEW_ASSIGNMENT'] = str(nbfile)
-
+    print(tags['NEW_ASSIGNMENT'])
     nb.mergetags(tags)
 
     studentfile = f"{studentfolder}{tags['NEW_ASSIGNMENT']}"
@@ -161,24 +220,24 @@ class InstructorNB():
                  Autograder_folder=None,
                  thiscourse=None):
 
-        self.this_notebook = ""
+        self.filename = ""
         self.student_folder = ""
         self.Autograder_folder = ""
 
         if filename:
-            self.this_notebook = filename
+            self.filename = filename
 
-        print(f"Myfilename {self.this_notebook}")
+        print(f"Myfilename {self.filename}")
 
         if filename:
-            self.contents = readnotebook(self.this_notebook)
+            self.contents = readnotebook(self.filename)
         else:
             contents = None
 
     def writenotebook(self, filename=None):
         """Write this notebook to a file"""
         if not filename:
-            filename = this_notebook
+            filename = self.filename
         writenotebook(filename, self.contents)
 
     def removecells(self, searchstring="#ANSWER#"):
@@ -251,7 +310,7 @@ class InstructorNB():
     def makestudent(self, tags=None, student_folder=None, filename=None):
         """Make a Student Version of the notebook"""
         if filename:
-            self.this_notebook = filename
+            self.filename = filename
         if student_folder:
             self.student_folder = student_folder
-        merge(self.this_notebook, studentfolder=self.studentfolder, tags=tags)
+        merge(self.filename, studentfolder=self.studentfolder, tags=tags)

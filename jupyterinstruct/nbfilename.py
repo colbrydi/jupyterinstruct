@@ -24,11 +24,64 @@ class nbfilename():
         self.isPreClass = False
         self.isAssignment = False
         self.isDate = False
-        date = ""
-        title = None
-        self.namestring = filename
+        self.date = ""
+        self.title = None
+        self.input_name = filename
         self.parsestr(filename)
 
+    def parsestr(self, filename=None):
+        """Parse the filestring and populate the nbfilename object"""
+        if not filename:
+            filename = self.input_name
+        else:
+            self.namestring = filename
+
+        attribute_list = ['INSTRUCTOR', 'STUDENT', 'in-class', 'pre-class']
+        self.parts = re.split('-|_| |\.', filename)
+
+        if '' in self.parts:
+            self.parts.remove('')
+
+        self.prefix = self.parts[0]
+        self.parts.remove(self.prefix)
+
+        if len(self.prefix) == 4 and self.prefix.isdigit():
+            if not self.prefix == '0000':
+                self.isDate = True
+
+        if self.isDate:
+            self.setDate()
+
+        self.extention = self.parts[-1]
+        if self.parts[-1] == 'ipynb':
+            self.parts.remove('ipynb')
+        else:
+            if '.' in filename:
+                self.extention = parts[-1]
+                parts.remove[parts[-1]]
+        if len(self.parts) > 0:
+            if self.parts[-1] == 'INSTRUCTOR':
+                self.isInstructor = True
+                del self.parts[-1]
+
+        if len(self.parts) > 3:
+            if self.parts[-1] == 'assignment' or self.parts[-1] == 'class':
+                if self.parts[-1] == 'assignment':
+                    self.isAssignment = True
+                    del self.parts[-1]
+
+                if self.parts[-1] == 'class':
+                    del self.parts[-1]
+                    if self.parts[-1] == 'in':
+                        self.isInClass = True
+                        del self.parts[-1]
+                    else:
+                        if self.parts[-1] == 'pre':
+                            self.isPreClass = True
+                            del self.parts[-1]
+        self.title = "_".join(self.parts)
+
+        
     def makestring(self):
         """Regenerate the filename string from the parsed data"""
 
@@ -108,58 +161,6 @@ class nbfilename():
         if self.isDate:
             self.prefix = f"{self.month:02}{self.day:02}"
         return self.prefix
-
-    def parsestr(self, filename=None):
-        """Parse the filestring and populate the nbfilename object"""
-        if not filename:
-            filename = self.namestring
-        else:
-            self.namestring = filename
-
-        attribute_list = ['INSTRUCTOR', 'STUDENT', 'in-class', 'pre-class']
-        self.parts = re.split('-|_| |\.', filename)
-
-        if '' in self.parts:
-            self.parts.remove('')
-
-        self.prefix = self.parts[0]
-        self.parts.remove(self.prefix)
-
-        if len(self.prefix) == 4 and self.prefix.isdigit():
-            if not self.prefix == '0000':
-                self.isDate = True
-
-        if self.isDate:
-            self.setDate()
-
-        self.extention = self.parts[-1]
-        if self.parts[-1] == 'ipynb':
-            self.parts.remove('ipynb')
-        else:
-            if '.' in filename:
-                self.extention = parts[-1]
-                parts.remove[parts[-1]]
-        if len(self.parts) > 0:
-            if self.parts[-1] == 'INSTRUCTOR':
-                self.isInstructor = True
-                del self.parts[-1]
-
-        if len(self.parts) > 3:
-            if self.parts[-1] == 'assignment' or self.parts[-1] == 'class':
-                if self.parts[-1] == 'assignment':
-                    self.isAssignment = True
-                    del self.parts[-1]
-
-                if self.parts[-1] == 'class':
-                    del self.parts[-1]
-                    if self.parts[-1] == 'in':
-                        self.isInClass = True
-                        del self.parts[-1]
-                    else:
-                        if self.parts[-1] == 'pre':
-                            self.isPreClass = True
-                            del self.parts[-1]
-        self.title = "_".join(self.parts)
 
     def __str__(self):
         """Return the namestring"""
