@@ -66,35 +66,13 @@ def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
     newname = f"{datestr}{oldname[4:]}"
     renamefile(oldname, newname, MAKE_CHANGES, force)
 
-
 def makestudent(this_notebook, studentfolder='./', tags={}):
     IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
                include=['application/javascript'])
-    nbfile = nbfilename(this_notebook)
 
     nb = InstructorNB(filename=this_notebook)
-
-    if nbfile.isDate:
-        tags['DUE_DATE'] = nbfile.getlongdate()
-        tags['MMDD'] = nbfile.prefix
-
-    nb.removecells(searchstring="#ANSWER#")
-    
-    #Remove INSTRUCTOR from name
-    nbfile.isInstructor = False
-    nb.filename = str(nbfile)
-
-    tags['NEW_ASSIGNMENT'] = str(nbfile)
-    print(tags['NEW_ASSIGNMENT'])
-    nb.mergetags(tags)
-
-    studentfile = f"{studentfolder}{tags['NEW_ASSIGNMENT']}"
-    nb.writenotebook(studentfile)
-
-    # Make a link for review
-    display(
-        HTML(f"<a href={studentfile} target=\"blank\">{studentfile}</a>"))
-
+    nb.makestudent(tags=tags, studentfolder=studentfolder)
+    return nb
 
 def getname():
     """Get the current notebook's name. This is actually a javascript command and 
@@ -221,8 +199,6 @@ class InstructorNB():
                  thiscourse=None):
 
         self.filename = ""
-        self.student_folder = ""
-        self.Autograder_folder = ""
 
         if filename:
             self.filename = filename
@@ -279,6 +255,12 @@ class InstructorNB():
             else:
                 newcells.append(cell)
         self.contents.cells = newcells
+   
+    def stripoutput(self):
+        for cell in self.contents.cells:
+            if cell['cell_type'] == 'code':
+                cell['outputs'] = []
+                cell['execution_count']= None
 
     def headerfooter(self, headerfile="Header.ipynb", footerfile="Footer.ipynb", ):
         """Append Header and Footer files to the current notebook"""
@@ -307,10 +289,39 @@ class InstructorNB():
                             f"###{key}###", tags[key])
             cell['source'] = source_string
 
-    def makestudent(self, tags=None, student_folder=None, filename=None):
+    def makestudent(self, tags=None, studentfolder='', filename=None):
         """Make a Student Version of the notebook"""
         if filename:
             self.filename = filename
-        if student_folder:
-            self.student_folder = student_folder
-        merge(self.filename, studentfolder=self.studentfolder, tags=tags)
+            
+        IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
+                   include=['application/javascript'])
+        
+        nbfile = nbfilename(self.filename)        
+        
+        if nbfile.isDate:
+            tags['DUE_DATE'] = nbfile.getlongdate()
+            tags['MMDD'] = nbfile.prefix
+
+        self.removecells(searchstring="#ANSWER#")
+        self.stripoutput()
+
+        #Remove INSTRUCTOR from name
+        nbfile.isInstructor = False
+        self.filename = str(nbfile)
+
+        tags['NEW_ASSIGNMENT'] = str(nbfile)
+        print(tags['NEW_ASSIGNMENT'])
+        self.mergetags(tags)
+
+        studentfile = f"{studentfolder}{tags['NEW_ASSIGNMENT']}"
+        self.writenotebook(studentfile)
+
+        #TODO: check all links in the directory for name change.
+        if not self.filename == filename:
+            print("WARNING: file may be changing {self.filename} != {filename}")
+            
+        # Make a link for review
+        display(
+            HTML(f"<a href={studentfile} target=\"blank\">{studentfile}</a>"))
+

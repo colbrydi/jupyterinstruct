@@ -81,8 +81,9 @@ class nbfilename():
                             del self.parts[-1]
         self.title = "_".join(self.parts)
 
+
         
-    def makestring(self):
+    def basename(self):
         """Regenerate the filename string from the parsed data"""
 
         string = self.getPrefix()
@@ -99,14 +100,17 @@ class nbfilename():
             string = string+'_in-class-assignment'
         if self.isPreClass:
             string = string+'_pre-class-assignment'
-
-        if self.isInstructor:
-            string = string + '-INSTRUCTOR'
-
-        string = string + "." + self.extention
-
         return string
 
+    def makestring(self):
+        string = self.basename()
+        
+        if self.isInstructor:
+            string = string + '-INSTRUCTOR'
+            
+        string = string + "." + self.extention
+        return string        
+        
     def daydifference(self, day, month, year):
         """Compare two dates and calcualte the number of days difference"""
         old_date = datetime.datetime(self.year, self.month, self.day)
