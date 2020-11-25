@@ -1,4 +1,7 @@
-import setuptools
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -11,11 +14,15 @@ setuptools.setup(
     description="Instructor tools used with Jupyter",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=setuptools.find_packages(),
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+    install_requires = [
+        'jupyter',
+        'IPython',
+        'nbformat',
+        'nbconvert',
+        'beautifulsoup4',
+        'pytest',
     ],
-    python_requires='>=3.6',
+    packages=[
+        'jupyterinstruct',
+    ],
 )
