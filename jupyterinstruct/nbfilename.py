@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import datetime
 import calendar
 import re
+from pathlib import Path, PosixPath
 
 
 class nbfilename():
@@ -29,13 +30,17 @@ class nbfilename():
         self.input_name = filename
         self.parsestr(filename)
 
+    #TODO. this is confusing why do we need input_name and namestring?
     def parsestr(self, filename=None):
         """Parse the filestring and populate the nbfilename object"""
         if not filename:
             filename = self.input_name
-        else:
-            self.namestring = filename
 
+        if (type(filename) == PosixPath):
+            filename = filename.name
+            
+        self.namestring = filename  
+            
         attribute_list = ['INSTRUCTOR', 'STUDENT', 'in-class', 'pre-class']
         self.parts = re.split('-|_| |\.', filename)
 

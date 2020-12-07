@@ -81,7 +81,15 @@ def getname():
     # TODO: Save the contents of the current notebook
     IP.display(IP.Javascript(
         'Jupyter.notebook.kernel.execute("this_notebook = " + "\'"+Jupyter.notebook.notebook_name+"\'");'))
+    
+    IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
+           include=['application/javascript'])
 
+def cleanNsave():
+    IP.display(IP.Javascript("IPython.notebook.clear_all_output()"),
+           include=['application/javascript'])
+    IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
+           include=['application/javascript'])
 
 getname()
 
