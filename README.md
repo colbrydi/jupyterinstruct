@@ -17,7 +17,7 @@ This package is currently under development and is not avaliable via pypy.  to i
 
 ## Usage
 
-[Click here for package documentation](https://colbrydi.github.io/jupyterinstruct/jupyterinstruct)
+[Click here for package documentation](https://colbrydi.github.io/jupyterinstruct/jupyterinstruct/index.html)
 
 
 
