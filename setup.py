@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="jupyterinstruct",
-    version="0.0.1",
+    version="0.0.1dev",
     author="Dirk Colbry",
     author_email="colbrydi@msu.edu",
     description="Instructor tools used with Jupyter",
