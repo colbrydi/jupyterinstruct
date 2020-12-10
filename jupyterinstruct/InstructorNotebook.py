@@ -97,7 +97,7 @@ getname()
 def nb2html(nb):
     """Helper function to convert a notebook to html for parsing"""
     html_exporter = HTMLExporter()
-    html_exporter.template_file = 'basic'
+    #html_exporter.template_file = 'basic'
     (body, resources) = html_exporter.from_notebook_node(nb)
     return (body, resources)
 
@@ -234,16 +234,20 @@ class InstructorNB():
                 newcells.append(cell)
         self.contents.cells = newcells
 
-    def removebefore(self, searchstring="#END_HEADER#"):
+    def removebefore(self, searchstring="#ENDHEADER#"):
         """Remove all cells efore cell with ```searchstring``` keyword (default #END_HEADER#)"""
         index = 0
+        found = -1
         for cell in self.contents.cells:
             if searchstring in cell['source']:
-                self.contents.cells = self.contents.cells[index+1:]
-                return
+                found = index
             index = index+1
+        if found >=0:
+            self.contents.cells = self.contents.cells[found+1:]
+        return
+       
 
-    def removeafter(self, searchstring="#START_FOOTER#"):
+    def removeafter(self, searchstring="#STARTFOOTER#"):
         """Remove all cells efore cell with ```searchstring``` keyword (default #START_FOOTER#)"""
         index = 0
         for cell in self.contents.cells:
