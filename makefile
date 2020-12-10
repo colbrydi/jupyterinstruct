@@ -26,6 +26,7 @@ init:
 
 docs:
 	pdoc3 --force --html --output-dir ./docs $(MODULENAME)
+	python makeindex.py ./README.md > docs/index.html
 
 lint:
 	pylint $(MODULENAME)
