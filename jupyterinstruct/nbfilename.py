@@ -30,7 +30,7 @@ class nbfilename():
         self.input_name = filename
         self.parsestr(filename)
 
-    #TODO. this is confusing why do we need input_name and namestring?
+    # TODO. this is confusing why do we need input_name and namestring?
     def parsestr(self, filename=None):
         """Parse the filestring and populate the nbfilename object"""
         if not filename:
@@ -38,9 +38,9 @@ class nbfilename():
 
         if (type(filename) == PosixPath):
             filename = filename.name
-            
-        self.namestring = filename  
-            
+
+        self.namestring = filename
+
         attribute_list = ['INSTRUCTOR', 'STUDENT', 'in-class', 'pre-class']
         self.parts = re.split('-|_| |\.', filename)
 
@@ -86,8 +86,6 @@ class nbfilename():
                             del self.parts[-1]
         self.title = "_".join(self.parts)
 
-
-        
     def basename(self):
         """Regenerate the filename string from the parsed data"""
 
@@ -109,13 +107,13 @@ class nbfilename():
 
     def makestring(self):
         string = self.basename()
-        
+
         if self.isInstructor:
             string = string + '-INSTRUCTOR'
-            
+
         string = string + "." + self.extention
-        return string        
-        
+        return string
+
     def daydifference(self, day, month, year):
         """Compare two dates and calcualte the number of days difference"""
         old_date = datetime.datetime(self.year, self.month, self.day)

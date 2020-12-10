@@ -2,7 +2,8 @@ import os
 import glob
 
 """Depreciated files"""
-    
+
+
 def renamefile(oldname, newname, MAKE_CHANGES=False):
     """Rename a file from oldname to newname. Search the current folder for any
     links in notebooks with the old filename and update them."""

@@ -1,10 +1,10 @@
-```The base notebook class object.
+'''The base notebook class object.
 Instuctor notebooks have extra content intended only for instructors. This class manages the extra content and enables instructors to generate student versions of the notebooks.  The key features of an instructor notebook include:
 
 - ##ANSWER## cells which include notes and code only readable by the instructor.
 - ###TAGS### additional tages stored in a tags dictionary which can be used as placeholders for information that changes each semester.  instructors can define the tag in a notebook and then these tags will automatically get replaced with the dictionary value when the student version is used. for example:
 	- A tage like ###COURSEWEBSITE### 
-```
+'''
 import IPython.core.display as IP
 import nbformat
 from nbconvert import HTMLExporter
@@ -19,6 +19,7 @@ from jupyterinstruct.nbvalidate import validate
 
 from jupyterinstruct.nbfilename import nbfilename
 
+
 def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
 
     old_nbfile = nbfilename(oldname)
@@ -27,22 +28,22 @@ def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
         if not force:
             print(f"   Set force=True to change anyway")
             return
-        
+
     new_nbfile = nbfilename(newname)
     if not newname == str(new_nbfile):
         print(f"ERROR: file {newname} does not conform to naming standard")
         print(f"       using {str(new_nbfile)}")
-        
+
     cmd = f"git mv {oldname} {str(new_nbfile)} "
-    
+
     old_nbfile.isInstructor = False
     new_nbfile.isInstructor = False
-    
+
     if MAKE_CHANGES:
         os.system(cmd)
     else:
         print(f"TEST: {cmd}")
-    
+
     directory = Path('.')
     for file in directory.glob('*.ipynb'):
         temp_np_file = nbfile(str(file))
@@ -58,14 +59,15 @@ def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
                 else:
                     print(f"TEST: Student File Reference in {file}")
 
+
 def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
     """Migrate a notebook from the filename to the new four digit date string"""
-    
+
     nbfile = nbfilename(filename)
     if not nbfile.isDate:
         print("ERROR: file not formated as a date file")
-        return 
-    
+        return
+
     directory = Path('.')
     files = directory.glob('*.ipynb')
     if not Path(filename).isfile():
@@ -75,6 +77,7 @@ def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
     newname = f"{datestr}{oldname[4:]}"
     renamefile(oldname, newname, MAKE_CHANGES, force)
 
+
 def makestudent(this_notebook, studentfolder='./', tags={}):
     IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
                include=['application/javascript'])
@@ -83,6 +86,7 @@ def makestudent(this_notebook, studentfolder='./', tags={}):
     studentfile = nb.makestudent(tags=tags, studentfolder=studentfolder)
     return studentfile
 
+
 def getname():
     """Get the current notebook's name. This is actually a javascript command and 
     requires some time before the name is stored in the global namespace as ```this_notebook```
@@ -90,15 +94,17 @@ def getname():
     # TODO: Save the contents of the current notebook
     IP.display(IP.Javascript(
         'Jupyter.notebook.kernel.execute("this_notebook = " + "\'"+Jupyter.notebook.notebook_name+"\'");'))
-    
+
     IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
-           include=['application/javascript'])
+               include=['application/javascript'])
+
 
 def cleanNsave():
     IP.display(IP.Javascript("IPython.notebook.clear_all_output()"),
-           include=['application/javascript'])
+               include=['application/javascript'])
     IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
-           include=['application/javascript'])
+               include=['application/javascript'])
+
 
 getname()
 
@@ -251,10 +257,9 @@ class InstructorNB():
             if searchstring in cell['source']:
                 found = index
             index = index+1
-        if found >=0:
+        if found >= 0:
             self.contents.cells = self.contents.cells[found+1:]
         return
-       
 
     def removeafter(self, searchstring="#STARTFOOTER#"):
         """Remove all cells efore cell with ```searchstring``` keyword (default #START_FOOTER#)"""
@@ -276,12 +281,12 @@ class InstructorNB():
             else:
                 newcells.append(cell)
         self.contents.cells = newcells
-   
+
     def stripoutput(self):
         for cell in self.contents.cells:
             if cell['cell_type'] == 'code':
                 cell['outputs'] = []
-                cell['execution_count']= None
+                cell['execution_count'] = None
 
     def headerfooter(self, headerfile="Header.ipynb", footerfile="Footer.ipynb", ):
         """Append Header and Footer files to the current notebook"""
@@ -314,12 +319,12 @@ class InstructorNB():
         """Make a Student Version of the notebook"""
         if filename:
             self.filename = filename
-            
+
         IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
                    include=['application/javascript'])
-        
-        nbfile = nbfilename(self.filename)        
-        
+
+        nbfile = nbfilename(self.filename)
+
         if nbfile.isDate:
             tags['DUE_DATE'] = nbfile.getlongdate()
             tags['MMDD'] = nbfile.prefix
@@ -327,7 +332,7 @@ class InstructorNB():
         self.removecells(searchstring="#ANSWER#")
         self.stripoutput()
 
-        #Remove INSTRUCTOR from name
+        # Remove INSTRUCTOR from name
         nbfile.isInstructor = False
         self.filename = str(nbfile)
 
@@ -338,13 +343,13 @@ class InstructorNB():
         studentfile = f"{studentfolder}{tags['NEW_ASSIGNMENT']}"
         self.writenotebook(studentfile)
 
-        #TODO: check all links in the directory for name change.
+        # TODO: check all links in the directory for name change.
         if not self.filename == filename:
-            print("WARNING: file may be changing {self.filename} != {filename}")
-            
+            print(
+                "WARNING: file may be changing {self.filename} != {filename}")
+
         # Make a link for review
         display(
             HTML(f"<a href={studentfile} target=\"blank\">{studentfile}</a>"))
-        
-        return studentfile
 
+        return studentfile
