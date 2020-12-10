@@ -1,3 +1,5 @@
+'''Depreciated library - only maintained for reverse compatibility'''
+
 from jupyterinstruct.nbfilename import nbfilename
 from pathlib import Path
 from IPython.core.display import Javascript, HTML

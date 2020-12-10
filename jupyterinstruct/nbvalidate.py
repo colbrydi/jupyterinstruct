@@ -1,7 +1,4 @@
-''' Jupyter notebook validator.
-Written by Dirk Colbry
-
-These functions are designed to validate a notebook being sent to a student.  The current checks include:
+''' Jupyter notebook validator.  These functions check for common errors in student notebooks including:
 
 - Extra Tags of the from ###TAG### (used by jupyterinstruct)
 - Link to URL errors

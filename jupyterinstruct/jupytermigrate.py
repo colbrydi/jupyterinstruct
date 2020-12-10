@@ -1,3 +1,5 @@
+'''Tools for helping instructors migrate curriculum to a new semester.  We try as best we can to make curriculum dynamic and reusable.'''
+
 import os
 import glob
 

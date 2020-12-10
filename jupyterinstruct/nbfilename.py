@@ -1,3 +1,5 @@
+'''A class designed to standardise notebook filenames.  Filenames have infomration about assignments being in-class, pre-class, INSTRUCTOR versions, dates due, etc.  This class helps validate filenames and ensures everything looks good.'''
+
 import IPython.core.display as IP
 import nbformat
 from nbconvert import HTMLExporter
