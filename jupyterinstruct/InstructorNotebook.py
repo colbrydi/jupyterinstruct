@@ -8,7 +8,105 @@ import re
 import IPython.core.display as IP
 from IPython.core.display import Javascript, HTML
 
+
 from jupyterinstruct.nbfilename import nbfilename
+
+import os
+import requests
+import nbformat
+from bs4 import BeautifulSoup
+from nbconvert import HTMLExporter
+from pathlib import Path
+from nbconvert.preprocessors import ExecutePreprocessor
+
+def checkurl(url):
+    request = requests.get(url, timeout=5)
+    output = 0
+    if not request.status_code < 400:
+
+        output = 1
+    return output
+
+
+def validate(filename):
+    '''Function to validate links and content of a IPYNB'''
+    print(f"Validating Notebook {filename}")
+    
+    parts = Path(filename)
+    foldername = parts.parent
+    
+    # Read in the file
+    with open(filename, 'r') as file:
+        text = file.read()
+
+    nb = nbformat.reads(text, as_version=4) #ipynb version 4
+    
+    #may be needed for video verification
+    ep = ExecutePreprocessor(timeout=600, kernel_name='python3', allow_errors=True)
+    ep.preprocess(nb)
+
+    # Process the notebook we loaded earlier
+    (body, resources) = HTMLExporter().from_notebook_node(nb)
+
+    #print(body)
+    soup = BeautifulSoup(body, 'html.parser')
+    anchorlist = dict()
+    links = soup.find_all('a',href=False)
+    for link in links:
+        anchorlist[link['name']] = False
+        
+    errorcount = 0
+    
+    links = soup.find_all('a',href=True)
+    for link in links:
+        href = link['href']
+        try:
+            if len(href) > 0:
+                if href[0] == "#":
+                    anchorlist[href[1:]] = True
+                else:
+                    if href[0:4] == "http":
+                        error = checkurl(href)
+                        if error:
+                            print(f'   LINK ERROR - {href}') 
+                            errorcount += error
+                    else:
+                        if not os.path.isfile(f'{foldername}/{href}'):
+                            print(f'   File Doesn\'t Exist - {href}')
+                            errorcount +=1
+            else:
+                print(f"   Empty Link - {link}")
+                errorcount +=1
+        except Exception as e:
+            print(f"   Timeout Warning for  {link}\n {e}")
+            errorcount +=1
+            
+    for anchor in anchorlist:
+        if not anchorlist[anchor]:
+            print(f"   Missing anchor for {anchor}")
+            errorcount +=1
+            
+    ##Verify video links
+    iframes = soup.find_all('iframe')    
+    for frame in iframes:
+        error = checkurl(frame['src'])
+        if error:
+            print(f'   Iframe LINK ERROR - {href}') 
+            errorcount += error
+            
+    ##Verify img links     
+    images = soup.find_all('img')    
+    for img in images:
+        image = img['src']
+        if not image[0:4]=='data':
+            error = checkurl(img['src'])
+            if error:
+                print(f'   Image LINK ERROR - {href}') 
+                errorcount += error
+
+    return errorcount
+        
+
 
 def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
 
@@ -71,8 +169,8 @@ def makestudent(this_notebook, studentfolder='./', tags={}):
                include=['application/javascript'])
 
     nb = InstructorNB(filename=this_notebook)
-    nb.makestudent(tags=tags, studentfolder=studentfolder)
-    return nb
+    studentfile = nb.makestudent(tags=tags, studentfolder=studentfolder)
+    return studentfile
 
 def getname():
     """Get the current notebook's name. This is actually a javascript command and 
@@ -336,4 +434,6 @@ class InstructorNB():
         # Make a link for review
         display(
             HTML(f"<a href={studentfile} target=\"blank\">{studentfile}</a>"))
+        
+        return studentfile
 
