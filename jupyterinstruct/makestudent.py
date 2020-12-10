@@ -1,6 +1,6 @@
 from jupyterinstruct import InstructorNotebook as inb
 
-"""makestudent is depreciated"""
+"""makestudent is being depreciated"""
 
 
 def merge(this_notebook, studentfolder='./', tags={}):

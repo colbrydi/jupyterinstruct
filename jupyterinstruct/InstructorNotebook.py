@@ -1,3 +1,10 @@
+```The base notebook class object.
+Instuctor notebooks have extra content intended only for instructors. This class manages the extra content and enables instructors to generate student versions of the notebooks.  The key features of an instructor notebook include:
+
+- ##ANSWER## cells which include notes and code only readable by the instructor.
+- ###TAGS### additional tages stored in a tags dictionary which can be used as placeholders for information that changes each semester.  instructors can define the tag in a notebook and then these tags will automatically get replaced with the dictionary value when the student version is used. for example:
+	- A tage like ###COURSEWEBSITE### 
+```
 import IPython.core.display as IP
 import nbformat
 from nbconvert import HTMLExporter
