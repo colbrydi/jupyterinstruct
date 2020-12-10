@@ -1,3 +1,19 @@
+''' Jupyter notebook validator.
+Written by Dirk Colbry
+
+These functions are designed to validate a notebook being sent to a student.  The current checks include:
+
+- Extra Tags of the from ###TAG### (used by jupyterinstruct)
+- Link to URL errors
+- Link to file errors
+- Empty Links
+- Missing anchor links (#) in notebook
+- Valid iframe links (for youtube videos)
+- Image Link error
+- Image alt text empty
+- Image missing alt text
+'''
+
 import re 
 import os
 import requests
@@ -97,6 +113,8 @@ def validate(filename):
             if error:
                 print(f'   Image LINK ERROR - {href}') 
                 errorcount += error
+                
+        #Check the image alt text is present and valid.
         if img.has_attr('alt'):
             if img['alt'] == "":
                 print(f'   Empty Alt text in image - {href}')
@@ -108,5 +126,6 @@ def validate(filename):
     return errorcount
 
 if __name__ == "__main__":
+    errors = 0
     for filename in argv[1:]:
-        validate(filename)
+        errors += validate(filename)
