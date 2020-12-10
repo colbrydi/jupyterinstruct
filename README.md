@@ -1,5 +1,8 @@
-<img alt="JupyterInstruct logo with a cartoon Jupyter writing on a green chalkboard. Image created by Tamara Colbry" src="https://raw.githubusercontent.com/colbrydi/jupyterinstruct/main/docs/images/JupyterInstruct_icon.png" style="float:right"> 
 # JupyterInstruct
+Written by Dirk Colbry
+
+
+<img alt="JupyterInstruct logo with a cartoon Jupyter writing on a green chalkboard. Image created by Tamara Colbry" src="https://raw.githubusercontent.com/colbrydi/jupyterinstruct/main/docs/images/JupyterInstruct_icon.png" style="float:right" width=100px> 
 
 The JupyterInstruct module is designed for INSTRUCTORS to organize and adjust course curriculum. Each assignment is given it's own jupyter notebook and all student reading, videos, images are included in the notebook.  Each notebook also contains notes for instructors that will be automatically removed. 
 
