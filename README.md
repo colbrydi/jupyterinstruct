@@ -19,7 +19,10 @@ This package is currently under development and is not avaliable via pypy.  to i
 
 [Click here for package documentation](https://colbrydi.github.io/jupyterinstruct/jupyterinstruct/index.html)
 
+## Accessable Jupyter Condtent
 
+Also included in this git repository is a notebook demonstrating best practices for generating Accessable content in Jupyter notebooks.
 
+- [Accessable Jupyter Content](./Assessable_Jupyter_content.html)
 
 
