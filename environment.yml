@@ -5,7 +5,8 @@ dependencies:
   - nbformat
   - pip
   - nbconvert
-  - markdown
   - bs4
+  - markdown
   - graphviz
-prefix: /Users/colbrydi/REPOS/jupyterinstruct/envs
+  - pip
+    - nbgrader

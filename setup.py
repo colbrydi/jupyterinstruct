@@ -18,9 +18,9 @@ setuptools.setup(
         'jupyter',
         'IPython',
         'nbformat',
+	'nbgrader',
         'nbconvert',
         'beautifulsoup4',
-        'pytest',
     ],
     packages=[
         'jupyterinstruct',
