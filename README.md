@@ -1,5 +1,5 @@
 # JupyterInstruct
-Written by [Dirk Colbry](http://colbrydi.github.io/]
+Written by [Dirk Colbry](http://colbrydi.github.io/)
 
 <img alt="JupyterInstruct logo with a cartoon Jupyter writing on a green chalkboard. Image created by Tamara Colbry" src="https://raw.githubusercontent.com/colbrydi/jupyterinstruct/master/docs/images/JupyterInstruct_icon.png" style="float:right" width=300px> 
 
