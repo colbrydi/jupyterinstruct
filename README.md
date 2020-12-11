@@ -24,6 +24,8 @@ This package is currently under development and is not avaliable via pypy.  to i
 
 ## Usage
 
+Please check out the [Example.ipynb](https://colbrydi.github.io/jupyterinstruct/Examples) for some instructions on how to use Jupyterinstruct. 
+
 [Click here for package documentation](https://colbrydi.github.io/jupyterinstruct/jupyterinstruct/index.html)
 
 ## Accessable Jupyter Condtent

@@ -239,12 +239,13 @@ class InstructorNB():
             filename = self.filename
         writenotebook(filename, self.contents)
 
-    def removecells(self, searchstring="#ANSWER#"):
+    def removecells(self, searchstring="#ANSWER#", verbose=True):
         """Remove with ```searchstring``` keyword (default #ANSWER#)"""
         newcells = []
         for cell in self.contents.cells:
             if searchstring in cell['source']:
-                print(f"\nREMOVING {cell['source']}\n")
+                if verbose:
+                    print(f"\nREMOVING {cell['source']}\n")
             else:
                 newcells.append(cell)
         self.contents.cells = newcells
@@ -329,7 +330,7 @@ class InstructorNB():
             tags['DUE_DATE'] = nbfile.getlongdate()
             tags['MMDD'] = nbfile.prefix
 
-        self.removecells(searchstring="#ANSWER#")
+        self.removecells(searchstring="#ANSWER#",verbose=False)
         self.stripoutput()
 
         # Remove INSTRUCTOR from name
@@ -345,8 +346,7 @@ class InstructorNB():
 
         # TODO: check all links in the directory for name change.
         if not self.filename == filename:
-            print(
-                "WARNING: file may be changing {self.filename} != {filename}")
+            print(f"WARNING: file may be changing {self.filename} != {filename}")
 
         # Make a link for review
         display(

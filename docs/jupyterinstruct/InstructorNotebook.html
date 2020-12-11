@@ -282,12 +282,13 @@ class InstructorNB():
             filename = self.filename
         writenotebook(filename, self.contents)
 
-    def removecells(self, searchstring=&#34;#ANSWER#&#34;):
+    def removecells(self, searchstring=&#34;#ANSWER#&#34;, verbose=True):
         &#34;&#34;&#34;Remove with ```searchstring``` keyword (default #ANSWER#)&#34;&#34;&#34;
         newcells = []
         for cell in self.contents.cells:
             if searchstring in cell[&#39;source&#39;]:
-                print(f&#34;\nREMOVING {cell[&#39;source&#39;]}\n&#34;)
+                if verbose:
+                    print(f&#34;\nREMOVING {cell[&#39;source&#39;]}\n&#34;)
             else:
                 newcells.append(cell)
         self.contents.cells = newcells
@@ -372,7 +373,7 @@ class InstructorNB():
             tags[&#39;DUE_DATE&#39;] = nbfile.getlongdate()
             tags[&#39;MMDD&#39;] = nbfile.prefix
 
-        self.removecells(searchstring=&#34;#ANSWER#&#34;)
+        self.removecells(searchstring=&#34;#ANSWER#&#34;,verbose=False)
         self.stripoutput()
 
         # Remove INSTRUCTOR from name
@@ -388,8 +389,7 @@ class InstructorNB():
 
         # TODO: check all links in the directory for name change.
         if not self.filename == filename:
-            print(
-                &#34;WARNING: file may be changing {self.filename} != {filename}&#34;)
+            print(f&#34;WARNING: file may be changing {self.filename} != {filename}&#34;)
 
         # Make a link for review
         display(
@@ -745,12 +745,13 @@ requires some time before the name is stored in the global namespace as <code>th
             filename = self.filename
         writenotebook(filename, self.contents)
 
-    def removecells(self, searchstring=&#34;#ANSWER#&#34;):
+    def removecells(self, searchstring=&#34;#ANSWER#&#34;, verbose=True):
         &#34;&#34;&#34;Remove with ```searchstring``` keyword (default #ANSWER#)&#34;&#34;&#34;
         newcells = []
         for cell in self.contents.cells:
             if searchstring in cell[&#39;source&#39;]:
-                print(f&#34;\nREMOVING {cell[&#39;source&#39;]}\n&#34;)
+                if verbose:
+                    print(f&#34;\nREMOVING {cell[&#39;source&#39;]}\n&#34;)
             else:
                 newcells.append(cell)
         self.contents.cells = newcells
@@ -835,7 +836,7 @@ requires some time before the name is stored in the global namespace as <code>th
             tags[&#39;DUE_DATE&#39;] = nbfile.getlongdate()
             tags[&#39;MMDD&#39;] = nbfile.prefix
 
-        self.removecells(searchstring=&#34;#ANSWER#&#34;)
+        self.removecells(searchstring=&#34;#ANSWER#&#34;,verbose=False)
         self.stripoutput()
 
         # Remove INSTRUCTOR from name
@@ -851,8 +852,7 @@ requires some time before the name is stored in the global namespace as <code>th
 
         # TODO: check all links in the directory for name change.
         if not self.filename == filename:
-            print(
-                &#34;WARNING: file may be changing {self.filename} != {filename}&#34;)
+            print(f&#34;WARNING: file may be changing {self.filename} != {filename}&#34;)
 
         # Make a link for review
         display(
@@ -946,7 +946,7 @@ requires some time before the name is stored in the global namespace as <code>th
         tags[&#39;DUE_DATE&#39;] = nbfile.getlongdate()
         tags[&#39;MMDD&#39;] = nbfile.prefix
 
-    self.removecells(searchstring=&#34;#ANSWER#&#34;)
+    self.removecells(searchstring=&#34;#ANSWER#&#34;,verbose=False)
     self.stripoutput()
 
     # Remove INSTRUCTOR from name
@@ -962,8 +962,7 @@ requires some time before the name is stored in the global namespace as <code>th
 
     # TODO: check all links in the directory for name change.
     if not self.filename == filename:
-        print(
-            &#34;WARNING: file may be changing {self.filename} != {filename}&#34;)
+        print(f&#34;WARNING: file may be changing {self.filename} != {filename}&#34;)
 
     # Make a link for review
     display(
@@ -1061,7 +1060,7 @@ requires some time before the name is stored in the global namespace as <code>th
 </details>
 </dd>
 <dt id="jupyterinstruct.InstructorNotebook.InstructorNB.removecells"><code class="name flex">
-<span>def <span class="ident">removecells</span></span>(<span>self, searchstring='#ANSWER#')</span>
+<span>def <span class="ident">removecells</span></span>(<span>self, searchstring='#ANSWER#', verbose=True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Remove with <code>searchstring</code> keyword (default #ANSWER#)</p></div>
@@ -1069,12 +1068,13 @@ requires some time before the name is stored in the global namespace as <code>th
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def removecells(self, searchstring=&#34;#ANSWER#&#34;):
+<pre><code class="python">def removecells(self, searchstring=&#34;#ANSWER#&#34;, verbose=True):
     &#34;&#34;&#34;Remove with ```searchstring``` keyword (default #ANSWER#)&#34;&#34;&#34;
     newcells = []
     for cell in self.contents.cells:
         if searchstring in cell[&#39;source&#39;]:
-            print(f&#34;\nREMOVING {cell[&#39;source&#39;]}\n&#34;)
+            if verbose:
+                print(f&#34;\nREMOVING {cell[&#39;source&#39;]}\n&#34;)
         else:
             newcells.append(cell)
     self.contents.cells = newcells</code></pre>
