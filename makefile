@@ -10,8 +10,7 @@ init:
 	conda env create --prefix ./envs --file environment.yml
 
 docs:
-	pdoc3 --force --html --output-dir ./docs $(MODULENAME)
-	python makeindex.py ./README.md > docs/index.html
+	./makewebsite.sh
 
 lint:
 	pylint $(MODULENAME)
