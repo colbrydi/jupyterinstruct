@@ -1,0 +1,11 @@
+name: /Users/colbrydi/REPOS/jupyterinstruct/envs
+channels:
+  - defaults
+dependencies:
+  - nbformat
+  - pip
+  - nbconvert
+  - markdown
+  - bs4
+  - graphviz
+prefix: /Users/colbrydi/REPOS/jupyterinstruct/envs

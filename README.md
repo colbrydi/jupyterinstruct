@@ -17,6 +17,11 @@ This package is currently under development and is not avaliable via pypy.  to i
 
 ```pip install git+https://github.com/colbrydi/jupyterinstruct```
 
+## Package UML dependancies
+
+<img alt="Package UML dependances" src="https://raw.githubusercontent.com/colbrydi/jupyterinstruct/master/docs/images/packages.png">
+
+
 ## Usage
 
 [Click here for package documentation](https://colbrydi.github.io/jupyterinstruct/jupyterinstruct/index.html)

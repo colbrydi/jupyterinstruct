@@ -1,5 +1,22 @@
-pdoc3 --force --html --output-dir ./docs jupyterinstruct
+
+MODULENAME=jupyterinstruct
+
+# Generate automatic documentation
+pdoc3 --force --html --output-dir ./docs $MODULENAME 
+
+# Convert project README.md as the website index.html page
 python makeindex.py ./README.md > docs/index.html
-jupyter nbconvert --log-level=0 --no-prompt --to html Accessable_Jupyter_content_for_INSTRUCTORS.ipynb --output ./docs/Accessable_Jupyter_content.html
+
+# Convert Jupyter Notebooks
+
+for notebook in *.ipynb;
+do
+	echo $notebook
+	jupyter nbconvert --log-level=0 --no-prompt --to html $notebook 
+done
+mv *.html ./docs/
  
+#Make UML Diagram
+pyreverse -ASmy -o png $MODULENAME
+mv *.png ./docs/images
  
