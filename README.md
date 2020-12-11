@@ -19,7 +19,7 @@ This package is currently under development and is not avaliable via pypy.  to i
 
 ## Package UML dependancies
 
-<img alt="Package UML dependances" src="https://raw.githubusercontent.com/colbrydi/jupyterinstruct/master/docs/images/packages.png">
+<img alt="Package UML dependances" src="https://github.com/colbrydi/jupyterinstruct/Accessable_Jupyter_content_for_INSTRUCTORS">
 
 
 ## Usage

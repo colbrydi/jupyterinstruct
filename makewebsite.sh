@@ -1,3 +1,4 @@
+# Simple script to create website from the current folder
 
 MODULENAME=jupyterinstruct
 
