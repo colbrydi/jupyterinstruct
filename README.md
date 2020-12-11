@@ -23,6 +23,6 @@ This package is currently under development and is not avaliable via pypy.  to i
 
 Also included in this git repository is a notebook demonstrating best practices for generating Accessable content in Jupyter notebooks.
 
-- [Accessable Jupyter Content](./Assessable_Jupyter_content.html)
+- [Accessable Jupyter Content](.Accessable_Jupyter_content.html)
 
 
