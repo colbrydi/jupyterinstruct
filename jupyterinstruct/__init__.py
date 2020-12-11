@@ -2,7 +2,7 @@
 # Welcome to JupyterInstruct!
 ### Written by Dirk colbry
 ### Last updated December 2020
-
+### [Link to Github Repository](https://github.com/colbrydi/jupyterinstruct)
 
 These toosl as developed to help instructors maintain and share course curriculum with students using jupyter notebooks.
 
