@@ -9,6 +9,16 @@
 - Image Link error
 - Image alt text empty
 - Image missing alt text
+
+## Usage
+
+"""
+from jupyterinstruct.nbvalidate import validate
+
+validate(filename="Accessable_Jupyter_content_for_INSTRUCTORS.ipynb")
+
+"""
+
 '''
 
 import re

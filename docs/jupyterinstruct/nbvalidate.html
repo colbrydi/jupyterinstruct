@@ -36,6 +36,11 @@ These functions check for common errors in student notebooks including:</p>
 <li>Image alt text empty</li>
 <li>Image missing alt text</li>
 </ul>
+<h2 id="usage">Usage</h2>
+<p>"""
+from jupyterinstruct.nbvalidate import validate</p>
+<p>validate(filename="Accessable_Jupyter_content_for_INSTRUCTORS.ipynb")</p>
+<p>"""</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -51,6 +56,16 @@ These functions check for common errors in student notebooks including:</p>
 - Image Link error
 - Image alt text empty
 - Image missing alt text
+
+## Usage
+
+&#34;&#34;&#34;
+from jupyterinstruct.nbvalidate import validate
+
+validate(filename=&#34;Accessable_Jupyter_content_for_INSTRUCTORS.ipynb&#34;)
+
+&#34;&#34;&#34;
+
 &#39;&#39;&#39;
 
 import re
@@ -310,7 +325,9 @@ if __name__ == &#34;__main__&#34;:
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul></ul>
+<ul>
+<li><a href="#usage">Usage</a></li>
+</ul>
 </div>
 <ul id="index">
 <li><h3>Super-module</h3>
