@@ -5,9 +5,11 @@ Written by Dirk Colbry
 
 The JupyterInstruct module is designed for INSTRUCTORS to organize and adjust course curriculum. Each assignment is given it's own jupyter notebook and all student reading, videos, images are included in the notebook.  Each notebook also contains notes for instructors that will be automatically removed. 
 
-* Student curriculum - This is the main content of the notebooks.  The intention is for these notebooks to contain all resources students need for the course.
-* Instructor Notes and Answers - Each notebook also contains instructor notes and answers using the ###ANSWER### tag.  any cell that contains the ###ANSWER### tag will be removed when automatically generating the student version of the notebook.
-* Information tags - Each course can include a ```thiscourse.py``` file which populates a dictionary of "tags". The tag key is a tag string (typically uppercase) such as ```GITURL``` and the tag value is a string. When generating the student version of a notebook the code will search for tag serounded by ```###``` escape charicters (ex. ```###GITURL###``` and replace each instance with the string. ```.
+- Tools to help instructors maintain course materials all in one place including instructor notes and Answers. 
+- Tools to help migrate curriculum form one semester to the next.
+- Tools to automatically generate websites and ebooks from notebooks. 
+- Notebook validation tools to identify common problems with links, images and accessibility.
+- Tools to interface nbgrader with the MSU jupyterhub servers and MSU Desire2Learn course management systems. 
 
 ## Installation
 

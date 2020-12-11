@@ -3,9 +3,11 @@
 <p><img alt="JupyterInstruct logo with a cartoon Jupyter writing on a green chalkboard. Image created by Tamara Colbry" src="https://raw.githubusercontent.com/colbrydi/jupyterinstruct/master/docs/images/JupyterInstruct_icon.png" style="float:right" width=300px> </p>
 <p>The JupyterInstruct module is designed for INSTRUCTORS to organize and adjust course curriculum. Each assignment is given it's own jupyter notebook and all student reading, videos, images are included in the notebook.  Each notebook also contains notes for instructors that will be automatically removed. </p>
 <ul>
-<li>Student curriculum - This is the main content of the notebooks.  The intention is for these notebooks to contain all resources students need for the course.</li>
-<li>Instructor Notes and Answers - Each notebook also contains instructor notes and answers using the ###ANSWER### tag.  any cell that contains the ###ANSWER### tag will be removed when automatically generating the student version of the notebook.</li>
-<li>Information tags - Each course can include a <code>thiscourse.py</code> file which populates a dictionary of "tags". The tag key is a tag string (typically uppercase) such as <code>GITURL</code> and the tag value is a string. When generating the student version of a notebook the code will search for tag serounded by <code>###</code> escape charicters (ex. <code>###GITURL###</code> and replace each instance with the string. ```.</li>
+<li>Tools to help instructors maintain course materials all in one place including instructor notes and Answers. </li>
+<li>Tools to help migrate curriculum form one semester to the next.</li>
+<li>Tools to automatically generate websites and ebooks from notebooks. </li>
+<li>Notebook validation tools to identify common problems with links, images and accessibility.</li>
+<li>Tools to interface nbgrader with the MSU jupyterhub servers and MSU Desire2Learn course management systems. </li>
 </ul>
 <h2>Installation</h2>
 <p>This package is currently under development and is not avaliable via pypy.  to install use the following command:</p>
