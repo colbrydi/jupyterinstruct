@@ -1,4 +1,4 @@
-name: /Users/colbrydi/REPOS/jupyterinstruct/envs
+name: jupyterinstruct/envs
 channels:
   - defaults
 dependencies:
@@ -8,5 +8,5 @@ dependencies:
   - bs4
   - markdown
   - graphviz
-  - pip
+  - pip:
     - nbgrader
