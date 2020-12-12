@@ -15,6 +15,7 @@ from jupyterinstruct import InstructorNotebook as inb
 import warnings
 
 def merge(this_notebook, studentfolder='./', tags={}):
+    print("merge is deprecated, use InstructorNotebook.makestudent() instead")
     warnings.warn(
         "merge is deprecated, use InstructorNotebook.makestudent() instead",
         DeprecationWarning
@@ -23,6 +24,7 @@ def merge(this_notebook, studentfolder='./', tags={}):
 
 
 def getname():
+    print("getname is deprecated, use InstructorNotebook.getname() instead")
     warnings.warn(
         "getname is deprecated, use InstructorNotebook.getname() instead",
         DeprecationWarning
@@ -34,8 +36,9 @@ def getname():
 
 
 def usenbgrader(this_notebook, coursefolder='./', tags={}):
+    print("usenbgrader will be deprecated in the future and moved to a different package (See documentation for updates)")
     warnings.warn(
-        "usenbgrader will be deprecated in the future.",
+        "usenbgrader will be deprecated in the future and moved to a different package (See documentation for updates)",
         DeprecationWarning
     )
     # Calculate Destination name
@@ -81,8 +84,9 @@ def usenbgrader(this_notebook, coursefolder='./', tags={}):
 
 
 def usenbgrader_new(instructor_notebook, coursefolder='./', GradingFolder='AutoGrader'):
+    print("usenbgrader will be deprecated in the future and moved to a different package (See documentation for updates)")
     warnings.warn(
-        "usenbgrader will be deprecated in the future.",
+        "usenbgrader will be deprecated in the future and moved to a different package (See documentation for updates)",
         DeprecationWarning
     )
     nbfile = nbfilename(instructor_notebook)
@@ -142,8 +146,9 @@ def usenbgrader_new(instructor_notebook, coursefolder='./', GradingFolder='AutoG
 
 
 def unpackD2L(filename, this_notebook, coursefolder='./', destination='upziptemp'):
+    print("unpackD2L will be deprecated in the future and moved to a different package (See documentation for updates)")
     warnings.warn(
-        "usenbgrader will be deprecated in the future.",
+        "unpackD2L will be deprecated in the future and moved to a different package (See documentation for updates)",
         DeprecationWarning
     )
     
