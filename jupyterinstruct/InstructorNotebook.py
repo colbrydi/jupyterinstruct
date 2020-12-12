@@ -2,14 +2,16 @@
 Instuctor notebooks have extra content intended only for instructors. This class manages the extra content and enables instructors to generate student versions of the notebooks.  
 '''
 import IPython.core.display as IP
-import nbformat
+from IPython.core.display import Javascript, HTML
+
 from nbconvert import HTMLExporter
 from bs4 import BeautifulSoup
 import datetime
 import calendar
 import re
-import IPython.core.display as IP
-from IPython.core.display import Javascript, HTML
+
+
+import nbformat
 
 from jupyterinstruct.nbvalidate import validate
 from jupyterinstruct.nbfilename import nbfilename
