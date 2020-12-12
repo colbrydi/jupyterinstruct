@@ -54,27 +54,24 @@ class gradernames():
     def __init__(self, filename, grading_folder='./AutoGrader'):
         
         nbfile = nbfilename(filename)
+        if nbfile.isInstructor:
             raise Exception("Instructor file error: Input student version filename not the instructor version.") 
         
-        self.core_assignment_name = f"{nbfile}"
+        corefile = Path(filename)
+
+        if not corefile.exists():
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), this_notebook)
+
+        self.core_assignment_name = corefile.stem 
         
-        print(nbfile)
-        
-        self.grading_folder = Path(Grading_folder)
+        self.grading_folder = Path(grading_folder)
  
-        self.source_folder = Path(Grading_folder, '/source/', self.core_assignment_name)
-        self.source_file = Path(self.source_folder, self.core_assignment_name)
-        self.source_file.suffix = '.ipynb'
+        self.source_folder = Path(self.grading_folder, 'source', self.core_assignment_name)
+        self.source_file = Path(self.source_folder, f'{self.core_assignment_name}-STUDENT.ipynb')
                                 
-        self.release_folder = Path(Grading_folder, '/release/', self.core_assignment_name)
-        self.release_file = Path(self.release_folder, self.core_assignment_name)
-        self.release_file.suffix = '.ipynb'
+        self.release_folder = Path(self.grading_folder, 'release', self.core_assignment_name)
+        self.release_file = Path(self.release_folder, f'{self.core_assignment_name}-STUDENT.ipynb')
                                 
-        #Make folder paths
-        self.grading_folder.mkdir(parents=True, exist_ok=True)
-        self.source_folder.mkdir(parents=True, exist_ok=True)
-        self.release_folder.mkdir(parents=True, exist_ok=True)
-        
         #Give OS time to make folders (Helps bugs on some systems)
         time.sleep(2)
     
@@ -90,14 +87,11 @@ def importnb(this_notebook):
 
     gname = gradernames(this_notebook)
     
-    # Clean out Autograder folders
-    if gname.source_folder.exists():
-        print(f'REMOVING {gname.source_folder}')
-        shutil.rmtree(gname.source_folder)
-    if gname.release_folder.exists():
-        print(f'REMOVING {gname.release_folder}')
-        shutil.rmtree(gname.release_folder)
-        
+    #Make folder paths
+    gname.grading_folder.mkdir(parents=True, exist_ok=True)
+    gname.source_folder.mkdir(parents=True, exist_ok=True)
+    gname.release_folder.mkdir(parents=True, exist_ok=True)
+
     shutil.move(this_notebook, gname.source_file)
 
     command = f'cd {gname.grading_folder}; nbgrader db assignment add {gname.core_assignment_name}'
@@ -105,7 +99,7 @@ def importnb(this_notebook):
     returned_output = subprocess.check_output(command, shell=True)
     print(f"Output: {returned_output.decode('utf-8')}")
 
-    command = f'cd {gname.grading_folder}; nbgrader generate_assignment {gname.core_assignment_name}'
+    command = f'cd {gname.grading_folder}; nbgrader generate_assignment --force {gname.core_assignment_name}'
     print(command)
     returned_output = subprocess.check_output(command, shell=True)
     print(f"Output: {returned_output.decode('utf-8')}")
