@@ -6,7 +6,7 @@ MODULENAME=jupyterinstruct
 pdoc3 --force --html --output-dir ./docs $MODULENAME 
 
 # Convert project README.md as the website index.html page
-python makeindex.py ./README.md > docs/index.html
+python Readme2Index.py ./README.md > docs/index.html
 
 # Convert Jupyter Notebooks
 
