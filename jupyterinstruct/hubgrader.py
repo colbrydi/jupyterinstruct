@@ -1,5 +1,14 @@
 """Interface between InstructorNotebooks and a non standard nbgrader installation.  These tools help put the files in the right place so that instructors can use the nbgrader installation on jupyterhub.erg.mus.edu.
+
+Usage
+-----
+
+from jupyterinstruct import hubgrader 
+output = hubgrader.importnb(studentfile)
+
 """
+
+
 
 from jupyterinstruct.nbfilename import nbfilename
 from pathlib import Path
@@ -8,8 +17,6 @@ import subprocess
 import shutil
 import time
 import pathlib
-
-
 
 class gradernames():
     """Create a class of names that follow the nbgrader naming convention:
