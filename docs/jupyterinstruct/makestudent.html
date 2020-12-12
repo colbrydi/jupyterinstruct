@@ -43,9 +43,10 @@ import time
 import pathlib
 from jupyterinstruct import InstructorNotebook as inb
 
-
+import warnings
 
 def merge(this_notebook, studentfolder=&#39;./&#39;, tags={}):
+    print(&#34;merge is deprecated, use InstructorNotebook.makestudent() instead&#34;)
     warnings.warn(
         &#34;merge is deprecated, use InstructorNotebook.makestudent() instead&#34;,
         DeprecationWarning
@@ -54,6 +55,7 @@ def merge(this_notebook, studentfolder=&#39;./&#39;, tags={}):
 
 
 def getname():
+    print(&#34;getname is deprecated, use InstructorNotebook.getname() instead&#34;)
     warnings.warn(
         &#34;getname is deprecated, use InstructorNotebook.getname() instead&#34;,
         DeprecationWarning
@@ -65,8 +67,9 @@ def getname():
 
 
 def usenbgrader(this_notebook, coursefolder=&#39;./&#39;, tags={}):
+    print(&#34;usenbgrader will be deprecated in the future and moved to a different package (See documentation for updates)&#34;)
     warnings.warn(
-        &#34;usenbgrader will be deprecated in the future.&#34;,
+        &#34;usenbgrader will be deprecated in the future and moved to a different package (See documentation for updates)&#34;,
         DeprecationWarning
     )
     # Calculate Destination name
@@ -112,8 +115,9 @@ def usenbgrader(this_notebook, coursefolder=&#39;./&#39;, tags={}):
 
 
 def usenbgrader_new(instructor_notebook, coursefolder=&#39;./&#39;, GradingFolder=&#39;AutoGrader&#39;):
+    print(&#34;usenbgrader will be deprecated in the future and moved to a different package (See documentation for updates)&#34;)
     warnings.warn(
-        &#34;usenbgrader will be deprecated in the future.&#34;,
+        &#34;usenbgrader will be deprecated in the future and moved to a different package (See documentation for updates)&#34;,
         DeprecationWarning
     )
     nbfile = nbfilename(instructor_notebook)
@@ -173,8 +177,9 @@ def usenbgrader_new(instructor_notebook, coursefolder=&#39;./&#39;, GradingFolde
 
 
 def unpackD2L(filename, this_notebook, coursefolder=&#39;./&#39;, destination=&#39;upziptemp&#39;):
+    print(&#34;unpackD2L will be deprecated in the future and moved to a different package (See documentation for updates)&#34;)
     warnings.warn(
-        &#34;usenbgrader will be deprecated in the future.&#34;,
+        &#34;unpackD2L will be deprecated in the future and moved to a different package (See documentation for updates)&#34;,
         DeprecationWarning
     )
     
@@ -241,6 +246,7 @@ def unpackD2L(filename, this_notebook, coursefolder=&#39;./&#39;, destination=&#
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def getname():
+    print(&#34;getname is deprecated, use InstructorNotebook.getname() instead&#34;)
     warnings.warn(
         &#34;getname is deprecated, use InstructorNotebook.getname() instead&#34;,
         DeprecationWarning
@@ -258,6 +264,7 @@ def unpackD2L(filename, this_notebook, coursefolder=&#39;./&#39;, destination=&#
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def merge(this_notebook, studentfolder=&#39;./&#39;, tags={}):
+    print(&#34;merge is deprecated, use InstructorNotebook.makestudent() instead&#34;)
     warnings.warn(
         &#34;merge is deprecated, use InstructorNotebook.makestudent() instead&#34;,
         DeprecationWarning
@@ -275,8 +282,9 @@ def unpackD2L(filename, this_notebook, coursefolder=&#39;./&#39;, destination=&#
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def unpackD2L(filename, this_notebook, coursefolder=&#39;./&#39;, destination=&#39;upziptemp&#39;):
+    print(&#34;unpackD2L will be deprecated in the future and moved to a different package (See documentation for updates)&#34;)
     warnings.warn(
-        &#34;usenbgrader will be deprecated in the future.&#34;,
+        &#34;unpackD2L will be deprecated in the future and moved to a different package (See documentation for updates)&#34;,
         DeprecationWarning
     )
     
@@ -321,8 +329,9 @@ def unpackD2L(filename, this_notebook, coursefolder=&#39;./&#39;, destination=&#
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def usenbgrader(this_notebook, coursefolder=&#39;./&#39;, tags={}):
+    print(&#34;usenbgrader will be deprecated in the future and moved to a different package (See documentation for updates)&#34;)
     warnings.warn(
-        &#34;usenbgrader will be deprecated in the future.&#34;,
+        &#34;usenbgrader will be deprecated in the future and moved to a different package (See documentation for updates)&#34;,
         DeprecationWarning
     )
     # Calculate Destination name
@@ -377,8 +386,9 @@ def unpackD2L(filename, this_notebook, coursefolder=&#39;./&#39;, destination=&#
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def usenbgrader_new(instructor_notebook, coursefolder=&#39;./&#39;, GradingFolder=&#39;AutoGrader&#39;):
+    print(&#34;usenbgrader will be deprecated in the future and moved to a different package (See documentation for updates)&#34;)
     warnings.warn(
-        &#34;usenbgrader will be deprecated in the future.&#34;,
+        &#34;usenbgrader will be deprecated in the future and moved to a different package (See documentation for updates)&#34;,
         DeprecationWarning
     )
     nbfile = nbfilename(instructor_notebook)
