@@ -11,7 +11,7 @@ import time
 import pathlib
 
 ##not used. only included to ensure compatibility with command line options
-import nbgrader
+#import nbgrader
 
 
 class gradernames():
@@ -90,7 +90,7 @@ def importnb(this_notebook):
     """ Import a student ipynb file into the current instructorsnbgrading system. 
     The file should be marked as an assignment by nbgrader."""
     
-    print(f"IMPORTING {this_notebook}"")
+    print(f"IMPORTING {this_notebook}")
           
     gname = gradernames(this_notebook)
     
@@ -121,7 +121,7 @@ def importnb(this_notebook):
 
     # Make a link for review
     display(
-        HTML(f"<a href={gname.release_file}} target=\"blank\">{gname.release_file}</a>"))
+        HTML(f"<a href={gname.release_file} target=\"blank\">{gname.release_file}</a>"))
     return gname.release_file
 
 
