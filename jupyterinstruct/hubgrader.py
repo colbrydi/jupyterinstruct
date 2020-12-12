@@ -1,7 +1,6 @@
 """Interface between InstructorNotebooks and a non standard nbgrader installation.  These tools help put the files in the right place so that instructors can use the nbgrader installation on jupyterhub.erg.mus.edu.
 """
 
-
 from jupyterinstruct.nbfilename import nbfilename
 from pathlib import Path
 from IPython.core.display import Javascript, HTML
@@ -10,8 +9,6 @@ import shutil
 import time
 import pathlib
 
-##not used. only included to ensure compatibility with command line options
-#import nbgrader
 
 
 class gradernames():
@@ -56,17 +53,13 @@ class gradernames():
     
     def __init__(self, filename, grading_folder='./AutoGrader'):
         
-        #nbfile = nbfilename(instructor_notebook)
-        #nbfile.isInstructor = False
-    
-        self.instructorfile = filename
+        nbfile = nbfilename(filename)
+            raise Exception("Instructor file error: Input student version filename not the instructor version.") 
         
-        # TODO update with nbfilename logic
-        ind = filename.index("INST")-1
-        ext = filename.index(".ipynb")
+        self.core_assignment_name = f"{nbfile}"
         
-        self.core_assignment_name =  filename[:ind]
-         
+        print(nbfile)
+        
         self.grading_folder = Path(Grading_folder)
  
         self.source_folder = Path(Grading_folder, '/source/', self.core_assignment_name)
@@ -91,7 +84,10 @@ def importnb(this_notebook):
     The file should be marked as an assignment by nbgrader."""
     
     print(f"IMPORTING {this_notebook}")
-          
+    
+    if not Path(this_notebook).exists():
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), this_notebook)
+
     gname = gradernames(this_notebook)
     
     # Clean out Autograder folders
