@@ -24,29 +24,13 @@ Instuctor notebooks have extra content intended only for instructors. This class
 </header>
 <section id="section-intro">
 <p>The base notebook class object.
-Instuctor notebooks have extra content intended only for instructors. This class manages the extra content and enables instructors to generate student versions of the notebooks.
-The key features of an instructor notebook include:</p>
-<ul>
-<li>
-<h2 id="answer-cells-which-include-notes-and-code-only-readable-by-the-instructor">ANSWER## cells which include notes and code only readable by the instructor.</h2>
-</li>
-<li>
-<h3 id="tags-additional-tages-stored-in-a-tags-dictionary-which-can-be-used-as-placeholders-for-information-that-changes-each-semester-instructors-can-define-the-tag-in-a-notebook-and-then-these-tags-will-automatically-get-replaced-with-the-dictionary-value-when-the-student-version-is-used-for-example">TAGS### additional tages stored in a tags dictionary which can be used as placeholders for information that changes each semester.
-instructors can define the tag in a notebook and then these tags will automatically get replaced with the dictionary value when the student version is used. for example:</h3>
-<pre><code>- A tage like ###COURSEWEBSITE###
-</code></pre>
-</li>
-</ul>
+Instuctor notebooks have extra content intended only for instructors. This class manages the extra content and enables instructors to generate student versions of the notebooks.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#39;&#39;&#39;The base notebook class object.
-Instuctor notebooks have extra content intended only for instructors. This class manages the extra content and enables instructors to generate student versions of the notebooks.  The key features of an instructor notebook include:
-
-- ##ANSWER## cells which include notes and code only readable by the instructor.
-- ###TAGS### additional tages stored in a tags dictionary which can be used as placeholders for information that changes each semester.  instructors can define the tag in a notebook and then these tags will automatically get replaced with the dictionary value when the student version is used. for example:
-        - A tage like ###COURSEWEBSITE### 
+Instuctor notebooks have extra content intended only for instructors. This class manages the extra content and enables instructors to generate student versions of the notebooks.  
 &#39;&#39;&#39;
 import IPython.core.display as IP
 import nbformat
@@ -64,7 +48,19 @@ from jupyterinstruct.nbfilename import nbfilename
 
 
 def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
-
+    &#34;&#34;&#34;Function to rename a file using git and updates all links to the file and checks.
+    
+    Parameters
+    ----------
+    oldname : string
+        Current name of the file
+    newname : string
+        New name for file
+    MAKE_CHANGES : boolean
+        Dry run name change to see what files are affected.
+    force : boolean
+        Ignore warnings and force the copy
+    &#34;&#34;&#34;
     old_nbfile = nbfilename(oldname)
     if not oldname == str(old_nbfile):
         print(f&#34;ERROR: file {oldname} does not conform to naming standard&#34;)
@@ -104,8 +100,19 @@ def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
 
 
 def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
-    &#34;&#34;&#34;Migrate a notebook from the filename to the new four digit date string&#34;&#34;&#34;
-
+    &#34;&#34;&#34;Migrate a notebook from the filename to the new four digit date string
+    
+    Parameters
+    ----------
+    filename : string
+        Current name of the Instructor notebook with the date prefix
+    datestring : string
+        New Datestring of the form MMDD (MONTH, DAY)
+    MAKE_CHANGES : boolean
+        Dry run name change to see what files are affected.
+    force : boolean
+        Ignore warnings and force the copy
+    &#34;&#34;&#34;
     nbfile = nbfilename(filename)
     if not nbfile.isDate:
         print(&#34;ERROR: file not formated as a date file&#34;)
@@ -121,11 +128,22 @@ def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
     renamefile(oldname, newname, MAKE_CHANGES, force)
 
 
-def makestudent(this_notebook, studentfolder=&#39;./&#39;, tags={}):
+def makestudent(filename, studentfolder=&#39;./&#39;, tags={}):
+    &#34;&#34;&#34;Make a student from an instructor noatebook
+    
+    Parameters
+    ----------
+    filename : string
+        Current name of the Instructor notebook with the date prefix
+    studentfolder : string
+        Name of folder to save the student notebook
+    tags: dictionary
+        Dictionary of Tag values (key) and replacment text (values). 
+    &#34;&#34;&#34;
     IP.display(IP.Javascript(&#34;IPython.notebook.save_notebook()&#34;),
                include=[&#39;application/javascript&#39;])
 
-    nb = InstructorNB(filename=this_notebook)
+    nb = InstructorNB(filename=filename)
     studentfile = nb.makestudent(tags=tags, studentfolder=studentfolder)
     return studentfile
 
@@ -143,6 +161,7 @@ def getname():
 
 
 def cleanNsave():
+    &#34;&#34;&#34;Run javascript in the current notebook to clear all output and save the notebook.&#34;&#34;&#34;    
     IP.display(IP.Javascript(&#34;IPython.notebook.clear_all_output()&#34;),
                include=[&#39;application/javascript&#39;])
     IP.display(IP.Javascript(&#34;IPython.notebook.save_notebook()&#34;),
@@ -153,7 +172,17 @@ getname()
 
 
 def nb2html(nb):
-    &#34;&#34;&#34;Helper function to convert a notebook to html for parsing&#34;&#34;&#34;
+    &#34;&#34;&#34;Helper function to convert a notebook to html for parsing
+    
+    Parameters
+    ----------
+    nb : InstructorNotebook
+        Input Notebook
+    Returns
+    -------
+    (string, string)
+        body and resurcers from teh html_export file
+    &#34;&#34;&#34;
     html_exporter = HTMLExporter()
     #html_exporter.template_file = &#39;basic&#39;
     (body, resources) = html_exporter.from_notebook_node(nb)
@@ -161,7 +190,13 @@ def nb2html(nb):
 
 
 def generateTOCfromHTML(body):
-    &#34;&#34;&#34;Generate the Table of Contents from html headers&#34;&#34;&#34;
+    &#34;&#34;&#34;Generate the Table of Contents from html headers
+    
+    Parameters
+    ----------
+    body : string
+        html input string
+    &#34;&#34;&#34;
     headerlist = []
     toc = []
     body = body.replace(r&#39;&amp;#182;&#39;, &#39;&#39;)
@@ -409,12 +444,13 @@ class InstructorNB():
 <span>def <span class="ident">cleanNsave</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Run javascript in the current notebook to clear all output and save the notebook.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def cleanNsave():
+    &#34;&#34;&#34;Run javascript in the current notebook to clear all output and save the notebook.&#34;&#34;&#34;    
     IP.display(IP.Javascript(&#34;IPython.notebook.clear_all_output()&#34;),
                include=[&#39;application/javascript&#39;])
     IP.display(IP.Javascript(&#34;IPython.notebook.save_notebook()&#34;),
@@ -425,13 +461,24 @@ class InstructorNB():
 <span>def <span class="ident">generateTOCfromHTML</span></span>(<span>body)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Generate the Table of Contents from html headers</p></div>
+<div class="desc"><p>Generate the Table of Contents from html headers</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>body</code></strong> :&ensp;<code>string</code></dt>
+<dd>html input string</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def generateTOCfromHTML(body):
-    &#34;&#34;&#34;Generate the Table of Contents from html headers&#34;&#34;&#34;
+    &#34;&#34;&#34;Generate the Table of Contents from html headers
+    
+    Parameters
+    ----------
+    body : string
+        html input string
+    &#34;&#34;&#34;
     headerlist = []
     toc = []
     body = body.replace(r&#39;&amp;#182;&#39;, &#39;&#39;)
@@ -539,19 +586,39 @@ requires some time before the name is stored in the global namespace as <code>th
 </details>
 </dd>
 <dt id="jupyterinstruct.InstructorNotebook.makestudent"><code class="name flex">
-<span>def <span class="ident">makestudent</span></span>(<span>this_notebook, studentfolder='./', tags={})</span>
+<span>def <span class="ident">makestudent</span></span>(<span>filename, studentfolder='./', tags={})</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Make a student from an instructor noatebook</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>filename</code></strong> :&ensp;<code>string</code></dt>
+<dd>Current name of the Instructor notebook with the date prefix</dd>
+<dt><strong><code>studentfolder</code></strong> :&ensp;<code>string</code></dt>
+<dd>Name of folder to save the student notebook</dd>
+<dt><strong><code>tags</code></strong> :&ensp;<code>dictionary</code></dt>
+<dd>Dictionary of Tag values (key) and replacment text (values).</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def makestudent(this_notebook, studentfolder=&#39;./&#39;, tags={}):
+<pre><code class="python">def makestudent(filename, studentfolder=&#39;./&#39;, tags={}):
+    &#34;&#34;&#34;Make a student from an instructor noatebook
+    
+    Parameters
+    ----------
+    filename : string
+        Current name of the Instructor notebook with the date prefix
+    studentfolder : string
+        Name of folder to save the student notebook
+    tags: dictionary
+        Dictionary of Tag values (key) and replacment text (values). 
+    &#34;&#34;&#34;
     IP.display(IP.Javascript(&#34;IPython.notebook.save_notebook()&#34;),
                include=[&#39;application/javascript&#39;])
 
-    nb = InstructorNB(filename=this_notebook)
+    nb = InstructorNB(filename=filename)
     studentfile = nb.makestudent(tags=tags, studentfolder=studentfolder)
     return studentfile</code></pre>
 </details>
@@ -560,13 +627,31 @@ requires some time before the name is stored in the global namespace as <code>th
 <span>def <span class="ident">nb2html</span></span>(<span>nb)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Helper function to convert a notebook to html for parsing</p></div>
+<div class="desc"><p>Helper function to convert a notebook to html for parsing</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>nb</code></strong> :&ensp;<code>InstructorNotebook</code></dt>
+<dd>Input Notebook</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>(string, string)
+body and resurcers from teh html_export file</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def nb2html(nb):
-    &#34;&#34;&#34;Helper function to convert a notebook to html for parsing&#34;&#34;&#34;
+    &#34;&#34;&#34;Helper function to convert a notebook to html for parsing
+    
+    Parameters
+    ----------
+    nb : InstructorNotebook
+        Input Notebook
+    Returns
+    -------
+    (string, string)
+        body and resurcers from teh html_export file
+    &#34;&#34;&#34;
     html_exporter = HTMLExporter()
     #html_exporter.template_file = &#39;basic&#39;
     (body, resources) = html_exporter.from_notebook_node(nb)
@@ -577,14 +662,36 @@ requires some time before the name is stored in the global namespace as <code>th
 <span>def <span class="ident">notebook</span></span>(<span>filename, datestr, MAKE_CHANGES=False, force=False)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Migrate a notebook from the filename to the new four digit date string</p></div>
+<div class="desc"><p>Migrate a notebook from the filename to the new four digit date string</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>filename</code></strong> :&ensp;<code>string</code></dt>
+<dd>Current name of the Instructor notebook with the date prefix</dd>
+<dt><strong><code>datestring</code></strong> :&ensp;<code>string</code></dt>
+<dd>New Datestring of the form MMDD (MONTH, DAY)</dd>
+<dt><strong><code>MAKE_CHANGES</code></strong> :&ensp;<code>boolean</code></dt>
+<dd>Dry run name change to see what files are affected.</dd>
+<dt><strong><code>force</code></strong> :&ensp;<code>boolean</code></dt>
+<dd>Ignore warnings and force the copy</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
-    &#34;&#34;&#34;Migrate a notebook from the filename to the new four digit date string&#34;&#34;&#34;
-
+    &#34;&#34;&#34;Migrate a notebook from the filename to the new four digit date string
+    
+    Parameters
+    ----------
+    filename : string
+        Current name of the Instructor notebook with the date prefix
+    datestring : string
+        New Datestring of the form MMDD (MONTH, DAY)
+    MAKE_CHANGES : boolean
+        Dry run name change to see what files are affected.
+    force : boolean
+        Ignore warnings and force the copy
+    &#34;&#34;&#34;
     nbfile = nbfilename(filename)
     if not nbfile.isDate:
         print(&#34;ERROR: file not formated as a date file&#34;)
@@ -621,13 +728,36 @@ requires some time before the name is stored in the global namespace as <code>th
 <span>def <span class="ident">renamefile_new</span></span>(<span>oldname, newname, MAKE_CHANGES=False, force=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Function to rename a file using git and updates all links to the file and checks.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>oldname</code></strong> :&ensp;<code>string</code></dt>
+<dd>Current name of the file</dd>
+<dt><strong><code>newname</code></strong> :&ensp;<code>string</code></dt>
+<dd>New name for file</dd>
+<dt><strong><code>MAKE_CHANGES</code></strong> :&ensp;<code>boolean</code></dt>
+<dd>Dry run name change to see what files are affected.</dd>
+<dt><strong><code>force</code></strong> :&ensp;<code>boolean</code></dt>
+<dd>Ignore warnings and force the copy</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
-
+    &#34;&#34;&#34;Function to rename a file using git and updates all links to the file and checks.
+    
+    Parameters
+    ----------
+    oldname : string
+        Current name of the file
+    newname : string
+        New name for file
+    MAKE_CHANGES : boolean
+        Dry run name change to see what files are affected.
+    force : boolean
+        Ignore warnings and force the copy
+    &#34;&#34;&#34;
     old_nbfile = nbfilename(oldname)
     if not oldname == str(old_nbfile):
         print(f&#34;ERROR: file {oldname} does not conform to naming standard&#34;)
@@ -1142,13 +1272,7 @@ requires some time before the name is stored in the global namespace as <code>th
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul>
-<li><a href="#answer-cells-which-include-notes-and-code-only-readable-by-the-instructor">ANSWER## cells which include notes and code only readable by the instructor.</a><ul>
-<li><a href="#tags-additional-tages-stored-in-a-tags-dictionary-which-can-be-used-as-placeholders-for-information-that-changes-each-semester-instructors-can-define-the-tag-in-a-notebook-and-then-these-tags-will-automatically-get-replaced-with-the-dictionary-value-when-the-student-version-is-used-for-example">TAGS### additional tages stored in a tags dictionary which can be used as placeholders for information that changes each semester.
-instructors can define the tag in a notebook and then these tags will automatically get replaced with the dictionary value when the student version is used. for example:</a></li>
-</ul>
-</li>
-</ul>
+<ul></ul>
 </div>
 <ul id="index">
 <li><h3>Super-module</h3>

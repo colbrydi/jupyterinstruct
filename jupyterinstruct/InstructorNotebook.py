@@ -1,9 +1,5 @@
 '''The base notebook class object.
-Instuctor notebooks have extra content intended only for instructors. This class manages the extra content and enables instructors to generate student versions of the notebooks.  The key features of an instructor notebook include:
-
-- ##ANSWER## cells which include notes and code only readable by the instructor.
-- ###TAGS### additional tages stored in a tags dictionary which can be used as placeholders for information that changes each semester.  instructors can define the tag in a notebook and then these tags will automatically get replaced with the dictionary value when the student version is used. for example:
-	- A tage like ###COURSEWEBSITE### 
+Instuctor notebooks have extra content intended only for instructors. This class manages the extra content and enables instructors to generate student versions of the notebooks.  
 '''
 import IPython.core.display as IP
 import nbformat
@@ -21,7 +17,19 @@ from jupyterinstruct.nbfilename import nbfilename
 
 
 def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
-
+    """Function to rename a file using git and updates all links to the file and checks.
+    
+    Parameters
+    ----------
+    oldname : string
+        Current name of the file
+    newname : string
+        New name for file
+    MAKE_CHANGES : boolean
+        Dry run name change to see what files are affected.
+    force : boolean
+        Ignore warnings and force the copy
+    """
     old_nbfile = nbfilename(oldname)
     if not oldname == str(old_nbfile):
         print(f"ERROR: file {oldname} does not conform to naming standard")
@@ -61,8 +69,19 @@ def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
 
 
 def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
-    """Migrate a notebook from the filename to the new four digit date string"""
-
+    """Migrate a notebook from the filename to the new four digit date string
+    
+    Parameters
+    ----------
+    filename : string
+        Current name of the Instructor notebook with the date prefix
+    datestring : string
+        New Datestring of the form MMDD (MONTH, DAY)
+    MAKE_CHANGES : boolean
+        Dry run name change to see what files are affected.
+    force : boolean
+        Ignore warnings and force the copy
+    """
     nbfile = nbfilename(filename)
     if not nbfile.isDate:
         print("ERROR: file not formated as a date file")
@@ -78,11 +97,22 @@ def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
     renamefile(oldname, newname, MAKE_CHANGES, force)
 
 
-def makestudent(this_notebook, studentfolder='./', tags={}):
+def makestudent(filename, studentfolder='./', tags={}):
+    """Make a student from an instructor noatebook
+    
+    Parameters
+    ----------
+    filename : string
+        Current name of the Instructor notebook with the date prefix
+    studentfolder : string
+        Name of folder to save the student notebook
+    tags: dictionary
+        Dictionary of Tag values (key) and replacment text (values). 
+    """
     IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
                include=['application/javascript'])
 
-    nb = InstructorNB(filename=this_notebook)
+    nb = InstructorNB(filename=filename)
     studentfile = nb.makestudent(tags=tags, studentfolder=studentfolder)
     return studentfile
 
@@ -100,6 +130,7 @@ def getname():
 
 
 def cleanNsave():
+    """Run javascript in the current notebook to clear all output and save the notebook."""    
     IP.display(IP.Javascript("IPython.notebook.clear_all_output()"),
                include=['application/javascript'])
     IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
@@ -110,7 +141,17 @@ getname()
 
 
 def nb2html(nb):
-    """Helper function to convert a notebook to html for parsing"""
+    """Helper function to convert a notebook to html for parsing
+    
+    Parameters
+    ----------
+    nb : InstructorNotebook
+        Input Notebook
+    Returns
+    -------
+    (string, string)
+        body and resurcers from teh html_export file
+    """
     html_exporter = HTMLExporter()
     #html_exporter.template_file = 'basic'
     (body, resources) = html_exporter.from_notebook_node(nb)
@@ -118,7 +159,13 @@ def nb2html(nb):
 
 
 def generateTOCfromHTML(body):
-    """Generate the Table of Contents from html headers"""
+    """Generate the Table of Contents from html headers
+    
+    Parameters
+    ----------
+    body : string
+        html input string
+    """
     headerlist = []
     toc = []
     body = body.replace(r'&#182;', '')
