@@ -25,12 +25,23 @@ These tools help put the files in the right place so that instructors …" />
 <section id="section-intro">
 <p>Interface between InstructorNotebooks and a non standard nbgrader installation.
 These tools help put the files in the right place so that instructors can use the nbgrader installation on jupyterhub.erg.mus.edu.</p>
+<h2 id="usage">Usage</h2>
+<p>from jupyterinstruct import hubgrader
+output = hubgrader.importnb(studentfile)</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Interface between InstructorNotebooks and a non standard nbgrader installation.  These tools help put the files in the right place so that instructors can use the nbgrader installation on jupyterhub.erg.mus.edu.
+
+Usage
+-----
+
+from jupyterinstruct import hubgrader 
+output = hubgrader.importnb(studentfile)
+
 &#34;&#34;&#34;
+
 
 
 from jupyterinstruct.nbfilename import nbfilename
@@ -40,10 +51,6 @@ import subprocess
 import shutil
 import time
 import pathlib
-
-##not used. only included to ensure compatibility with command line options
-#import nbgrader
-
 
 class gradernames():
     &#34;&#34;&#34;Create a class of names that follow the nbgrader naming convention:
@@ -87,32 +94,25 @@ class gradernames():
     
     def __init__(self, filename, grading_folder=&#39;./AutoGrader&#39;):
         
-        #nbfile = nbfilename(instructor_notebook)
-        #nbfile.isInstructor = False
-    
-        self.instructorfile = filename
+        nbfile = nbfilename(filename)
+        if nbfile.isInstructor:
+            raise Exception(&#34;Instructor file error: Input student version filename not the instructor version.&#34;) 
         
-        # TODO update with nbfilename logic
-        ind = filename.index(&#34;INST&#34;)-1
-        ext = filename.index(&#34;.ipynb&#34;)
+        corefile = Path(filename)
+
+        if not corefile.exists():
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), this_notebook)
+
+        self.core_assignment_name = corefile.stem 
         
-        self.core_assignment_name =  filename[:ind]
-         
-        self.grading_folder = Path(Grading_folder)
+        self.grading_folder = Path(grading_folder)
  
-        self.source_folder = Path(Grading_folder, &#39;/source/&#39;, self.core_assignment_name)
-        self.source_file = Path(self.source_folder, self.core_assignment_name)
-        self.source_file.suffix = &#39;.ipynb&#39;
+        self.source_folder = Path(self.grading_folder, &#39;source&#39;, self.core_assignment_name)
+        self.source_file = Path(self.source_folder, f&#39;{self.core_assignment_name}-STUDENT.ipynb&#39;)
                                 
-        self.release_folder = Path(Grading_folder, &#39;/release/&#39;, self.core_assignment_name)
-        self.release_file = Path(self.release_folder, self.core_assignment_name)
-        self.release_file.suffix = &#39;.ipynb&#39;
+        self.release_folder = Path(self.grading_folder, &#39;release&#39;, self.core_assignment_name)
+        self.release_file = Path(self.release_folder, f&#39;{self.core_assignment_name}-STUDENT.ipynb&#39;)
                                 
-        #Make folder paths
-        self.grading_folder.mkdir(parents=True, exist_ok=True)
-        self.source_folder.mkdir(parents=True, exist_ok=True)
-        self.release_folder.mkdir(parents=True, exist_ok=True)
-        
         #Give OS time to make folders (Helps bugs on some systems)
         time.sleep(2)
     
@@ -122,17 +122,17 @@ def importnb(this_notebook):
     The file should be marked as an assignment by nbgrader.&#34;&#34;&#34;
     
     print(f&#34;IMPORTING {this_notebook}&#34;)
-          
+    
+    if not Path(this_notebook).exists():
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), this_notebook)
+
     gname = gradernames(this_notebook)
     
-    # Clean out Autograder folders
-    if gname.source_folder.exists():
-        print(f&#39;REMOVING {gname.source_folder}&#39;)
-        shutil.rmtree(gname.source_folder)
-    if gname.release_folder.exists():
-        print(f&#39;REMOVING {gname.release_folder}&#39;)
-        shutil.rmtree(gname.release_folder)
-        
+    #Make folder paths
+    gname.grading_folder.mkdir(parents=True, exist_ok=True)
+    gname.source_folder.mkdir(parents=True, exist_ok=True)
+    gname.release_folder.mkdir(parents=True, exist_ok=True)
+
     shutil.move(this_notebook, gname.source_file)
 
     command = f&#39;cd {gname.grading_folder}; nbgrader db assignment add {gname.core_assignment_name}&#39;
@@ -140,7 +140,7 @@ def importnb(this_notebook):
     returned_output = subprocess.check_output(command, shell=True)
     print(f&#34;Output: {returned_output.decode(&#39;utf-8&#39;)}&#34;)
 
-    command = f&#39;cd {gname.grading_folder}; nbgrader generate_assignment {gname.core_assignment_name}&#39;
+    command = f&#39;cd {gname.grading_folder}; nbgrader generate_assignment --force {gname.core_assignment_name}&#39;
     print(command)
     returned_output = subprocess.check_output(command, shell=True)
     print(f&#34;Output: {returned_output.decode(&#39;utf-8&#39;)}&#34;)
@@ -231,17 +231,17 @@ The file should be marked as an assignment by nbgrader.</p></div>
     The file should be marked as an assignment by nbgrader.&#34;&#34;&#34;
     
     print(f&#34;IMPORTING {this_notebook}&#34;)
-          
+    
+    if not Path(this_notebook).exists():
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), this_notebook)
+
     gname = gradernames(this_notebook)
     
-    # Clean out Autograder folders
-    if gname.source_folder.exists():
-        print(f&#39;REMOVING {gname.source_folder}&#39;)
-        shutil.rmtree(gname.source_folder)
-    if gname.release_folder.exists():
-        print(f&#39;REMOVING {gname.release_folder}&#39;)
-        shutil.rmtree(gname.release_folder)
-        
+    #Make folder paths
+    gname.grading_folder.mkdir(parents=True, exist_ok=True)
+    gname.source_folder.mkdir(parents=True, exist_ok=True)
+    gname.release_folder.mkdir(parents=True, exist_ok=True)
+
     shutil.move(this_notebook, gname.source_file)
 
     command = f&#39;cd {gname.grading_folder}; nbgrader db assignment add {gname.core_assignment_name}&#39;
@@ -249,7 +249,7 @@ The file should be marked as an assignment by nbgrader.</p></div>
     returned_output = subprocess.check_output(command, shell=True)
     print(f&#34;Output: {returned_output.decode(&#39;utf-8&#39;)}&#34;)
 
-    command = f&#39;cd {gname.grading_folder}; nbgrader generate_assignment {gname.core_assignment_name}&#39;
+    command = f&#39;cd {gname.grading_folder}; nbgrader generate_assignment --force {gname.core_assignment_name}&#39;
     print(command)
     returned_output = subprocess.check_output(command, shell=True)
     print(f&#34;Output: {returned_output.decode(&#39;utf-8&#39;)}&#34;)
@@ -403,32 +403,25 @@ The file should be marked as an assignment by nbgrader.</p></div>
     
     def __init__(self, filename, grading_folder=&#39;./AutoGrader&#39;):
         
-        #nbfile = nbfilename(instructor_notebook)
-        #nbfile.isInstructor = False
-    
-        self.instructorfile = filename
+        nbfile = nbfilename(filename)
+        if nbfile.isInstructor:
+            raise Exception(&#34;Instructor file error: Input student version filename not the instructor version.&#34;) 
         
-        # TODO update with nbfilename logic
-        ind = filename.index(&#34;INST&#34;)-1
-        ext = filename.index(&#34;.ipynb&#34;)
+        corefile = Path(filename)
+
+        if not corefile.exists():
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), this_notebook)
+
+        self.core_assignment_name = corefile.stem 
         
-        self.core_assignment_name =  filename[:ind]
-         
-        self.grading_folder = Path(Grading_folder)
+        self.grading_folder = Path(grading_folder)
  
-        self.source_folder = Path(Grading_folder, &#39;/source/&#39;, self.core_assignment_name)
-        self.source_file = Path(self.source_folder, self.core_assignment_name)
-        self.source_file.suffix = &#39;.ipynb&#39;
+        self.source_folder = Path(self.grading_folder, &#39;source&#39;, self.core_assignment_name)
+        self.source_file = Path(self.source_folder, f&#39;{self.core_assignment_name}-STUDENT.ipynb&#39;)
                                 
-        self.release_folder = Path(Grading_folder, &#39;/release/&#39;, self.core_assignment_name)
-        self.release_file = Path(self.release_folder, self.core_assignment_name)
-        self.release_file.suffix = &#39;.ipynb&#39;
+        self.release_folder = Path(self.grading_folder, &#39;release&#39;, self.core_assignment_name)
+        self.release_file = Path(self.release_folder, f&#39;{self.core_assignment_name}-STUDENT.ipynb&#39;)
                                 
-        #Make folder paths
-        self.grading_folder.mkdir(parents=True, exist_ok=True)
-        self.source_folder.mkdir(parents=True, exist_ok=True)
-        self.release_folder.mkdir(parents=True, exist_ok=True)
-        
         #Give OS time to make folders (Helps bugs on some systems)
         time.sleep(2)</code></pre>
 </details>
@@ -439,7 +432,9 @@ The file should be marked as an assignment by nbgrader.</p></div>
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul></ul>
+<ul>
+<li><a href="#usage">Usage</a></li>
+</ul>
 </div>
 <ul id="index">
 <li><h3>Super-module</h3>
