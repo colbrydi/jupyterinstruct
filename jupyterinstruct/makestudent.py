@@ -12,7 +12,7 @@ import time
 import pathlib
 from jupyterinstruct import InstructorNotebook as inb
 
-
+import warnings
 
 def merge(this_notebook, studentfolder='./', tags={}):
     warnings.warn(
