@@ -14261,56 +14261,6 @@ a.anchor-link {
 <p><a href="https://raw.githubusercontent.com/colbrydi/jupyterinstruct/master/Examples.ipynb">Link to this notebook</a></p>
 
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-
-<span class="n">home</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span>
-<span class="n">wave_absolute</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="s2">&quot;ocean&quot;</span><span class="p">,</span> <span class="s2">&quot;wave.txt&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">home</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">wave_absolute</span><span class="p">)</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>/Users/colbrydi
-/Users/colbrydi/ocean/wave.txt
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="Examples">Examples<a class="anchor-link" href="#Examples">&#182;</a></h1><p>This notebook contains simple examples for using the JupyterInstruct python package.  Not all features are included but some basic ones are hear to help get people started.</p>
@@ -14558,8 +14508,32 @@ a.anchor-link {
 
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="4.-Self-Referncing-Files">4. Self Referncing Files<a class="anchor-link" href="#4.-Self-Referncing-Files">&#182;</a></h1><p>Jupyter instruct often will work best as commands included inside the instructor notebooks.  This allows instructors to easily publish a notebook the are working on from within the notebook. the trick to make this work is that the notebook needs to know the file name.  This requires running some embeded javascript inside the notebook.  Fortunatly, just loading thelibrary will run that command and store the current notebook in a variable called <code>this_notebook</code> (You can also just use the <code>InstructorNotebook.getname()</code> function).</p>
+<h1 id="4.-Automatic-Grading-system">4. Automatic Grading system<a class="anchor-link" href="#4.-Automatic-Grading-system">&#182;</a></h1><p>Michigan State University (MSU) has a jupyterhub server with nbgrader parcially installed.  Since the hub does not included shared file systems, many of the nbgrader features are not avaliable.  To get around this problem the <code>jupyterinstruct</code> package has some functions inside <code>hubgrader</code> designed to help instructors.</p>
+<h2 id="Step-1:-Use-the-right-server">Step 1: Use the right server<a class="anchor-link" href="#Step-1:-Use-the-right-server">&#182;</a></h2><p>In order to use nbgrader at MSU you need to log onto the <a href="http://jupyter-grader.msu.edu">http://jupyter-grader.msu.edu</a> server.  This is the only one with nbgrader installed.</p>
+<h2 id="Step-2:-Convert-the-INSTRUCTOR-notebook-to-an-&quot;assignment&quot;">Step 2: Convert the INSTRUCTOR notebook to an "assignment"<a class="anchor-link" href="#Step-2:-Convert-the-INSTRUCTOR-notebook-to-an-&quot;assignment&quot;">&#182;</a></h2><p>In the jupyter menu select "View--&gt;Cell Toolbar--Assignment" This will add the assignment options to the current notebook's cells.  Modify the cells for grading and autograding following the nbgrader tutorials.</p>
+<h2 id="Step-3:-Generate-and-verify-the-student-version-of-the-notebook">Step 3: Generate and verify the student version of the notebook<a class="anchor-link" href="#Step-3:-Generate-and-verify-the-student-version-of-the-notebook">&#182;</a></h2><p>Generate the student version of the INSTRUCTOR notebook and verify it is written as expected.</p>
+<h2 id="Step-4:-Import-student-version-into-NBGrader-system">Step 4: Import student version into NBGrader system<a class="anchor-link" href="#Step-4:-Import-student-version-into-NBGrader-system">&#182;</a></h2><p>Run the following cell which takes the student version filename and imports it into the nbgrader database.</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jupyterinstruct</span> <span class="kn">import</span> <span class="n">hubgrader</span> 
+<span class="n">output</span> <span class="o">=</span> <span class="n">hubgrader</span><span class="o">.</span><span class="n">importnb</span><span class="p">(</span><span class="n">studentfile</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Step-5:-Publish-notebook-to-D2L-(or-wherever)">Step 5: Publish notebook to D2L (or wherever)<a class="anchor-link" href="#Step-5:-Publish-notebook-to-D2L-(or-wherever)">&#182;</a></h2><p>Click on the generated link to download the released version of the notebook</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<hr>
+<h1 id="5.-Self-Referncing-Files">5. Self Referncing Files<a class="anchor-link" href="#5.-Self-Referncing-Files">&#182;</a></h1><p>Jupyter instruct often will work best as commands included inside the instructor notebooks.  This allows instructors to easily publish a notebook the are working on from within the notebook. the trick to make this work is that the notebook needs to know the file name.  This requires running some embedded javascript inside the notebook.  fortunately, just loading the library will run that command and store the current notebook in a variable called <code>this_notebook</code> (You can also just use the <code>InstructorNotebook.getname()</code> function).</p>
 <p><strong><em>WARNING</em></strong> Since this function uses javascript you need to get the name in a different cell and wait to use the name.</p>
+<p><strong><em>WARNING #2</em></strong> These Javascript functions will NOT work in Jupyterlab without some extensions installed.</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>It is recommended that the following cells be added to the footer of each INSTRUCTOR notebook (The third cell is only for autograder assignments). This will provide the instructor flexibility when submitting files.</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -14571,6 +14545,9 @@ a.anchor-link {
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">##ANSWER## </span>
 <span class="c1">#this cell gets the name of the current notebook.</span>
 <span class="kn">from</span> <span class="nn">jupyterinstruct</span> <span class="kn">import</span> <span class="n">InstructorNotebook</span>
+
+<span class="kn">import</span> <span class="nn">thiscourse</span>
+<span class="n">tags</span> <span class="o">=</span> <span class="n">thiscourse</span><span class="o">.</span><span class="n">tags</span><span class="p">()</span>
 <span class="c1">##ANSWER## </span>
 </pre></div>
 
@@ -14579,27 +14556,6 @@ a.anchor-link {
 </div>
 </div>
 
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-InputArea jp-Cell-inputArea">
-
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">##ANSWER##</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">this_notebook</span><span class="p">)</span>
-<span class="c1">##ANSWER##</span>
-</pre></div>
-
-     </div>
-</div>
-</div>
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Once you have the notebook (and have imported the course tag files) you can generate the student version of the current notebook and validate it using the following command:</p>
-
-</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
@@ -14618,8 +14574,26 @@ a.anchor-link {
 </div>
 </div>
 
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">##ANSWER##</span>
+<span class="kn">from</span> <span class="nn">jupyterinstruct</span> <span class="kn">import</span> <span class="n">hubgrader</span> 
+<span class="n">output</span> <span class="o">=</span> <span class="n">hubgrader</span><span class="o">.</span><span class="n">importnb</span><span class="p">(</span><span class="n">studentfile</span><span class="p">)</span>
+<span class="c1">##ANSWER##</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<hr>
 <p>Written by Dr. Dirk Colbry, Michigan State University
 <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.</p>
 
