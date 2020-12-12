@@ -1,4 +1,7 @@
-'''Depreciated library - only maintained for reverse compatibility'''
+"""makestudent is a Depreciated library - only maintained for reverse compatibility.
+   Use InstructorNotebook instead.
+"""
+
 
 from jupyterinstruct.nbfilename import nbfilename
 from pathlib import Path
@@ -9,14 +12,21 @@ import time
 import pathlib
 from jupyterinstruct import InstructorNotebook as inb
 
-"""makestudent is being depreciated"""
 
 
 def merge(this_notebook, studentfolder='./', tags={}):
+    warnings.warn(
+        "merge is deprecated, use InstructorNotebook.makestudent() instead",
+        DeprecationWarning
+    )
     inb.makestudent(this_notebook, studentfolder=studentfolder, tags=tags)
 
 
 def getname():
+    warnings.warn(
+        "getname is deprecated, use InstructorNotebook.getname() instead",
+        DeprecationWarning
+    )
     inb.getname()
 
 
@@ -24,6 +34,10 @@ def getname():
 
 
 def usenbgrader(this_notebook, coursefolder='./', tags={}):
+    warnings.warn(
+        "usenbgrader will be deprecated in the future.",
+        DeprecationWarning
+    )
     # Calculate Destination name
     ASSIGNMENT = this_notebook
     ind = ASSIGNMENT.index("INST")-1
@@ -67,7 +81,10 @@ def usenbgrader(this_notebook, coursefolder='./', tags={}):
 
 
 def usenbgrader_new(instructor_notebook, coursefolder='./', GradingFolder='AutoGrader'):
-
+    warnings.warn(
+        "usenbgrader will be deprecated in the future.",
+        DeprecationWarning
+    )
     nbfile = nbfilename(instructor_notebook)
     nbfile.isInstructor = False
 
@@ -125,6 +142,11 @@ def usenbgrader_new(instructor_notebook, coursefolder='./', GradingFolder='AutoG
 
 
 def unpackD2L(filename, this_notebook, coursefolder='./', destination='upziptemp'):
+    warnings.warn(
+        "usenbgrader will be deprecated in the future.",
+        DeprecationWarning
+    )
+    
     from pathlib import Path
     from urllib.request import urlretrieve
     import zipfile
