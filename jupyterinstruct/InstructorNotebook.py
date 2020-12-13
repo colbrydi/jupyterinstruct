@@ -10,6 +10,9 @@ import datetime
 import calendar
 import re
 
+from pathlib import Path
+import os
+
 
 import nbformat
 
@@ -17,7 +20,7 @@ from jupyterinstruct.nbvalidate import validate
 from jupyterinstruct.nbfilename import nbfilename
 
 
-def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
+def renamefile(oldname, newname, MAKE_CHANGES=False, force=False):
     """Function to rename a file using git and updates all links to the file and checks.
     
     Parameters
@@ -31,31 +34,37 @@ def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
     force : boolean
         Ignore warnings and force the copy
     """
+   
     old_nbfile = nbfilename(oldname)
     if not oldname == str(old_nbfile):
-        print(f"ERROR: file {oldname} does not conform to naming standard")
+        print(f"WARNING: old file {oldname} does not conform to naming standard")
         if not force:
             print(f"   Set force=True to change anyway")
             return
+        oldstudentversion = f"{oldname[:-17]}"
+    else:
+        old_nbfile.isInstructor = False
+        oldstudentversion = str(old_nbfile)
 
     new_nbfile = nbfilename(newname)
     if not newname == str(new_nbfile):
-        print(f"ERROR: file {newname} does not conform to naming standard")
+        print(f"ERROR: new file {newname} does not conform to naming standard")
         print(f"       using {str(new_nbfile)}")
-
+    
+    #STEP 1. Move instructor file to new name
     cmd = f"git mv {oldname} {str(new_nbfile)} "
-
-    old_nbfile.isInstructor = False
-    new_nbfile.isInstructor = False
-
     if MAKE_CHANGES:
         os.system(cmd)
     else:
         print(f"TEST: {cmd}")
+        
+    #Forcing new file to conform to the file standard
+    new_nbfile.isInstructor = False
+    newstudentversion = str(new_nbfile)
 
     directory = Path('.')
     for file in directory.glob('*.ipynb'):
-        temp_np_file = nbfile(str(file))
+        temp_np_file = nbfilename(str(file))
         if temp_np_file.isInstructor:
             with open(file, encoding="utf-8") as f:
                 s = f.read()
@@ -69,7 +78,7 @@ def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
                     print(f"TEST: Student File Reference in {file}")
 
 
-def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
+def changeprefix(filename, datestr, MAKE_CHANGES=False, force=False):
     """Migrate a notebook from the filename to the new four digit date string
     
     Parameters
@@ -83,6 +92,7 @@ def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
     force : boolean
         Ignore warnings and force the copy
     """
+    
     nbfile = nbfilename(filename)
     if not nbfile.isDate:
         print("ERROR: file not formated as a date file")
@@ -90,7 +100,7 @@ def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
 
     directory = Path('.')
     files = directory.glob('*.ipynb')
-    if not Path(filename).isfile():
+    if not Path(filename).exists():
         print(f"ERROR: File {filename} not found in directory")
         return
     oldname = filename
