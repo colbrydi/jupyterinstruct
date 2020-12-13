@@ -41,6 +41,9 @@ import datetime
 import calendar
 import re
 
+from pathlib import Path
+import os
+
 
 import nbformat
 
@@ -48,7 +51,7 @@ from jupyterinstruct.nbvalidate import validate
 from jupyterinstruct.nbfilename import nbfilename
 
 
-def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
+def renamefile(oldname, newname, MAKE_CHANGES=False, force=False):
     &#34;&#34;&#34;Function to rename a file using git and updates all links to the file and checks.
     
     Parameters
@@ -62,31 +65,37 @@ def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
     force : boolean
         Ignore warnings and force the copy
     &#34;&#34;&#34;
+   
     old_nbfile = nbfilename(oldname)
     if not oldname == str(old_nbfile):
-        print(f&#34;ERROR: file {oldname} does not conform to naming standard&#34;)
+        print(f&#34;WARNING: old file {oldname} does not conform to naming standard&#34;)
         if not force:
             print(f&#34;   Set force=True to change anyway&#34;)
             return
+        oldstudentversion = f&#34;{oldname[:-17]}&#34;
+    else:
+        old_nbfile.isInstructor = False
+        oldstudentversion = str(old_nbfile)
 
     new_nbfile = nbfilename(newname)
     if not newname == str(new_nbfile):
-        print(f&#34;ERROR: file {newname} does not conform to naming standard&#34;)
+        print(f&#34;ERROR: new file {newname} does not conform to naming standard&#34;)
         print(f&#34;       using {str(new_nbfile)}&#34;)
-
+    
+    #STEP 1. Move instructor file to new name
     cmd = f&#34;git mv {oldname} {str(new_nbfile)} &#34;
-
-    old_nbfile.isInstructor = False
-    new_nbfile.isInstructor = False
-
     if MAKE_CHANGES:
         os.system(cmd)
     else:
         print(f&#34;TEST: {cmd}&#34;)
+        
+    #Forcing new file to conform to the file standard
+    new_nbfile.isInstructor = False
+    newstudentversion = str(new_nbfile)
 
     directory = Path(&#39;.&#39;)
     for file in directory.glob(&#39;*.ipynb&#39;):
-        temp_np_file = nbfile(str(file))
+        temp_np_file = nbfilename(str(file))
         if temp_np_file.isInstructor:
             with open(file, encoding=&#34;utf-8&#34;) as f:
                 s = f.read()
@@ -100,7 +109,7 @@ def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
                     print(f&#34;TEST: Student File Reference in {file}&#34;)
 
 
-def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
+def changeprefix(filename, datestr, MAKE_CHANGES=False, force=False):
     &#34;&#34;&#34;Migrate a notebook from the filename to the new four digit date string
     
     Parameters
@@ -114,6 +123,7 @@ def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
     force : boolean
         Ignore warnings and force the copy
     &#34;&#34;&#34;
+    
     nbfile = nbfilename(filename)
     if not nbfile.isDate:
         print(&#34;ERROR: file not formated as a date file&#34;)
@@ -121,7 +131,7 @@ def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
 
     directory = Path(&#39;.&#39;)
     files = directory.glob(&#39;*.ipynb&#39;)
-    if not Path(filename).isfile():
+    if not Path(filename).exists():
         print(f&#34;ERROR: File {filename} not found in directory&#34;)
         return
     oldname = filename
@@ -441,6 +451,56 @@ class InstructorNB():
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="jupyterinstruct.InstructorNotebook.changeprefix"><code class="name flex">
+<span>def <span class="ident">changeprefix</span></span>(<span>filename, datestr, MAKE_CHANGES=False, force=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Migrate a notebook from the filename to the new four digit date string</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>filename</code></strong> :&ensp;<code>string</code></dt>
+<dd>Current name of the Instructor notebook with the date prefix</dd>
+<dt><strong><code>datestring</code></strong> :&ensp;<code>string</code></dt>
+<dd>New Datestring of the form MMDD (MONTH, DAY)</dd>
+<dt><strong><code>MAKE_CHANGES</code></strong> :&ensp;<code>boolean</code></dt>
+<dd>Dry run name change to see what files are affected.</dd>
+<dt><strong><code>force</code></strong> :&ensp;<code>boolean</code></dt>
+<dd>Ignore warnings and force the copy</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def changeprefix(filename, datestr, MAKE_CHANGES=False, force=False):
+    &#34;&#34;&#34;Migrate a notebook from the filename to the new four digit date string
+    
+    Parameters
+    ----------
+    filename : string
+        Current name of the Instructor notebook with the date prefix
+    datestring : string
+        New Datestring of the form MMDD (MONTH, DAY)
+    MAKE_CHANGES : boolean
+        Dry run name change to see what files are affected.
+    force : boolean
+        Ignore warnings and force the copy
+    &#34;&#34;&#34;
+    
+    nbfile = nbfilename(filename)
+    if not nbfile.isDate:
+        print(&#34;ERROR: file not formated as a date file&#34;)
+        return
+
+    directory = Path(&#39;.&#39;)
+    files = directory.glob(&#39;*.ipynb&#39;)
+    if not Path(filename).exists():
+        print(f&#34;ERROR: File {filename} not found in directory&#34;)
+        return
+    oldname = filename
+    newname = f&#34;{datestr}{oldname[4:]}&#34;
+    renamefile(oldname, newname, MAKE_CHANGES, force)</code></pre>
+</details>
+</dd>
 <dt id="jupyterinstruct.InstructorNotebook.cleanNsave"><code class="name flex">
 <span>def <span class="ident">cleanNsave</span></span>(<span>)</span>
 </code></dt>
@@ -659,55 +719,6 @@ body and resurcers from teh html_export file</p></div>
     return (body, resources)</code></pre>
 </details>
 </dd>
-<dt id="jupyterinstruct.InstructorNotebook.notebook"><code class="name flex">
-<span>def <span class="ident">notebook</span></span>(<span>filename, datestr, MAKE_CHANGES=False, force=False)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Migrate a notebook from the filename to the new four digit date string</p>
-<h2 id="parameters">Parameters</h2>
-<dl>
-<dt><strong><code>filename</code></strong> :&ensp;<code>string</code></dt>
-<dd>Current name of the Instructor notebook with the date prefix</dd>
-<dt><strong><code>datestring</code></strong> :&ensp;<code>string</code></dt>
-<dd>New Datestring of the form MMDD (MONTH, DAY)</dd>
-<dt><strong><code>MAKE_CHANGES</code></strong> :&ensp;<code>boolean</code></dt>
-<dd>Dry run name change to see what files are affected.</dd>
-<dt><strong><code>force</code></strong> :&ensp;<code>boolean</code></dt>
-<dd>Ignore warnings and force the copy</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def notebook(filename, datestr, MAKE_CHANGES=False, force=False):
-    &#34;&#34;&#34;Migrate a notebook from the filename to the new four digit date string
-    
-    Parameters
-    ----------
-    filename : string
-        Current name of the Instructor notebook with the date prefix
-    datestring : string
-        New Datestring of the form MMDD (MONTH, DAY)
-    MAKE_CHANGES : boolean
-        Dry run name change to see what files are affected.
-    force : boolean
-        Ignore warnings and force the copy
-    &#34;&#34;&#34;
-    nbfile = nbfilename(filename)
-    if not nbfile.isDate:
-        print(&#34;ERROR: file not formated as a date file&#34;)
-        return
-
-    directory = Path(&#39;.&#39;)
-    files = directory.glob(&#39;*.ipynb&#39;)
-    if not Path(filename).isfile():
-        print(f&#34;ERROR: File {filename} not found in directory&#34;)
-        return
-    oldname = filename
-    newname = f&#34;{datestr}{oldname[4:]}&#34;
-    renamefile(oldname, newname, MAKE_CHANGES, force)</code></pre>
-</details>
-</dd>
 <dt id="jupyterinstruct.InstructorNotebook.readnotebook"><code class="name flex">
 <span>def <span class="ident">readnotebook</span></span>(<span>filename)</span>
 </code></dt>
@@ -725,8 +736,8 @@ body and resurcers from teh html_export file</p></div>
     return nb</code></pre>
 </details>
 </dd>
-<dt id="jupyterinstruct.InstructorNotebook.renamefile_new"><code class="name flex">
-<span>def <span class="ident">renamefile_new</span></span>(<span>oldname, newname, MAKE_CHANGES=False, force=False)</span>
+<dt id="jupyterinstruct.InstructorNotebook.renamefile"><code class="name flex">
+<span>def <span class="ident">renamefile</span></span>(<span>oldname, newname, MAKE_CHANGES=False, force=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Function to rename a file using git and updates all links to the file and checks.</p>
@@ -745,7 +756,7 @@ body and resurcers from teh html_export file</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def renamefile_new(oldname, newname, MAKE_CHANGES=False, force=False):
+<pre><code class="python">def renamefile(oldname, newname, MAKE_CHANGES=False, force=False):
     &#34;&#34;&#34;Function to rename a file using git and updates all links to the file and checks.
     
     Parameters
@@ -759,31 +770,37 @@ body and resurcers from teh html_export file</p></div>
     force : boolean
         Ignore warnings and force the copy
     &#34;&#34;&#34;
+   
     old_nbfile = nbfilename(oldname)
     if not oldname == str(old_nbfile):
-        print(f&#34;ERROR: file {oldname} does not conform to naming standard&#34;)
+        print(f&#34;WARNING: old file {oldname} does not conform to naming standard&#34;)
         if not force:
             print(f&#34;   Set force=True to change anyway&#34;)
             return
+        oldstudentversion = f&#34;{oldname[:-17]}&#34;
+    else:
+        old_nbfile.isInstructor = False
+        oldstudentversion = str(old_nbfile)
 
     new_nbfile = nbfilename(newname)
     if not newname == str(new_nbfile):
-        print(f&#34;ERROR: file {newname} does not conform to naming standard&#34;)
+        print(f&#34;ERROR: new file {newname} does not conform to naming standard&#34;)
         print(f&#34;       using {str(new_nbfile)}&#34;)
-
+    
+    #STEP 1. Move instructor file to new name
     cmd = f&#34;git mv {oldname} {str(new_nbfile)} &#34;
-
-    old_nbfile.isInstructor = False
-    new_nbfile.isInstructor = False
-
     if MAKE_CHANGES:
         os.system(cmd)
     else:
         print(f&#34;TEST: {cmd}&#34;)
+        
+    #Forcing new file to conform to the file standard
+    new_nbfile.isInstructor = False
+    newstudentversion = str(new_nbfile)
 
     directory = Path(&#39;.&#39;)
     for file in directory.glob(&#39;*.ipynb&#39;):
-        temp_np_file = nbfile(str(file))
+        temp_np_file = nbfilename(str(file))
         if temp_np_file.isInstructor:
             with open(file, encoding=&#34;utf-8&#34;) as f:
                 s = f.read()
@@ -1283,6 +1300,7 @@ body and resurcers from teh html_export file</p></div>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="two-column">
+<li><code><a title="jupyterinstruct.InstructorNotebook.changeprefix" href="#jupyterinstruct.InstructorNotebook.changeprefix">changeprefix</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.cleanNsave" href="#jupyterinstruct.InstructorNotebook.cleanNsave">cleanNsave</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.generateTOCfromHTML" href="#jupyterinstruct.InstructorNotebook.generateTOCfromHTML">generateTOCfromHTML</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.getname" href="#jupyterinstruct.InstructorNotebook.getname">getname</a></code></li>
@@ -1291,9 +1309,8 @@ body and resurcers from teh html_export file</p></div>
 <li><code><a title="jupyterinstruct.InstructorNotebook.makeTOC" href="#jupyterinstruct.InstructorNotebook.makeTOC">makeTOC</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.makestudent" href="#jupyterinstruct.InstructorNotebook.makestudent">makestudent</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.nb2html" href="#jupyterinstruct.InstructorNotebook.nb2html">nb2html</a></code></li>
-<li><code><a title="jupyterinstruct.InstructorNotebook.notebook" href="#jupyterinstruct.InstructorNotebook.notebook">notebook</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.readnotebook" href="#jupyterinstruct.InstructorNotebook.readnotebook">readnotebook</a></code></li>
-<li><code><a title="jupyterinstruct.InstructorNotebook.renamefile_new" href="#jupyterinstruct.InstructorNotebook.renamefile_new">renamefile_new</a></code></li>
+<li><code><a title="jupyterinstruct.InstructorNotebook.renamefile" href="#jupyterinstruct.InstructorNotebook.renamefile">renamefile</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.writenotebook" href="#jupyterinstruct.InstructorNotebook.writenotebook">writenotebook</a></code></li>
 </ul>
 </li>
