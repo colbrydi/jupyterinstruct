@@ -73,12 +73,19 @@ def validate(filename):
 
     # print(body)
     soup = BeautifulSoup(body, 'html.parser')
+    
+    #Make a dictionary of in-file anchors for checking later.
     anchorlist = dict()
     links = soup.find_all('a', href=False)
     for link in links:
-        anchorlist[link['name']] = False
+        if link.has_attr('name'):
+            anchorlist[link['name']] = False
+        else:
+            print(truncate_string(f"   Missing 'name' attribute in link {link}"))
+            errorcount += 1
 
 
+    # check all hyperlinks
     links = soup.find_all('a', href=True)
     for link in links:
         href = link['href']
@@ -103,6 +110,7 @@ def validate(filename):
             print(truncate_string(f"   Timeout Warning for  {link}\n {e}"))
             errorcount += 1
 
+    #Verify hyperlinks to infile anchors
     for anchor in anchorlist:
         if not anchorlist[anchor]:
             print(f"   Missing anchor for {anchor}")
@@ -116,7 +124,7 @@ def validate(filename):
             print(f'   Iframe LINK ERROR - {href}')
             errorcount += error
 
-    # Verify img links
+    # Verify img links and alt text
     images = soup.find_all('img')
     for img in images:
         image = img['src']
