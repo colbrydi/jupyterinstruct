@@ -92,6 +92,8 @@ def renamefile(oldname, newname, MAKE_CHANGES=False, force=False):
     #Forcing new file to conform to the file standard
     new_nbfile.isInstructor = False
     newstudentversion = str(new_nbfile)
+    
+    print(f&#34; Replaceing {oldstudentversion} with {newstudentversion}&#34;)
 
     directory = Path(&#39;.&#39;)
     for file in directory.glob(&#39;*.ipynb&#39;):
@@ -155,6 +157,7 @@ def makestudent(filename, studentfolder=&#39;./&#39;, tags={}):
                include=[&#39;application/javascript&#39;])
 
     nb = InstructorNB(filename=filename)
+    
     studentfile = nb.makestudent(tags=tags, studentfolder=studentfolder)
     return studentfile
 
@@ -405,41 +408,53 @@ class InstructorNB():
                             f&#34;###{key}###&#34;, tags[key])
             cell[&#39;source&#39;] = source_string
 
-    def makestudent(self, tags=None, studentfolder=&#39;&#39;, filename=None):
+    def makestudent(self, tags=None, studentfolder=&#39;&#39;):
         &#34;&#34;&#34;Make a Student Version of the notebook&#34;&#34;&#34;
-        if filename:
-            self.filename = filename
+        
+        instructor_fn = self.filename
+        
+        instructorfile = nbfilename(instructor_fn)
 
+        # TODO: check all links in the directory for name change.
+        if not str(instructorfile) == instructor_fn:
+            print(f&#34;WARNING: Instructor file name is wrong {instructorfile} != {instructor_fn}&#34;)
+            
+        
         IP.display(IP.Javascript(&#34;IPython.notebook.save_notebook()&#34;),
                    include=[&#39;application/javascript&#39;])
 
-        nbfile = nbfilename(self.filename)
+        studentfile = nbfilename(instructor_fn)
 
-        if nbfile.isDate:
-            tags[&#39;DUE_DATE&#39;] = nbfile.getlongdate()
-            tags[&#39;MMDD&#39;] = nbfile.prefix
+        if studentfile.isDate:
+            tags[&#39;DUE_DATE&#39;] = studentfile.getlongdate()
+            tags[&#39;MMDD&#39;] = studentfile.prefix
 
         self.removecells(searchstring=&#34;#ANSWER#&#34;,verbose=False)
         self.stripoutput()
 
         # Remove INSTRUCTOR from name
-        nbfile.isInstructor = False
-        self.filename = str(nbfile)
+        studentfile.isInstructor = False
+        self.filename = str(studentfile)
 
-        tags[&#39;NEW_ASSIGNMENT&#39;] = str(nbfile)
+        tags[&#39;NEW_ASSIGNMENT&#39;] = str(studentfile)
         print(tags[&#39;NEW_ASSIGNMENT&#39;])
         self.mergetags(tags)
 
-        studentfile = f&#34;{studentfolder}{tags[&#39;NEW_ASSIGNMENT&#39;]}&#34;
-        self.writenotebook(studentfile)
+        student_fn = f&#34;{studentfolder}{studentfile}&#34;
+        
+        
+        if Path(instructor_fn) == Path(student_fn):
+            print(&#34;ERROR: student file will overrite instructor. Aborting&#34;)
+            print(f&#34;   {instructor_fn} --&gt; {student_fn}&#34;)
+            return
+                  
+        
+        self.writenotebook(student_fn)
 
-        # TODO: check all links in the directory for name change.
-        if not self.filename == filename:
-            print(f&#34;WARNING: file may be changing {self.filename} != {filename}&#34;)
 
         # Make a link for review
         display(
-            HTML(f&#34;&lt;a href={studentfile} target=\&#34;blank\&#34;&gt;{studentfile}&lt;/a&gt;&#34;))
+            HTML(f&#34;&lt;a href={student_fn} target=\&#34;blank\&#34;&gt;{student_fn}&lt;/a&gt;&#34;))
 
         return studentfile</code></pre>
 </details>
@@ -680,6 +695,7 @@ requires some time before the name is stored in the global namespace as <code>th
                include=[&#39;application/javascript&#39;])
 
     nb = InstructorNB(filename=filename)
+    
     studentfile = nb.makestudent(tags=tags, studentfolder=studentfolder)
     return studentfile</code></pre>
 </details>
@@ -797,6 +813,8 @@ body and resurcers from teh html_export file</p></div>
     #Forcing new file to conform to the file standard
     new_nbfile.isInstructor = False
     newstudentversion = str(new_nbfile)
+    
+    print(f&#34; Replaceing {oldstudentversion} with {newstudentversion}&#34;)
 
     directory = Path(&#39;.&#39;)
     for file in directory.glob(&#39;*.ipynb&#39;):
@@ -970,41 +988,53 @@ body and resurcers from teh html_export file</p></div>
                             f&#34;###{key}###&#34;, tags[key])
             cell[&#39;source&#39;] = source_string
 
-    def makestudent(self, tags=None, studentfolder=&#39;&#39;, filename=None):
+    def makestudent(self, tags=None, studentfolder=&#39;&#39;):
         &#34;&#34;&#34;Make a Student Version of the notebook&#34;&#34;&#34;
-        if filename:
-            self.filename = filename
+        
+        instructor_fn = self.filename
+        
+        instructorfile = nbfilename(instructor_fn)
 
+        # TODO: check all links in the directory for name change.
+        if not str(instructorfile) == instructor_fn:
+            print(f&#34;WARNING: Instructor file name is wrong {instructorfile} != {instructor_fn}&#34;)
+            
+        
         IP.display(IP.Javascript(&#34;IPython.notebook.save_notebook()&#34;),
                    include=[&#39;application/javascript&#39;])
 
-        nbfile = nbfilename(self.filename)
+        studentfile = nbfilename(instructor_fn)
 
-        if nbfile.isDate:
-            tags[&#39;DUE_DATE&#39;] = nbfile.getlongdate()
-            tags[&#39;MMDD&#39;] = nbfile.prefix
+        if studentfile.isDate:
+            tags[&#39;DUE_DATE&#39;] = studentfile.getlongdate()
+            tags[&#39;MMDD&#39;] = studentfile.prefix
 
         self.removecells(searchstring=&#34;#ANSWER#&#34;,verbose=False)
         self.stripoutput()
 
         # Remove INSTRUCTOR from name
-        nbfile.isInstructor = False
-        self.filename = str(nbfile)
+        studentfile.isInstructor = False
+        self.filename = str(studentfile)
 
-        tags[&#39;NEW_ASSIGNMENT&#39;] = str(nbfile)
+        tags[&#39;NEW_ASSIGNMENT&#39;] = str(studentfile)
         print(tags[&#39;NEW_ASSIGNMENT&#39;])
         self.mergetags(tags)
 
-        studentfile = f&#34;{studentfolder}{tags[&#39;NEW_ASSIGNMENT&#39;]}&#34;
-        self.writenotebook(studentfile)
+        student_fn = f&#34;{studentfolder}{studentfile}&#34;
+        
+        
+        if Path(instructor_fn) == Path(student_fn):
+            print(&#34;ERROR: student file will overrite instructor. Aborting&#34;)
+            print(f&#34;   {instructor_fn} --&gt; {student_fn}&#34;)
+            return
+                  
+        
+        self.writenotebook(student_fn)
 
-        # TODO: check all links in the directory for name change.
-        if not self.filename == filename:
-            print(f&#34;WARNING: file may be changing {self.filename} != {filename}&#34;)
 
         # Make a link for review
         display(
-            HTML(f&#34;&lt;a href={studentfile} target=\&#34;blank\&#34;&gt;{studentfile}&lt;/a&gt;&#34;))
+            HTML(f&#34;&lt;a href={student_fn} target=\&#34;blank\&#34;&gt;{student_fn}&lt;/a&gt;&#34;))
 
         return studentfile</code></pre>
 </details>
@@ -1072,7 +1102,7 @@ body and resurcers from teh html_export file</p></div>
 </details>
 </dd>
 <dt id="jupyterinstruct.InstructorNotebook.InstructorNB.makestudent"><code class="name flex">
-<span>def <span class="ident">makestudent</span></span>(<span>self, tags=None, studentfolder='', filename=None)</span>
+<span>def <span class="ident">makestudent</span></span>(<span>self, tags=None, studentfolder='')</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Make a Student Version of the notebook</p></div>
@@ -1080,41 +1110,53 @@ body and resurcers from teh html_export file</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def makestudent(self, tags=None, studentfolder=&#39;&#39;, filename=None):
+<pre><code class="python">def makestudent(self, tags=None, studentfolder=&#39;&#39;):
     &#34;&#34;&#34;Make a Student Version of the notebook&#34;&#34;&#34;
-    if filename:
-        self.filename = filename
+    
+    instructor_fn = self.filename
+    
+    instructorfile = nbfilename(instructor_fn)
 
+    # TODO: check all links in the directory for name change.
+    if not str(instructorfile) == instructor_fn:
+        print(f&#34;WARNING: Instructor file name is wrong {instructorfile} != {instructor_fn}&#34;)
+        
+    
     IP.display(IP.Javascript(&#34;IPython.notebook.save_notebook()&#34;),
                include=[&#39;application/javascript&#39;])
 
-    nbfile = nbfilename(self.filename)
+    studentfile = nbfilename(instructor_fn)
 
-    if nbfile.isDate:
-        tags[&#39;DUE_DATE&#39;] = nbfile.getlongdate()
-        tags[&#39;MMDD&#39;] = nbfile.prefix
+    if studentfile.isDate:
+        tags[&#39;DUE_DATE&#39;] = studentfile.getlongdate()
+        tags[&#39;MMDD&#39;] = studentfile.prefix
 
     self.removecells(searchstring=&#34;#ANSWER#&#34;,verbose=False)
     self.stripoutput()
 
     # Remove INSTRUCTOR from name
-    nbfile.isInstructor = False
-    self.filename = str(nbfile)
+    studentfile.isInstructor = False
+    self.filename = str(studentfile)
 
-    tags[&#39;NEW_ASSIGNMENT&#39;] = str(nbfile)
+    tags[&#39;NEW_ASSIGNMENT&#39;] = str(studentfile)
     print(tags[&#39;NEW_ASSIGNMENT&#39;])
     self.mergetags(tags)
 
-    studentfile = f&#34;{studentfolder}{tags[&#39;NEW_ASSIGNMENT&#39;]}&#34;
-    self.writenotebook(studentfile)
+    student_fn = f&#34;{studentfolder}{studentfile}&#34;
+    
+    
+    if Path(instructor_fn) == Path(student_fn):
+        print(&#34;ERROR: student file will overrite instructor. Aborting&#34;)
+        print(f&#34;   {instructor_fn} --&gt; {student_fn}&#34;)
+        return
+              
+    
+    self.writenotebook(student_fn)
 
-    # TODO: check all links in the directory for name change.
-    if not self.filename == filename:
-        print(f&#34;WARNING: file may be changing {self.filename} != {filename}&#34;)
 
     # Make a link for review
     display(
-        HTML(f&#34;&lt;a href={studentfile} target=\&#34;blank\&#34;&gt;{studentfile}&lt;/a&gt;&#34;))
+        HTML(f&#34;&lt;a href={student_fn} target=\&#34;blank\&#34;&gt;{student_fn}&lt;/a&gt;&#34;))
 
     return studentfile</code></pre>
 </details>

@@ -81,11 +81,16 @@ def checkurl(url):
         output = 1
     return output
 
+def truncate_string(data, depth=75):
+    info = (data[:depth] + &#39;..&#39;) if len(data) &gt; depth else data
+    return info
 
 def validate(filename):
     &#39;&#39;&#39;Function to validate links and content of a IPYNB&#39;&#39;&#39;
     print(f&#34;Validating Notebook {filename}&#34;)
 
+    errorcount = 0
+    
     parts = Path(filename)
     foldername = parts.parent
 
@@ -101,10 +106,13 @@ def validate(filename):
     nb = nbformat.reads(text, as_version=4)  # ipynb version 4
 
     # may be needed for video verification
-    ep = ExecutePreprocessor(
-        timeout=600, kernel_name=&#39;python3&#39;, allow_errors=True)
-    ep.preprocess(nb)
-
+    try:
+        ep = ExecutePreprocessor(timeout=10, kernel_name=&#39;python3&#39;, allow_errors=True)
+        ep.preprocess(nb)
+    except Exception as e:
+        print(truncate_string(f&#34;   Notebook preprocess Timeout (check for long running code)\n {e}&#34;))
+        errorcount += 1
+    
     # Process the notebook we loaded earlier
     (body, resources) = HTMLExporter().from_notebook_node(nb)
 
@@ -115,7 +123,6 @@ def validate(filename):
     for link in links:
         anchorlist[link[&#39;name&#39;]] = False
 
-    errorcount = 0
 
     links = soup.find_all(&#39;a&#39;, href=True)
     for link in links:
@@ -138,7 +145,7 @@ def validate(filename):
                 print(f&#34;   Empty Link - {link}&#34;)
                 errorcount += 1
         except Exception as e:
-            print(f&#34;   Timeout Warning for  {link}\n {e}&#34;)
+            print(truncate_string(f&#34;   Timeout Warning for  {link}\n {e}&#34;))
             errorcount += 1
 
     for anchor in anchorlist:
@@ -167,11 +174,11 @@ def validate(filename):
         # Check the image alt text is present and valid.
         if img.has_attr(&#39;alt&#39;):
             if img[&#39;alt&#39;] == &#34;&#34;:
-                print(f&#39;   Empty Alt text in image - {href}&#39;)
-                errorcount += error
+                print(truncate_string(f&#39;   Empty Alt text in image - {href}&#39;))
+                errorcount += 1
         else:
-            print(f&#39;   No Alt text in image - {img[&#34;src&#34;]}&#39;)
-            errorcount += error
+            print(truncate_string(f&#39;   No Alt text in image - {img[&#34;src&#34;]}&#39;))
+            errorcount += 1
 
     return errorcount
 
@@ -208,6 +215,20 @@ if __name__ == &#34;__main__&#34;:
     return output</code></pre>
 </details>
 </dd>
+<dt id="jupyterinstruct.nbvalidate.truncate_string"><code class="name flex">
+<span>def <span class="ident">truncate_string</span></span>(<span>data, depth=75)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def truncate_string(data, depth=75):
+    info = (data[:depth] + &#39;..&#39;) if len(data) &gt; depth else data
+    return info</code></pre>
+</details>
+</dd>
 <dt id="jupyterinstruct.nbvalidate.validate"><code class="name flex">
 <span>def <span class="ident">validate</span></span>(<span>filename)</span>
 </code></dt>
@@ -221,6 +242,8 @@ if __name__ == &#34;__main__&#34;:
     &#39;&#39;&#39;Function to validate links and content of a IPYNB&#39;&#39;&#39;
     print(f&#34;Validating Notebook {filename}&#34;)
 
+    errorcount = 0
+    
     parts = Path(filename)
     foldername = parts.parent
 
@@ -236,10 +259,13 @@ if __name__ == &#34;__main__&#34;:
     nb = nbformat.reads(text, as_version=4)  # ipynb version 4
 
     # may be needed for video verification
-    ep = ExecutePreprocessor(
-        timeout=600, kernel_name=&#39;python3&#39;, allow_errors=True)
-    ep.preprocess(nb)
-
+    try:
+        ep = ExecutePreprocessor(timeout=10, kernel_name=&#39;python3&#39;, allow_errors=True)
+        ep.preprocess(nb)
+    except Exception as e:
+        print(truncate_string(f&#34;   Notebook preprocess Timeout (check for long running code)\n {e}&#34;))
+        errorcount += 1
+    
     # Process the notebook we loaded earlier
     (body, resources) = HTMLExporter().from_notebook_node(nb)
 
@@ -250,7 +276,6 @@ if __name__ == &#34;__main__&#34;:
     for link in links:
         anchorlist[link[&#39;name&#39;]] = False
 
-    errorcount = 0
 
     links = soup.find_all(&#39;a&#39;, href=True)
     for link in links:
@@ -273,7 +298,7 @@ if __name__ == &#34;__main__&#34;:
                 print(f&#34;   Empty Link - {link}&#34;)
                 errorcount += 1
         except Exception as e:
-            print(f&#34;   Timeout Warning for  {link}\n {e}&#34;)
+            print(truncate_string(f&#34;   Timeout Warning for  {link}\n {e}&#34;))
             errorcount += 1
 
     for anchor in anchorlist:
@@ -302,11 +327,11 @@ if __name__ == &#34;__main__&#34;:
         # Check the image alt text is present and valid.
         if img.has_attr(&#39;alt&#39;):
             if img[&#39;alt&#39;] == &#34;&#34;:
-                print(f&#39;   Empty Alt text in image - {href}&#39;)
-                errorcount += error
+                print(truncate_string(f&#39;   Empty Alt text in image - {href}&#39;))
+                errorcount += 1
         else:
-            print(f&#39;   No Alt text in image - {img[&#34;src&#34;]}&#39;)
-            errorcount += error
+            print(truncate_string(f&#39;   No Alt text in image - {img[&#34;src&#34;]}&#39;))
+            errorcount += 1
 
     return errorcount</code></pre>
 </details>
@@ -332,6 +357,7 @@ if __name__ == &#34;__main__&#34;:
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="jupyterinstruct.nbvalidate.checkurl" href="#jupyterinstruct.nbvalidate.checkurl">checkurl</a></code></li>
+<li><code><a title="jupyterinstruct.nbvalidate.truncate_string" href="#jupyterinstruct.nbvalidate.truncate_string">truncate_string</a></code></li>
 <li><code><a title="jupyterinstruct.nbvalidate.validate" href="#jupyterinstruct.nbvalidate.validate">validate</a></code></li>
 </ul>
 </li>
