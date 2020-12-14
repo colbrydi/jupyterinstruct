@@ -36,11 +36,16 @@ def checkurl(url):
         output = 1
     return output
 
+def truncate_string(data, depth=75):
+    info = (data[:depth] + '..') if len(data) > depth else data
+    return info
 
 def validate(filename):
     '''Function to validate links and content of a IPYNB'''
     print(f"Validating Notebook {filename}")
 
+    errorcount = 0
+    
     parts = Path(filename)
     foldername = parts.parent
 
@@ -56,10 +61,13 @@ def validate(filename):
     nb = nbformat.reads(text, as_version=4)  # ipynb version 4
 
     # may be needed for video verification
-    ep = ExecutePreprocessor(
-        timeout=600, kernel_name='python3', allow_errors=True)
-    ep.preprocess(nb)
-
+    try:
+        ep = ExecutePreprocessor(timeout=10, kernel_name='python3', allow_errors=True)
+        ep.preprocess(nb)
+    except Exception as e:
+        print(truncate_string(f"   Notebook preprocess Timeout (check for long running code)\n {e}"))
+        errorcount += 1
+    
     # Process the notebook we loaded earlier
     (body, resources) = HTMLExporter().from_notebook_node(nb)
 
@@ -70,7 +78,6 @@ def validate(filename):
     for link in links:
         anchorlist[link['name']] = False
 
-    errorcount = 0
 
     links = soup.find_all('a', href=True)
     for link in links:
@@ -93,7 +100,7 @@ def validate(filename):
                 print(f"   Empty Link - {link}")
                 errorcount += 1
         except Exception as e:
-            print(f"   Timeout Warning for  {link}\n {e}")
+            print(truncate_string(f"   Timeout Warning for  {link}\n {e}"))
             errorcount += 1
 
     for anchor in anchorlist:
@@ -122,10 +129,10 @@ def validate(filename):
         # Check the image alt text is present and valid.
         if img.has_attr('alt'):
             if img['alt'] == "":
-                print(f'   Empty Alt text in image - {href}')
+                print(truncate_string(f'   Empty Alt text in image - {href}'))
                 errorcount += error
         else:
-            print(f'   No Alt text in image - {img["src"]}')
+            print(truncate_string(f'   No Alt text in image - {img["src"]}'))
             errorcount += error
 
     return errorcount
