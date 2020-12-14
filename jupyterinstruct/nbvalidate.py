@@ -29,10 +29,13 @@ from nbconvert.preprocessors import ExecutePreprocessor
 
 def checkurl(url):
     '''Check if url is a valid link. timeout 5 seconds'''
-    request = requests.get(url, timeout=5)
+    try:
+        request = requests.get(url, timeout=5)
+    except Exception as e:
+        return 1
+    
     output = 0
     if not request.status_code < 400:
-
         output = 1
     return output
 
@@ -56,7 +59,7 @@ def validate(filename):
     # TODO: check for ###NAME### triple hash
     extra_tags = set(re.findall('#\w+#', text))
     for tag in extra_tags:
-        print(f"   - Extra Tag {tag}")
+        print(f"   - ERROR: Extra Tag {tag}")
 
     nb = nbformat.reads(text, as_version=4)  # ipynb version 4
 
@@ -65,7 +68,7 @@ def validate(filename):
         ep = ExecutePreprocessor(timeout=10, kernel_name='python3', allow_errors=True)
         ep.preprocess(nb)
     except Exception as e:
-        print(truncate_string(f"   Notebook preprocess Timeout (check for long running code)\n {e}"))
+        print(truncate_string(f"   WARNING: Notebook preprocess Timeout (check for long running code)\n {e}"))
         errorcount += 1
     
     # Process the notebook we loaded earlier
@@ -81,7 +84,7 @@ def validate(filename):
         if link.has_attr('name'):
             anchorlist[link['name']] = False
         else:
-            print(truncate_string(f"   Missing 'name' attribute in link {link}"))
+            print(truncate_string(f"   ERROR: Missing 'name' attribute in link {link}"))
             errorcount += 1
 
 
@@ -97,23 +100,23 @@ def validate(filename):
                     if href[0:4] == "http":
                         error = checkurl(href)
                         if error:
-                            print(f'   LINK ERROR - {href}')
+                            print(f'   ERROR: Link not found - {href}')
                             errorcount += error
                     else:
                         if not os.path.isfile(f'{foldername}/{href}'):
-                            print(f'   File Doesn\'t Exist - {href}')
+                            print(f'   ERROR: File Doesn\'t Exist - {href}')
                             errorcount += 1
             else:
                 print(f"   Empty Link - {link}")
                 errorcount += 1
         except Exception as e:
-            print(truncate_string(f"   Timeout Warning for  {link}\n {e}"))
+            print(truncate_string(f"   WARNING: Timeout checking for link {link}\n {e}"))
             errorcount += 1
 
     #Verify hyperlinks to infile anchors
     for anchor in anchorlist:
         if not anchorlist[anchor]:
-            print(f"   Missing anchor for {anchor}")
+            print(f"   ERROR: Missing anchor for {anchor}")
             errorcount += 1
 
     # Verify video links
@@ -121,7 +124,7 @@ def validate(filename):
     for frame in iframes:
         error = checkurl(frame['src'])
         if error:
-            print(f'   Iframe LINK ERROR - {href}')
+            print(f'   ERROR: Iframe LINK not found - {href}')
             errorcount += error
 
     # Verify img links and alt text
@@ -131,16 +134,16 @@ def validate(filename):
         if not image[0:4] == 'data':
             error = checkurl(img['src'])
             if error:
-                print(f'   Image LINK ERROR - {href}')
+                print(f'   ERROR: Image LINK not found - {href}')
                 errorcount += error
 
         # Check the image alt text is present and valid.
         if img.has_attr('alt'):
             if img['alt'] == "":
-                print(truncate_string(f'   Empty Alt text in image - {href}'))
+                print(truncate_string(f'   ERROR: Empty Alt text in image - {href}'))
                 errorcount += 1
         else:
-            print(truncate_string(f'   No Alt text in image - {img["src"]}'))
+            print(truncate_string(f'   ERROR: No Alt text in image - {img["src"]}'))
             errorcount += 1
 
     return errorcount
