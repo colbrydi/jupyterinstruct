@@ -130,10 +130,10 @@ def validate(filename):
         if img.has_attr('alt'):
             if img['alt'] == "":
                 print(truncate_string(f'   Empty Alt text in image - {href}'))
-                errorcount += error
+                errorcount += 1
         else:
             print(truncate_string(f'   No Alt text in image - {img["src"]}'))
-            errorcount += error
+            errorcount += 1
 
     return errorcount
 
