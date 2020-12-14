@@ -61,6 +61,8 @@ def renamefile(oldname, newname, MAKE_CHANGES=False, force=False):
     #Forcing new file to conform to the file standard
     new_nbfile.isInstructor = False
     newstudentversion = str(new_nbfile)
+    
+    print(f" Replaceing {oldstudentversion} with {newstudentversion}")
 
     directory = Path('.')
     for file in directory.glob('*.ipynb'):
@@ -124,6 +126,7 @@ def makestudent(filename, studentfolder='./', tags={}):
                include=['application/javascript'])
 
     nb = InstructorNB(filename=filename)
+    
     studentfile = nb.makestudent(tags=tags, studentfolder=studentfolder)
     return studentfile
 
@@ -374,40 +377,52 @@ class InstructorNB():
                             f"###{key}###", tags[key])
             cell['source'] = source_string
 
-    def makestudent(self, tags=None, studentfolder='', filename=None):
+    def makestudent(self, tags=None, studentfolder=''):
         """Make a Student Version of the notebook"""
-        if filename:
-            self.filename = filename
+        
+        instructor_fn = self.filename
+        
+        instructorfile = nbfilename(instructor_fn)
 
+        # TODO: check all links in the directory for name change.
+        if not str(instructorfile) == instructor_fn:
+            print(f"WARNING: Instructor file name is wrong {instructorfile} != {instructor_fn}")
+            
+        
         IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
                    include=['application/javascript'])
 
-        nbfile = nbfilename(self.filename)
+        studentfile = nbfilename(instructor_fn)
 
-        if nbfile.isDate:
-            tags['DUE_DATE'] = nbfile.getlongdate()
-            tags['MMDD'] = nbfile.prefix
+        if studentfile.isDate:
+            tags['DUE_DATE'] = studentfile.getlongdate()
+            tags['MMDD'] = studentfile.prefix
 
         self.removecells(searchstring="#ANSWER#",verbose=False)
         self.stripoutput()
 
         # Remove INSTRUCTOR from name
-        nbfile.isInstructor = False
-        self.filename = str(nbfile)
+        studentfile.isInstructor = False
+        self.filename = str(studentfile)
 
-        tags['NEW_ASSIGNMENT'] = str(nbfile)
+        tags['NEW_ASSIGNMENT'] = str(studentfile)
         print(tags['NEW_ASSIGNMENT'])
         self.mergetags(tags)
 
-        studentfile = f"{studentfolder}{tags['NEW_ASSIGNMENT']}"
-        self.writenotebook(studentfile)
+        student_fn = f"{studentfolder}{studentfile}"
+        
+        
+        if Path(instructor_fn) == Path(student_fn):
+            print("ERROR: student file will overrite instructor. Aborting")
+            print(f"   {instructor_fn} --> {student_fn}")
+            return
+                  
+        
+        self.writenotebook(student_fn)
 
-        # TODO: check all links in the directory for name change.
-        if not self.filename == filename:
-            print(f"WARNING: file may be changing {self.filename} != {filename}")
 
         # Make a link for review
         display(
-            HTML(f"<a href={studentfile} target=\"blank\">{studentfile}</a>"))
+            HTML(f"<a href={student_fn} target=\"blank\">{student_fn}</a>"))
 
         return studentfile
