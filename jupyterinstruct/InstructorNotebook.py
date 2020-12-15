@@ -425,4 +425,4 @@ class InstructorNB():
         display(
             HTML(f"<a href={student_fn} target=\"blank\">{student_fn}</a>"))
 
-        return studentfile
+        return student_fn 
