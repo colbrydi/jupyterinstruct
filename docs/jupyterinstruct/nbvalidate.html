@@ -74,10 +74,13 @@ from nbconvert.preprocessors import ExecutePreprocessor
 
 def checkurl(url):
     &#39;&#39;&#39;Check if url is a valid link. timeout 5 seconds&#39;&#39;&#39;
-    request = requests.get(url, timeout=5)
+    try:
+        request = requests.get(url, timeout=5)
+    except Exception as e:
+        return 1
+    
     output = 0
     if not request.status_code &lt; 400:
-
         output = 1
     return output
 
@@ -101,7 +104,7 @@ def validate(filename):
     # TODO: check for ###NAME### triple hash
     extra_tags = set(re.findall(&#39;#\w+#&#39;, text))
     for tag in extra_tags:
-        print(f&#34;   - Extra Tag {tag}&#34;)
+        print(f&#34;   - ERROR: Extra Tag {tag}&#34;)
 
     nb = nbformat.reads(text, as_version=4)  # ipynb version 4
 
@@ -110,7 +113,7 @@ def validate(filename):
         ep = ExecutePreprocessor(timeout=10, kernel_name=&#39;python3&#39;, allow_errors=True)
         ep.preprocess(nb)
     except Exception as e:
-        print(truncate_string(f&#34;   Notebook preprocess Timeout (check for long running code)\n {e}&#34;))
+        print(truncate_string(f&#34;   WARNING: Notebook preprocess Timeout (check for long running code)\n {e}&#34;))
         errorcount += 1
     
     # Process the notebook we loaded earlier
@@ -118,12 +121,19 @@ def validate(filename):
 
     # print(body)
     soup = BeautifulSoup(body, &#39;html.parser&#39;)
+    
+    #Make a dictionary of in-file anchors for checking later.
     anchorlist = dict()
     links = soup.find_all(&#39;a&#39;, href=False)
     for link in links:
-        anchorlist[link[&#39;name&#39;]] = False
+        if link.has_attr(&#39;name&#39;):
+            anchorlist[link[&#39;name&#39;]] = False
+        else:
+            print(truncate_string(f&#34;   ERROR: Missing &#39;name&#39; attribute in link {link}&#34;))
+            errorcount += 1
 
 
+    # check all hyperlinks
     links = soup.find_all(&#39;a&#39;, href=True)
     for link in links:
         href = link[&#39;href&#39;]
@@ -135,22 +145,23 @@ def validate(filename):
                     if href[0:4] == &#34;http&#34;:
                         error = checkurl(href)
                         if error:
-                            print(f&#39;   LINK ERROR - {href}&#39;)
+                            print(f&#39;   ERROR: Link not found - {href}&#39;)
                             errorcount += error
                     else:
                         if not os.path.isfile(f&#39;{foldername}/{href}&#39;):
-                            print(f&#39;   File Doesn\&#39;t Exist - {href}&#39;)
+                            print(f&#39;   ERROR: File Doesn\&#39;t Exist - {href}&#39;)
                             errorcount += 1
             else:
                 print(f&#34;   Empty Link - {link}&#34;)
                 errorcount += 1
         except Exception as e:
-            print(truncate_string(f&#34;   Timeout Warning for  {link}\n {e}&#34;))
+            print(truncate_string(f&#34;   WARNING: Timeout checking for link {link}\n {e}&#34;))
             errorcount += 1
 
+    #Verify hyperlinks to infile anchors
     for anchor in anchorlist:
         if not anchorlist[anchor]:
-            print(f&#34;   Missing anchor for {anchor}&#34;)
+            print(f&#34;   ERROR: Missing anchor for {anchor}&#34;)
             errorcount += 1
 
     # Verify video links
@@ -158,26 +169,26 @@ def validate(filename):
     for frame in iframes:
         error = checkurl(frame[&#39;src&#39;])
         if error:
-            print(f&#39;   Iframe LINK ERROR - {href}&#39;)
+            print(f&#39;   ERROR: Iframe LINK not found - {href}&#39;)
             errorcount += error
 
-    # Verify img links
+    # Verify img links and alt text
     images = soup.find_all(&#39;img&#39;)
     for img in images:
         image = img[&#39;src&#39;]
         if not image[0:4] == &#39;data&#39;:
             error = checkurl(img[&#39;src&#39;])
             if error:
-                print(f&#39;   Image LINK ERROR - {href}&#39;)
+                print(f&#39;   ERROR: Image LINK not found - {href}&#39;)
                 errorcount += error
 
         # Check the image alt text is present and valid.
         if img.has_attr(&#39;alt&#39;):
             if img[&#39;alt&#39;] == &#34;&#34;:
-                print(truncate_string(f&#39;   Empty Alt text in image - {href}&#39;))
+                print(truncate_string(f&#39;   ERROR: Empty Alt text in image - {href}&#39;))
                 errorcount += 1
         else:
-            print(truncate_string(f&#39;   No Alt text in image - {img[&#34;src&#34;]}&#39;))
+            print(truncate_string(f&#39;   ERROR: No Alt text in image - {img[&#34;src&#34;]}&#39;))
             errorcount += 1
 
     return errorcount
@@ -207,10 +218,13 @@ if __name__ == &#34;__main__&#34;:
 </summary>
 <pre><code class="python">def checkurl(url):
     &#39;&#39;&#39;Check if url is a valid link. timeout 5 seconds&#39;&#39;&#39;
-    request = requests.get(url, timeout=5)
+    try:
+        request = requests.get(url, timeout=5)
+    except Exception as e:
+        return 1
+    
     output = 0
     if not request.status_code &lt; 400:
-
         output = 1
     return output</code></pre>
 </details>
@@ -254,7 +268,7 @@ if __name__ == &#34;__main__&#34;:
     # TODO: check for ###NAME### triple hash
     extra_tags = set(re.findall(&#39;#\w+#&#39;, text))
     for tag in extra_tags:
-        print(f&#34;   - Extra Tag {tag}&#34;)
+        print(f&#34;   - ERROR: Extra Tag {tag}&#34;)
 
     nb = nbformat.reads(text, as_version=4)  # ipynb version 4
 
@@ -263,7 +277,7 @@ if __name__ == &#34;__main__&#34;:
         ep = ExecutePreprocessor(timeout=10, kernel_name=&#39;python3&#39;, allow_errors=True)
         ep.preprocess(nb)
     except Exception as e:
-        print(truncate_string(f&#34;   Notebook preprocess Timeout (check for long running code)\n {e}&#34;))
+        print(truncate_string(f&#34;   WARNING: Notebook preprocess Timeout (check for long running code)\n {e}&#34;))
         errorcount += 1
     
     # Process the notebook we loaded earlier
@@ -271,12 +285,19 @@ if __name__ == &#34;__main__&#34;:
 
     # print(body)
     soup = BeautifulSoup(body, &#39;html.parser&#39;)
+    
+    #Make a dictionary of in-file anchors for checking later.
     anchorlist = dict()
     links = soup.find_all(&#39;a&#39;, href=False)
     for link in links:
-        anchorlist[link[&#39;name&#39;]] = False
+        if link.has_attr(&#39;name&#39;):
+            anchorlist[link[&#39;name&#39;]] = False
+        else:
+            print(truncate_string(f&#34;   ERROR: Missing &#39;name&#39; attribute in link {link}&#34;))
+            errorcount += 1
 
 
+    # check all hyperlinks
     links = soup.find_all(&#39;a&#39;, href=True)
     for link in links:
         href = link[&#39;href&#39;]
@@ -288,22 +309,23 @@ if __name__ == &#34;__main__&#34;:
                     if href[0:4] == &#34;http&#34;:
                         error = checkurl(href)
                         if error:
-                            print(f&#39;   LINK ERROR - {href}&#39;)
+                            print(f&#39;   ERROR: Link not found - {href}&#39;)
                             errorcount += error
                     else:
                         if not os.path.isfile(f&#39;{foldername}/{href}&#39;):
-                            print(f&#39;   File Doesn\&#39;t Exist - {href}&#39;)
+                            print(f&#39;   ERROR: File Doesn\&#39;t Exist - {href}&#39;)
                             errorcount += 1
             else:
                 print(f&#34;   Empty Link - {link}&#34;)
                 errorcount += 1
         except Exception as e:
-            print(truncate_string(f&#34;   Timeout Warning for  {link}\n {e}&#34;))
+            print(truncate_string(f&#34;   WARNING: Timeout checking for link {link}\n {e}&#34;))
             errorcount += 1
 
+    #Verify hyperlinks to infile anchors
     for anchor in anchorlist:
         if not anchorlist[anchor]:
-            print(f&#34;   Missing anchor for {anchor}&#34;)
+            print(f&#34;   ERROR: Missing anchor for {anchor}&#34;)
             errorcount += 1
 
     # Verify video links
@@ -311,26 +333,26 @@ if __name__ == &#34;__main__&#34;:
     for frame in iframes:
         error = checkurl(frame[&#39;src&#39;])
         if error:
-            print(f&#39;   Iframe LINK ERROR - {href}&#39;)
+            print(f&#39;   ERROR: Iframe LINK not found - {href}&#39;)
             errorcount += error
 
-    # Verify img links
+    # Verify img links and alt text
     images = soup.find_all(&#39;img&#39;)
     for img in images:
         image = img[&#39;src&#39;]
         if not image[0:4] == &#39;data&#39;:
             error = checkurl(img[&#39;src&#39;])
             if error:
-                print(f&#39;   Image LINK ERROR - {href}&#39;)
+                print(f&#39;   ERROR: Image LINK not found - {href}&#39;)
                 errorcount += error
 
         # Check the image alt text is present and valid.
         if img.has_attr(&#39;alt&#39;):
             if img[&#39;alt&#39;] == &#34;&#34;:
-                print(truncate_string(f&#39;   Empty Alt text in image - {href}&#39;))
+                print(truncate_string(f&#39;   ERROR: Empty Alt text in image - {href}&#39;))
                 errorcount += 1
         else:
-            print(truncate_string(f&#39;   No Alt text in image - {img[&#34;src&#34;]}&#39;))
+            print(truncate_string(f&#39;   ERROR: No Alt text in image - {img[&#34;src&#34;]}&#39;))
             errorcount += 1
 
     return errorcount</code></pre>
