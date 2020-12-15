@@ -45,7 +45,7 @@ class nbfilename():
 
         attribute_list = ['INSTRUCTOR', 'STUDENT', 'in-class', 'pre-class']
         self.parts = re.split('-|_| |\.', filename)
-
+        
         if '' in self.parts:
             self.parts.remove('')
 
@@ -65,12 +65,16 @@ class nbfilename():
         else:
             if '.' in filename:
                 self.extention = parts[-1]
-                parts.remove[parts[-1]]
+                parts.remove[parts[-1]]     
+            else:
+                self.extention = 'ipynb'
+                
         if len(self.parts) > 0:
             if self.parts[-1] == 'INSTRUCTOR':
                 self.isInstructor = True
                 del self.parts[-1]
 
+                
         if len(self.parts) > 3:
             if self.parts[-1] == 'assignment' or self.parts[-1] == 'class':
                 if self.parts[-1] == 'assignment':
