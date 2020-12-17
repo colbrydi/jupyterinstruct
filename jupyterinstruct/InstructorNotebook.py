@@ -2,6 +2,7 @@
 Instuctor notebooks have extra content intended only for instructors. This class manages the extra content and enables instructors to generate student versions of the notebooks.  
 '''
 import IPython.core.display as IP
+import IPython.core.display as display
 from IPython.core.display import Javascript, HTML
 
 from nbconvert import HTMLExporter
@@ -422,7 +423,6 @@ class InstructorNB():
 
 
         # Make a link for review
-        display(
-            HTML(f"<a href={student_fn} target=\"blank\">{student_fn}</a>"))
+        IP.display(HTML(f"<a href={student_fn} target=\"blank\">{student_fn}</a>"))
 
         return student_fn 

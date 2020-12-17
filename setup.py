@@ -24,9 +24,11 @@ setuptools.setup(
     ],
     entry_points = {
         'console_scripts': [
+            'jupyterinstruct=jupyterinstruct.console_commands:listcommands',
             'validatenb=jupyterinstruct.console_commands:validatenb',
             'publishnb=jupyterinstruct.console_commands:publish',
             'renamenb=jupyterinstruct.console_commands:rename',
+            'makestudentnb=jupyterinstruct.console_commands:makestudent',
          ],
     },
     packages=[

@@ -1,16 +1,25 @@
+"""
+Command line tools for workign with jupyter notebooks.
+
+  - jupyterinstruct - Print out this help message.
+  - validatenb - Validate a notebook for errors.
+  - publishnb - Publish notebook to a website.
+  - renamenb - Rename a notebook
+  - makestudentnb - Make a student version of the notebook
+         
+"""
 import argparse
 import sys
 
-
-
-
 def renamenb():
+    """Rename Instructor notebook using git and fix all 
+    student links in files."""
     from jupyterinstruct.InstructorNotebook import renamefile
  
     parser = argparse.ArgumentParser(description='rename notebook')
 
     parser.add_argument('input', help=' input filenames')
-    parser.add_argument('output', help=' output filename')
+    parser.add_argument('output', help=' output filename', nargs='*')
 
     args = parser.parse_args()
     
@@ -19,8 +28,36 @@ def renamenb():
     print('\n\n')
     
     renamefile(args.input, args.output)
+    
+def makestudentnb():
+    """Make a student version of an instructor notebook. """
+    from jupyterinstruct.InstructorNotebook import makestudent
+    
+    parser = argparse.ArgumentParser(description='Make a student version.')
 
+    parser.add_argument('-outputfolder', '-w', metavar='outputfolder', 
+                        default='./',
+                        help=' Name of the destination Folder')
+    parser.add_argument('files', help=' inputfilenames', nargs='+')
+#     parser.add_argument('-coursefile', '-c', metavar='coursefile',
+#                         default='thiscourse.py',
+#                         help=' Course file which creates tags')
+    
+    try:
+        import thiscourse.py
+        tags = thiscourse.tags
+    except:
+        print('thiscourse not found')
+        tags = {}
+
+    args = parser.parse_args()
+
+    for filename in args.files:
+        makestudent(filename, studentfolder=args.outputfolder, tags=tags)
+        
 def publishnb():
+    """ Publish jupyter notebook as html file.
+    """
     from jupyterinstruct.webtools import publish
     
     parser = argparse.ArgumentParser(description='Publish notebook to folder.')
@@ -36,6 +73,7 @@ def publishnb():
         publish(filename,outfolder=args.webfolder)
         
 def validatenb():
+    """Run Validator on jupyter notebook."""
     from jupyterinstruct.nbvalidate import validate
     
     parser = argparse.ArgumentParser(description='validate notebook file')
@@ -46,6 +84,10 @@ def validatenb():
 
     for filename in args.files:
         validate(filename)
-    
+
+def listcommands():
+    print(__doc__)
+        
 if __name__ == "__main__":
-    validatenb()
+    listcommands()
+    makestudentnb()
