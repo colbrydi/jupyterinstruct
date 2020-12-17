@@ -149,7 +149,9 @@ def validate(filename):
     return errorcount
 
 
+
 if __name__ == "__main__":
+    import sys
     errors = 0
-    for filename in argv[1:]:
+    for filename in sys.argv[1:]:
         errors += validate(filename)

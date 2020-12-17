@@ -18,10 +18,17 @@ setuptools.setup(
         'jupyter',
         'IPython',
         'nbformat',
-	'nbgrader',
+        'nbgrader',
         'nbconvert',
         'beautifulsoup4',
     ],
+    entry_points = {
+        'console_scripts': [
+            'validatenb=jupyterinstruct.console_commands:validatenb',
+            'publishnb=jupyterinstruct.console_commands:publish',
+            'renamenb=jupyterinstruct.console_commands:rename',
+         ],
+    },
     packages=[
         'jupyterinstruct',
     ],
