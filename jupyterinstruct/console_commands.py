@@ -1,11 +1,12 @@
 """
 Command line tools for workign with jupyter notebooks.
 
-  - jupyterinstruct - Print out this help message.
-  - validatenb - Validate a notebook for errors.
-  - publishnb - Publish notebook to a website.
-  - renamenb - Rename a notebook
-  - makestudentnb - Make a student version of the notebook
+- jupyterinstruct - list of all of the command line tools.
+- validatenb NOTEBOOKNAME - Validate a notebook for errors.
+- publishnb -o OUTPUTFOLDER NOTEBOOKNAME - Publish notebook to a website.
+- renamenb OLDFILENAME NEWFILENAME - Rename a notebook
+- makestudentnb -o OUTPUTFOLDER NOTEBOOKNAME - Make a student version of the notebook
+
          
 """
 import argparse

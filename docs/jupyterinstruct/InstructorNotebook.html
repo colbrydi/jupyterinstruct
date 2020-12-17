@@ -33,6 +33,7 @@ Instuctor notebooks have extra content intended only for instructors. This class
 Instuctor notebooks have extra content intended only for instructors. This class manages the extra content and enables instructors to generate student versions of the notebooks.  
 &#39;&#39;&#39;
 import IPython.core.display as IP
+import IPython.core.display as display
 from IPython.core.display import Javascript, HTML
 
 from nbconvert import HTMLExporter
@@ -453,8 +454,7 @@ class InstructorNB():
 
 
         # Make a link for review
-        display(
-            HTML(f&#34;&lt;a href={student_fn} target=\&#34;blank\&#34;&gt;{student_fn}&lt;/a&gt;&#34;))
+        IP.display(HTML(f&#34;&lt;a href={student_fn} target=\&#34;blank\&#34;&gt;{student_fn}&lt;/a&gt;&#34;))
 
         return student_fn </code></pre>
 </details>
@@ -1033,8 +1033,7 @@ body and resurcers from teh html_export file</p></div>
 
 
         # Make a link for review
-        display(
-            HTML(f&#34;&lt;a href={student_fn} target=\&#34;blank\&#34;&gt;{student_fn}&lt;/a&gt;&#34;))
+        IP.display(HTML(f&#34;&lt;a href={student_fn} target=\&#34;blank\&#34;&gt;{student_fn}&lt;/a&gt;&#34;))
 
         return student_fn </code></pre>
 </details>
@@ -1155,8 +1154,7 @@ body and resurcers from teh html_export file</p></div>
 
 
     # Make a link for review
-    display(
-        HTML(f&#34;&lt;a href={student_fn} target=\&#34;blank\&#34;&gt;{student_fn}&lt;/a&gt;&#34;))
+    IP.display(HTML(f&#34;&lt;a href={student_fn} target=\&#34;blank\&#34;&gt;{student_fn}&lt;/a&gt;&#34;))
 
     return student_fn </code></pre>
 </details>

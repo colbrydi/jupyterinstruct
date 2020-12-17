@@ -17,6 +17,17 @@ This package is currently under development and is not avaliable via pypy.  to i
 
 ```pip install git+https://github.com/colbrydi/jupyterinstruct```
 
+## Command line tools
+
+Many of the core jupyterinstruct tools have a command line interface option.  These include:
+
+- ```jupyterinstruct``` - list of all of the command line tools.
+- ```validatenb NOTEBOOKNAME``` - Validate a notebook for errors.
+- ```publishnb -o OUTPUTFOLDER NOTEBOOKNAME``` - Publish notebook to a website.
+- ```renamenb OLDFILENAME NEWFILENAME``` - Rename a notebook
+- ```makestudentnb -o OUTPUTFOLDER NOTEBOOKNAME``` - Make a student version of the notebook
+
+
 ## Package UML dependancies
 
 <img alt="Package UML dependances" src="https://raw.githubusercontent.com/colbrydi/jupyterinstruct/master/docs/images/packages.png">
