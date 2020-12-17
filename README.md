@@ -17,6 +17,10 @@ This package is currently under development and is not avaliable via pypy.  to i
 
 ```pip install git+https://github.com/colbrydi/jupyterinstruct```
 
+To install as a user on Jupyterhub try the following instead:
+
+```pip install -user git+https://github.com/colbrydi/jupyterinstruct```
+
 ## Command line tools
 
 Many of the core jupyterinstruct tools have a command line interface option.  These include:
@@ -26,6 +30,13 @@ Many of the core jupyterinstruct tools have a command line interface option.  Th
 - ```publishnb -o OUTPUTFOLDER NOTEBOOKNAME``` - Publish notebook to a website.
 - ```renamenb OLDFILENAME NEWFILENAME``` - Rename a notebook
 - ```makestudentnb -o OUTPUTFOLDER NOTEBOOKNAME``` - Make a student version of the notebook
+
+**_NOTE_**: The MSU jupyterhub server terminal currently defaults to tcsh. To best utilize these tools type 'bash' at the command prompt when starting a terminal. 
+
+```
+> bash
+> jupyterinstruct
+```
 
 
 ## Package UML dependancies
