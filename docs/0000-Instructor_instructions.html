@@ -3,7 +3,7 @@
 <head><meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>0000-Instructor_instructions</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Notebook</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 
 
 
@@ -14257,7 +14257,8 @@ a.anchor-link {
     <!-- End of mathjax configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
 
-<div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="Using-the-JupyterInstruct-Library">Using the JupyterInstruct Library<a class="anchor-link" href="#Using-the-JupyterInstruct-Library">&#182;</a></h1><p>The JupyterInstruct library is designed for INSTRUCTORS to organize and adjust course curriculum. Each assignment is given it's own jupyter notebook and all student reading, videos, images are included in the notebook.  Each notebook also contains notes for instructors that will be automatically removed.</p>
 <ul>
 <li>Student curriculum - This is the main content of the notebooks.  The intention is for these notebooks to contain all resources students need for the course.</li>
@@ -14267,7 +14268,8 @@ a.anchor-link {
 
 </div>
 </div>
-<div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Filenames">Filenames<a class="anchor-link" href="#Filenames">&#182;</a></h2><p>In addition to the above features, the JupyterInstruct library also has some prefered filenames. These filenames are not required but can help during semester migration of the course:</p>
 <ul>
 <li>It is highly recommmended that every file that uses the JupyterInstruct library end with "INSTRUCTOR.ipynb". Although not required this filename tag will help distinguish between instructor and student versions of the files. </li>
@@ -14278,7 +14280,8 @@ a.anchor-link {
 
 </div>
 </div>
-<div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Course-Repository">Course Repository<a class="anchor-link" href="#Course-Repository">&#182;</a></h2><p>It is assumed that each course will use a private course repository to store the INSTRUCTOR notebooks.  Student notebooks are generated from the instructor and therefore should NOT be included in the INSTRUCTOR repository.  There are two techniques for sharing student notebooks with a class:</p>
 <ul>
 <li><p><strong>Student Git Repository</strong> - In more advanced programming courses instructors may choose to share course content with students using git.  We recommend creating a subfolder inside the INSTRUCTOR folder that is it's own repository. For example in a course such as CMSE802 the the main directory may be CMSE802 and the subdirectory may be CMSE802_F20</p>
@@ -14292,7 +14295,8 @@ a.anchor-link {
 
 </div>
 </div>
-<div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Renaming-Files">Renaming Files<a class="anchor-link" href="#Renaming-Files">&#182;</a></h2><p>It is possible to include links inside a jupyternotebook for a local file.  These links are relative to the current directory and depend on a notebook's filename.  If an instructor renames a file there is a good chance it could break some of these links.  Using the following rename functions will automatically rename the file and update any links in the current directory.</p>
 <h3 id="Dated-Notebook-Files">Dated Notebook Files<a class="anchor-link" href="#Dated-Notebook-Files">&#182;</a></h3><p>This rename works if you just want to rename based on the date string (actually any 4-digit prefix).</p>
 
@@ -14300,7 +14304,7 @@ a.anchor-link {
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">###TODO: Rename this to renamebydate</span>
@@ -14318,9 +14322,14 @@ a.anchor-link {
 
 <div class="jp-Cell-outputWrapper">
 
+
 <div class="jp-OutputArea jp-Cell-outputArea">
 
 <div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>getting name
@@ -14330,11 +14339,15 @@ a.anchor-link {
 
 <div class="jp-OutputArea-child">
 
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
-<div id="e64c0fcc-0959-4537-a270-8f271f022198" class="jp-RenderedJavaScript jp-OutputArea-output " data-mime-type="application/javascript">
+
+
+<div id="6cc3910e-2a4f-4a4b-bfc7-ab1d47fd4b4a" class="jp-RenderedJavaScript jp-OutputArea-output " data-mime-type="application/javascript">
 <script type="text/javascript">
-var element = document.getElementById('e64c0fcc-0959-4537-a270-8f271f022198');
+var element = document.getElementById('6cc3910e-2a4f-4a4b-bfc7-ab1d47fd4b4a');
 Jupyter.notebook.kernel.execute("this_notebook = " + "'"+Jupyter.notebook.notebook_name+"'");
 </script>
 </div>
@@ -14342,6 +14355,10 @@ Jupyter.notebook.kernel.execute("this_notebook = " + "'"+Jupyter.notebook.notebo
 </div>
 
 <div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>TEST: git mv 0112--Software_Review_pre-class-assignment-INSTRUCTOR.ipynb 0112--Software_Review_pre-class-assignment-INSTRUCTOR.ipynb 
@@ -14357,14 +14374,15 @@ TEST: Student File Reference in 0113-Dwarfs_in-class-assignment-INSTRUCTOR.ipynb
 </div>
 
 </div>
-<div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Rename-any-notebook-file">Rename any notebook file<a class="anchor-link" href="#Rename-any-notebook-file">&#182;</a></h2><p>This will rename the entire file name.</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">jupyterinstruct</span> <span class="kn">import</span> <span class="n">jupytermigrate</span>
@@ -14380,9 +14398,14 @@ TEST: Student File Reference in 0113-Dwarfs_in-class-assignment-INSTRUCTOR.ipynb
 
 <div class="jp-Cell-outputWrapper">
 
+
 <div class="jp-OutputArea jp-Cell-outputArea">
 
 <div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>ERROR: File 1124-Binary_Morphology-pre-class-assignment-INSTRUCTOR.ipynb not found in directory
@@ -14395,7 +14418,8 @@ TEST: Student File Reference in 0113-Dwarfs_in-class-assignment-INSTRUCTOR.ipynb
 </div>
 
 </div>
-<div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h1 id="Semester-Migration">Semester Migration<a class="anchor-link" href="#Semester-Migration">&#182;</a></h1><p>The following bits of code use the above function and are designed to run on an entire INSTRUCTOR notebook directory.</p>
 <h2 id="Shift-Due-Dates">Shift Due Dates<a class="anchor-link" href="#Shift-Due-Dates">&#182;</a></h2><p>The follow, loops though files in the current directory of date based jupyternotebook files and adjusts their date by number of days.  Don't forget leap years.</p>
 
@@ -14403,7 +14427,7 @@ TEST: Student File Reference in 0113-Dwarfs_in-class-assignment-INSTRUCTOR.ipynb
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -14427,19 +14451,21 @@ TEST: Student File Reference in 0113-Dwarfs_in-class-assignment-INSTRUCTOR.ipynb
 </div>
 
 </div>
-<div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Search-for-and-Remove-Cells">Search for and Remove Cells<a class="anchor-link" href="#Search-for-and-Remove-Cells">&#182;</a></h2><p>The following code will search for cells with the provided search string and delete them.  There are also functions to delete the cell and all cells from the beginning of the notebook or from the cell to the end of the notebook.</p>
 
 </div>
 </div>
-<div class="jp-Cell-inputWrapper"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Add-Header-Footer">Add Header Footer<a class="anchor-link" href="#Add-Header-Footer">&#182;</a></h2><p>The following code will add headers and footer cells to a notebook. Default header hame is Header.py and default Footer name is Footer.ipynb</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">headerfooter</span> <span class="kn">import</span> <span class="n">header_footer</span>
@@ -14454,7 +14480,7 @@ TEST: Student File Reference in 0113-Dwarfs_in-class-assignment-INSTRUCTOR.ipynb
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">makeindex</span> <span class="kn">import</span> <span class="n">makeindex</span>
@@ -14469,7 +14495,7 @@ TEST: Student File Reference in 0113-Dwarfs_in-class-assignment-INSTRUCTOR.ipynb
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">o_dates</span> <span class="o">=</span> <span class="n">old_dates</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -14484,7 +14510,7 @@ TEST: Student File Reference in 0113-Dwarfs_in-class-assignment-INSTRUCTOR.ipynb
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">jupyterinstruct</span> <span class="kn">import</span> <span class="n">jupytermigrate</span>
@@ -14512,7 +14538,7 @@ TEST: Student File Reference in 0113-Dwarfs_in-class-assignment-INSTRUCTOR.ipynb
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">name</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;0107*&#39;</span><span class="p">)</span>
@@ -14528,7 +14554,7 @@ TEST: Student File Reference in 0113-Dwarfs_in-class-assignment-INSTRUCTOR.ipynb
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

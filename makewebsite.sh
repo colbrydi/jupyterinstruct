@@ -10,12 +10,7 @@ python Readme2Index.py ./README.md > docs/index.html
 
 # Convert Jupyter Notebooks
 
-for notebook in *.ipynb;
-do
-	echo $notebook
-	jupyter nbconvert --log-level=0 --no-prompt --to html $notebook 
-done
-mv *.html ./docs/
+publish2web -w ./docs *.ipynb
  
 #Make UML Diagram
 pyreverse -ASmy -o png $MODULENAME

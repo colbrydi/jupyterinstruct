@@ -36,6 +36,7 @@ import shutil
 from IPython.display import Markdown
 from jupyterinstruct.nbfilename import nbfilename
 
+
 def makedateschedule(assignment_folder=&#39;assignments&#39;):
     &#39;&#39;&#39;Make an index.md file inside the assignment_folder with references to html and ipynb files&#39;&#39;&#39;
     S_path = Path(assignment_folder)
@@ -81,19 +82,17 @@ def makedateschedule(assignment_folder=&#39;assignments&#39;):
         
     return schedule
 
-
-def publish2folder(notebook, website_folder, assignment_folder=&#39;assignments&#39;, datefile=None):
-    &#39;&#39;&#39;Copy the notebook to the website_folder/assignment_folder and make an html copy of it. 
-    Automatically generate the index.md schedule file&#39;&#39;&#39;
+def publish(notebook, outfolder=&#39;./&#39;):
 
     #Copy Notebookfile
     from_file = Path(notebook)
-    full_path = Path(website_folder,assignment_folder)
-    to_file = Path(full_path,from_file.name)
-    shutil.copy(from_file, to_file)  # For newer Python.
-
+    out_path = Path(outfolder)
+    to_file = Path(out_path,from_file.name)
     
-    destination = Path(full_path,str(from_file.stem)+&#34;.html&#34;)
+    if not from_file == to_file:
+        shutil.copy(from_file, to_file)  # For newer Python.
+
+    destination = Path(out_path,str(from_file.stem)+&#34;.html&#34;)
     nb = InstructorNB(notebook)
     
     (body, resources) = nb2html(nb.contents)
@@ -101,13 +100,18 @@ def publish2folder(notebook, website_folder, assignment_folder=&#39;assignments&
     # Read in the file
     with open(destination, &#39;w&#39;) as file:
         file.write(body)
+
+def publish2folder(notebook, website_folder=&#39;./&#39;, assignment_folder=&#39;assignments&#39;, datefile=None):
+    &#39;&#39;&#39;Copy the notebook to the website_folder/assignment_folder and make an html copy of it. 
+    Automatically generate the index.md schedule file&#39;&#39;&#39;
+    
+    publish(notebook, str(Path(website_folder,assignment_folder)))
     
     if datefile == None:
-        output = makedateschedule(full_path)
+        output = makedateschedule(website_folder)
         
      #Make a link for review
-    return Markdown(f&#34;[{destination}]({destination})\n\n{output}&#34;)
-    </code></pre>
+    return Markdown(f&#34;[{destination}]({destination})\n\n{output}&#34;)</code></pre>
 </details>
 </section>
 <section>
@@ -172,8 +176,37 @@ def publish2folder(notebook, website_folder, assignment_folder=&#39;assignments&
     return schedule</code></pre>
 </details>
 </dd>
+<dt id="jupyterinstruct.webtools.publish"><code class="name flex">
+<span>def <span class="ident">publish</span></span>(<span>notebook, outfolder='./')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def publish(notebook, outfolder=&#39;./&#39;):
+
+    #Copy Notebookfile
+    from_file = Path(notebook)
+    out_path = Path(outfolder)
+    to_file = Path(out_path,from_file.name)
+    
+    if not from_file == to_file:
+        shutil.copy(from_file, to_file)  # For newer Python.
+
+    destination = Path(out_path,str(from_file.stem)+&#34;.html&#34;)
+    nb = InstructorNB(notebook)
+    
+    (body, resources) = nb2html(nb.contents)
+    
+    # Read in the file
+    with open(destination, &#39;w&#39;) as file:
+        file.write(body)</code></pre>
+</details>
+</dd>
 <dt id="jupyterinstruct.webtools.publish2folder"><code class="name flex">
-<span>def <span class="ident">publish2folder</span></span>(<span>notebook, website_folder, assignment_folder='assignments', datefile=None)</span>
+<span>def <span class="ident">publish2folder</span></span>(<span>notebook, website_folder='./', assignment_folder='assignments', datefile=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Copy the notebook to the website_folder/assignment_folder and make an html copy of it.
@@ -182,28 +215,14 @@ Automatically generate the index.md schedule file</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def publish2folder(notebook, website_folder, assignment_folder=&#39;assignments&#39;, datefile=None):
+<pre><code class="python">def publish2folder(notebook, website_folder=&#39;./&#39;, assignment_folder=&#39;assignments&#39;, datefile=None):
     &#39;&#39;&#39;Copy the notebook to the website_folder/assignment_folder and make an html copy of it. 
     Automatically generate the index.md schedule file&#39;&#39;&#39;
-
-    #Copy Notebookfile
-    from_file = Path(notebook)
-    full_path = Path(website_folder,assignment_folder)
-    to_file = Path(full_path,from_file.name)
-    shutil.copy(from_file, to_file)  # For newer Python.
-
     
-    destination = Path(full_path,str(from_file.stem)+&#34;.html&#34;)
-    nb = InstructorNB(notebook)
-    
-    (body, resources) = nb2html(nb.contents)
-    
-    # Read in the file
-    with open(destination, &#39;w&#39;) as file:
-        file.write(body)
+    publish(notebook, str(Path(website_folder,assignment_folder)))
     
     if datefile == None:
-        output = makedateschedule(full_path)
+        output = makedateschedule(website_folder)
         
      #Make a link for review
     return Markdown(f&#34;[{destination}]({destination})\n\n{output}&#34;)</code></pre>
@@ -228,6 +247,7 @@ Automatically generate the index.md schedule file</p></div>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="jupyterinstruct.webtools.makedateschedule" href="#jupyterinstruct.webtools.makedateschedule">makedateschedule</a></code></li>
+<li><code><a title="jupyterinstruct.webtools.publish" href="#jupyterinstruct.webtools.publish">publish</a></code></li>
 <li><code><a title="jupyterinstruct.webtools.publish2folder" href="#jupyterinstruct.webtools.publish2folder">publish2folder</a></code></li>
 </ul>
 </li>
