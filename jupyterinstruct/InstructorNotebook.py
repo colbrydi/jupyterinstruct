@@ -129,6 +129,9 @@ def makestudent(filename, studentfolder='./', tags={}):
     nb = InstructorNB(filename=filename)
     
     studentfile = nb.makestudent(tags=tags, studentfolder=studentfolder)
+    
+    nb.writenotebook(studentfile)
+    
     return studentfile
 
 
@@ -223,10 +226,8 @@ def readnotebook(filename):
 
 def writenotebook(filename, nb):
     """Writes out the notebook object"""
-    text = nbformat.writes(nb)
-    with open(filename, mode="w") as file:
-        file.write(text)
-
+    with open(filename, 'w', encoding='utf-8') as file:
+        nbformat.write(nb, file)
 
 def header_footer(filename=None,
                   headerfile="Header.ipynb",
@@ -301,6 +302,14 @@ class InstructorNB():
             filename = self.filename
         writenotebook(filename, self.contents)
 
+    def removeoutputerror(self):
+        '''Loop though output cells and delete any with 'error' status'''
+        for cell in self.contents.cells:
+            if 'outputs' in cell:
+                for output in cell['outputs']:
+                    if output['output_type'] == 'error':
+                        cell['outputs'] = []
+                 
     def removecells(self, searchstring="#ANSWER#", verbose=True):
         """Remove with ```searchstring``` keyword (default #ANSWER#)"""
         newcells = []
@@ -418,10 +427,6 @@ class InstructorNB():
             print(f"   {instructor_fn} --> {student_fn}")
             return
                   
-        
-        self.writenotebook(student_fn)
-
-
         # Make a link for review
         IP.display(HTML(f"<a href={student_fn} target=\"blank\">{student_fn}</a>"))
 
