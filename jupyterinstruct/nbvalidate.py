@@ -65,7 +65,9 @@ def validate(filename):
 
     # may be needed for video verification
     try:
-        ep = ExecutePreprocessor(timeout=10, kernel_name='python3', allow_errors=True)
+        ep = ExecutePreprocessor(timeout=10, 
+                                 kernel_name='python3', 
+                                 allow_errors=True)
         ep.preprocess(nb)
     except Exception as e:
         print(truncate_string(f"   WARNING: Notebook preprocess Timeout (check for long running code)\n {e}"))

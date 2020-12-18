@@ -53,7 +53,7 @@ def makedateschedule(assignment_folder='assignments'):
         
     return schedule
 
-def publish(notebook, outfolder='./'):
+def publish(notebook, outfolder='./', execute=True):
 
     #Copy Notebookfile
     from_file = Path(notebook)
@@ -62,21 +62,34 @@ def publish(notebook, outfolder='./'):
     
     if not from_file == to_file:
         shutil.copy(from_file, to_file)  # For newer Python.
+    else:
+        print('Source and destination are the same')
 
     destination = Path(out_path,str(from_file.stem)+".html")
     nb = InstructorNB(notebook)
+    
+    try:
+        ep = ExecutePreprocessor(timeout=30, 
+                                 kernel_name='python3', 
+                                 allow_errors=True)
+        ep.preprocess(nb.contents)
+
+        nb.removeoutputerror()
+    except Exception as e:
+        print(f"   WARNING: Notebook preprocess Timeout (check for long running code)\n {e}")
     
     (body, resources) = nb2html(nb.contents)
     
     # Read in the file
     with open(destination, 'w') as file:
         file.write(body)
+    return destination
 
 def publish2folder(notebook, website_folder='./', assignment_folder='assignments', datefile=None):
     '''Copy the notebook to the website_folder/assignment_folder and make an html copy of it. 
     Automatically generate the index.md schedule file'''
     
-    publish(notebook, str(Path(website_folder,assignment_folder)))
+    destination = publish(notebook, str(Path(website_folder,assignment_folder)))
     
     if datefile == None:
         output = makedateschedule(website_folder)
