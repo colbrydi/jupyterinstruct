@@ -12,6 +12,8 @@
 <h2>Installation</h2>
 <p>This package is currently under development and is not avaliable via pypy.  to install use the following command:</p>
 <p><code>pip install git+https://github.com/colbrydi/jupyterinstruct</code></p>
+<p>To install as a user on Jupyterhub try the following instead:</p>
+<p><code>pip install -user git+https://github.com/colbrydi/jupyterinstruct</code></p>
 <h2>Command line tools</h2>
 <p>Many of the core jupyterinstruct tools have a command line interface option.  These include:</p>
 <ul>
@@ -21,6 +23,13 @@
 <li><code>renamenb OLDFILENAME NEWFILENAME</code> - Rename a notebook</li>
 <li><code>makestudentnb -o OUTPUTFOLDER NOTEBOOKNAME</code> - Make a student version of the notebook</li>
 </ul>
+<p><strong><em>NOTE</em></strong>: The MSU jupyterhub server terminal currently defaults to tcsh. To best utilize these tools type 'bash' at the command prompt when starting a terminal. </p>
+<p>```</p>
+<blockquote>
+<p>bash
+jupyterinstruct
+```</p>
+</blockquote>
 <h2>Package UML dependancies</h2>
 <p><img alt="Package UML dependances" src="https://raw.githubusercontent.com/colbrydi/jupyterinstruct/master/docs/images/packages.png"></p>
 <h2>Usage</h2>
