@@ -110,7 +110,9 @@ def validate(filename):
 
     # may be needed for video verification
     try:
-        ep = ExecutePreprocessor(timeout=10, kernel_name=&#39;python3&#39;, allow_errors=True)
+        ep = ExecutePreprocessor(timeout=10, 
+                                 kernel_name=&#39;python3&#39;, 
+                                 allow_errors=True)
         ep.preprocess(nb)
     except Exception as e:
         print(truncate_string(f&#34;   WARNING: Notebook preprocess Timeout (check for long running code)\n {e}&#34;))
@@ -276,7 +278,9 @@ if __name__ == &#34;__main__&#34;:
 
     # may be needed for video verification
     try:
-        ep = ExecutePreprocessor(timeout=10, kernel_name=&#39;python3&#39;, allow_errors=True)
+        ep = ExecutePreprocessor(timeout=10, 
+                                 kernel_name=&#39;python3&#39;, 
+                                 allow_errors=True)
         ep.preprocess(nb)
     except Exception as e:
         print(truncate_string(f&#34;   WARNING: Notebook preprocess Timeout (check for long running code)\n {e}&#34;))

@@ -36,6 +36,49 @@ import shutil
 from IPython.display import Markdown
 from jupyterinstruct.nbfilename import nbfilename
 
+import pandas
+
+
+def makecsvschedule(csvfile = &#39;CMSE314-001-NLA-S21_Schedule.csv&#39;, 
+                    assignmentsfolder = &#39;./mth314-s21-student/assignments/&#39;):
+    
+    df = pandas.read_csv(csvfile)
+    sections= [&#34;Section 001&#34;, &#34;Section 002&#34;, &#34;Section 003&#34;, &#34;Section 004&#34;]
+    times = [&#34;Tu Th 10:20AM - 11:40AM&#34;, &#34;M W 12:40PM - 2:00PM&#34;, &#34;Tu Th 1:00PM - 2:20PM&#34;, &#34;M W 12:40PM - 2:00PM&#34;]
+
+    webfolder = Path(assignmentsfolder)
+
+    output = &#34;&#34;
+    files = set()
+
+    for file in webfolder.glob(&#39;*.ipynb&#39;):
+        files.add(str(file.name))
+    
+    schedulefiles = []
+
+    for section, tm in zip(sections, times):
+        schedule = f&#34;# MTH314 {section} Schedule ({tm})\n\n&#34;
+        schedule += &#34;| Date | Assignment | Link to Notebook |\n&#34;
+        schedule += &#34;|------|------------|------------------|\n&#34;
+        for i, row in df.iterrows():
+            file = row[&#39;Number&#39;]
+            if isinstance(file,str):
+                if &#39;ipynb&#39; in file:
+                    nbfile = nbfilename(file)
+                    if nbfile.prefix.isdigit():
+                        nbfile.isInstructor = False
+                        if str(nbfile) in files:
+                            schedule += f&#34;| {row[section]} | [{nbfile.basename()}]({nbfile.basename()}.html) | [ipynb]({str(nbfile)}) |\n&#34;
+                        else:
+                            schedule += f&#34;| {row[section]} | {nbfile.basename()} | ipynb | \n&#34;
+
+        name = section.replace(&#39; &#39;,&#39;_&#39;)
+        schedulefile = f&#34;{assignmentsfolder}{name}.md&#34; 
+        with open(schedulefile, &#34;w&#34;) as file_object:
+                file_object.write(schedule)      
+        schedulefiles.append(schedulefile) 
+    return schedulefiles
+                    
 
 def makedateschedule(assignment_folder=&#39;assignments&#39;):
     &#39;&#39;&#39;Make an index.md file inside the assignment_folder with references to html and ipynb files&#39;&#39;&#39;
@@ -52,7 +95,7 @@ def makedateschedule(assignment_folder=&#39;assignments&#39;):
     InstructorFiles = I_path.glob(f&#34;*.ipynb&#34;)
 
     schedule = &#34;&#34;
-    schedule += &#34;| Date | Assignment Number | Type | Topic | Link to Notebook |\n&#34;
+    schedule += &#34;| Due Date | Assignment Number | Type | Topic | Link to Notebook |\n&#34;
     schedule += &#34;|------|--------|------|-------|----------|\n&#34;
 
     for file in sorted(InstructorFiles):
@@ -74,15 +117,15 @@ def makedateschedule(assignment_folder=&#39;assignments&#39;):
             else:
                 schedule += f&#34;| {nbfile.getlongdate()}, 2021   | {nbfile.basename()[0:4]} | {filetype} | {nbfile.basename()[5:].replace(&#39;_&#39;,&#39; &#39;)} |\n&#34;
                 
-    indexfile = Path(assignment_folder,&#39;index.md&#39;)
+    indexfile = Path(assignment_folder,&#39;Schedule.md&#39;)
                      
     # Read in the file
     with open(indexfile, &#39;w&#39;) as file:
         file.write(schedule)
         
-    return schedule
+    return str(indexfile) 
 
-def publish(notebook, outfolder=&#39;./&#39;):
+def publish(notebook, outfolder=&#39;./&#39;, execute=True):
 
     #Copy Notebookfile
     from_file = Path(notebook)
@@ -91,24 +134,41 @@ def publish(notebook, outfolder=&#39;./&#39;):
     
     if not from_file == to_file:
         shutil.copy(from_file, to_file)  # For newer Python.
+    else:
+        print(&#39;Source and destination are the same&#39;)
 
     destination = Path(out_path,str(from_file.stem)+&#34;.html&#34;)
     nb = InstructorNB(notebook)
+    
+    try:
+        ep = ExecutePreprocessor(timeout=30, 
+                                 kernel_name=&#39;python3&#39;, 
+                                 allow_errors=True)
+        ep.preprocess(nb.contents)
+
+        nb.removeoutputerror()
+    except Exception as e:
+        print(f&#34;   WARNING: Notebook preprocess Timeout (check for long running code)\n {e}&#34;)
     
     (body, resources) = nb2html(nb.contents)
     
     # Read in the file
     with open(destination, &#39;w&#39;) as file:
         file.write(body)
+    return destination
 
-def publish2folder(notebook, website_folder=&#39;./&#39;, assignment_folder=&#39;assignments&#39;, datefile=None):
+def publish2folder(notebook, website_folder=&#39;./&#39;,  csvfile=None):
     &#39;&#39;&#39;Copy the notebook to the website_folder/assignment_folder and make an html copy of it. 
     Automatically generate the index.md schedule file&#39;&#39;&#39;
     
-    publish(notebook, str(Path(website_folder,assignment_folder)))
+    destination = publish(notebook, str(Path(website_folder)))
     
-    if datefile == None:
+    if csvfile == None:
+        print(&#34;generating schedule from file dates&#34;)
         output = makedateschedule(website_folder)
+    else:
+        print(f&#34;generating schedule from csv file {csvfile}&#34;)
+        output =  makecsvschedule(csvfile, website_folder)
         
      #Make a link for review
     return Markdown(f&#34;[{destination}]({destination})\n\n{output}&#34;)</code></pre>
@@ -121,6 +181,56 @@ def publish2folder(notebook, website_folder=&#39;./&#39;, assignment_folder=&#39
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="jupyterinstruct.webtools.makecsvschedule"><code class="name flex">
+<span>def <span class="ident">makecsvschedule</span></span>(<span>csvfile='CMSE314-001-NLA-S21_Schedule.csv', assignmentsfolder='./mth314-s21-student/assignments/')</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def makecsvschedule(csvfile = &#39;CMSE314-001-NLA-S21_Schedule.csv&#39;, 
+                    assignmentsfolder = &#39;./mth314-s21-student/assignments/&#39;):
+    
+    df = pandas.read_csv(csvfile)
+    sections= [&#34;Section 001&#34;, &#34;Section 002&#34;, &#34;Section 003&#34;, &#34;Section 004&#34;]
+    times = [&#34;Tu Th 10:20AM - 11:40AM&#34;, &#34;M W 12:40PM - 2:00PM&#34;, &#34;Tu Th 1:00PM - 2:20PM&#34;, &#34;M W 12:40PM - 2:00PM&#34;]
+
+    webfolder = Path(assignmentsfolder)
+
+    output = &#34;&#34;
+    files = set()
+
+    for file in webfolder.glob(&#39;*.ipynb&#39;):
+        files.add(str(file.name))
+    
+    schedulefiles = []
+
+    for section, tm in zip(sections, times):
+        schedule = f&#34;# MTH314 {section} Schedule ({tm})\n\n&#34;
+        schedule += &#34;| Date | Assignment | Link to Notebook |\n&#34;
+        schedule += &#34;|------|------------|------------------|\n&#34;
+        for i, row in df.iterrows():
+            file = row[&#39;Number&#39;]
+            if isinstance(file,str):
+                if &#39;ipynb&#39; in file:
+                    nbfile = nbfilename(file)
+                    if nbfile.prefix.isdigit():
+                        nbfile.isInstructor = False
+                        if str(nbfile) in files:
+                            schedule += f&#34;| {row[section]} | [{nbfile.basename()}]({nbfile.basename()}.html) | [ipynb]({str(nbfile)}) |\n&#34;
+                        else:
+                            schedule += f&#34;| {row[section]} | {nbfile.basename()} | ipynb | \n&#34;
+
+        name = section.replace(&#39; &#39;,&#39;_&#39;)
+        schedulefile = f&#34;{assignmentsfolder}{name}.md&#34; 
+        with open(schedulefile, &#34;w&#34;) as file_object:
+                file_object.write(schedule)      
+        schedulefiles.append(schedulefile) 
+    return schedulefiles</code></pre>
+</details>
+</dd>
 <dt id="jupyterinstruct.webtools.makedateschedule"><code class="name flex">
 <span>def <span class="ident">makedateschedule</span></span>(<span>assignment_folder='assignments')</span>
 </code></dt>
@@ -145,7 +255,7 @@ def publish2folder(notebook, website_folder=&#39;./&#39;, assignment_folder=&#39
     InstructorFiles = I_path.glob(f&#34;*.ipynb&#34;)
 
     schedule = &#34;&#34;
-    schedule += &#34;| Date | Assignment Number | Type | Topic | Link to Notebook |\n&#34;
+    schedule += &#34;| Due Date | Assignment Number | Type | Topic | Link to Notebook |\n&#34;
     schedule += &#34;|------|--------|------|-------|----------|\n&#34;
 
     for file in sorted(InstructorFiles):
@@ -167,17 +277,17 @@ def publish2folder(notebook, website_folder=&#39;./&#39;, assignment_folder=&#39
             else:
                 schedule += f&#34;| {nbfile.getlongdate()}, 2021   | {nbfile.basename()[0:4]} | {filetype} | {nbfile.basename()[5:].replace(&#39;_&#39;,&#39; &#39;)} |\n&#34;
                 
-    indexfile = Path(assignment_folder,&#39;index.md&#39;)
+    indexfile = Path(assignment_folder,&#39;Schedule.md&#39;)
                      
     # Read in the file
     with open(indexfile, &#39;w&#39;) as file:
         file.write(schedule)
         
-    return schedule</code></pre>
+    return str(indexfile) </code></pre>
 </details>
 </dd>
 <dt id="jupyterinstruct.webtools.publish"><code class="name flex">
-<span>def <span class="ident">publish</span></span>(<span>notebook, outfolder='./')</span>
+<span>def <span class="ident">publish</span></span>(<span>notebook, outfolder='./', execute=True)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -185,7 +295,7 @@ def publish2folder(notebook, website_folder=&#39;./&#39;, assignment_folder=&#39
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def publish(notebook, outfolder=&#39;./&#39;):
+<pre><code class="python">def publish(notebook, outfolder=&#39;./&#39;, execute=True):
 
     #Copy Notebookfile
     from_file = Path(notebook)
@@ -194,19 +304,32 @@ def publish2folder(notebook, website_folder=&#39;./&#39;, assignment_folder=&#39
     
     if not from_file == to_file:
         shutil.copy(from_file, to_file)  # For newer Python.
+    else:
+        print(&#39;Source and destination are the same&#39;)
 
     destination = Path(out_path,str(from_file.stem)+&#34;.html&#34;)
     nb = InstructorNB(notebook)
+    
+    try:
+        ep = ExecutePreprocessor(timeout=30, 
+                                 kernel_name=&#39;python3&#39;, 
+                                 allow_errors=True)
+        ep.preprocess(nb.contents)
+
+        nb.removeoutputerror()
+    except Exception as e:
+        print(f&#34;   WARNING: Notebook preprocess Timeout (check for long running code)\n {e}&#34;)
     
     (body, resources) = nb2html(nb.contents)
     
     # Read in the file
     with open(destination, &#39;w&#39;) as file:
-        file.write(body)</code></pre>
+        file.write(body)
+    return destination</code></pre>
 </details>
 </dd>
 <dt id="jupyterinstruct.webtools.publish2folder"><code class="name flex">
-<span>def <span class="ident">publish2folder</span></span>(<span>notebook, website_folder='./', assignment_folder='assignments', datefile=None)</span>
+<span>def <span class="ident">publish2folder</span></span>(<span>notebook, website_folder='./', csvfile=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Copy the notebook to the website_folder/assignment_folder and make an html copy of it.
@@ -215,14 +338,18 @@ Automatically generate the index.md schedule file</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def publish2folder(notebook, website_folder=&#39;./&#39;, assignment_folder=&#39;assignments&#39;, datefile=None):
+<pre><code class="python">def publish2folder(notebook, website_folder=&#39;./&#39;,  csvfile=None):
     &#39;&#39;&#39;Copy the notebook to the website_folder/assignment_folder and make an html copy of it. 
     Automatically generate the index.md schedule file&#39;&#39;&#39;
     
-    publish(notebook, str(Path(website_folder,assignment_folder)))
+    destination = publish(notebook, str(Path(website_folder)))
     
-    if datefile == None:
+    if csvfile == None:
+        print(&#34;generating schedule from file dates&#34;)
         output = makedateschedule(website_folder)
+    else:
+        print(f&#34;generating schedule from csv file {csvfile}&#34;)
+        output =  makecsvschedule(csvfile, website_folder)
         
      #Make a link for review
     return Markdown(f&#34;[{destination}]({destination})\n\n{output}&#34;)</code></pre>
@@ -246,6 +373,7 @@ Automatically generate the index.md schedule file</p></div>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="jupyterinstruct.webtools.makecsvschedule" href="#jupyterinstruct.webtools.makecsvschedule">makecsvschedule</a></code></li>
 <li><code><a title="jupyterinstruct.webtools.makedateschedule" href="#jupyterinstruct.webtools.makedateschedule">makedateschedule</a></code></li>
 <li><code><a title="jupyterinstruct.webtools.publish" href="#jupyterinstruct.webtools.publish">publish</a></code></li>
 <li><code><a title="jupyterinstruct.webtools.publish2folder" href="#jupyterinstruct.webtools.publish2folder">publish2folder</a></code></li>

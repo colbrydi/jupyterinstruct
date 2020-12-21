@@ -160,6 +160,9 @@ def makestudent(filename, studentfolder=&#39;./&#39;, tags={}):
     nb = InstructorNB(filename=filename)
     
     studentfile = nb.makestudent(tags=tags, studentfolder=studentfolder)
+    
+    nb.writenotebook(studentfile)
+    
     return studentfile
 
 
@@ -254,10 +257,8 @@ def readnotebook(filename):
 
 def writenotebook(filename, nb):
     &#34;&#34;&#34;Writes out the notebook object&#34;&#34;&#34;
-    text = nbformat.writes(nb)
-    with open(filename, mode=&#34;w&#34;) as file:
-        file.write(text)
-
+    with open(filename, &#39;w&#39;, encoding=&#39;utf-8&#39;) as file:
+        nbformat.write(nb, file)
 
 def header_footer(filename=None,
                   headerfile=&#34;Header.ipynb&#34;,
@@ -332,6 +333,14 @@ class InstructorNB():
             filename = self.filename
         writenotebook(filename, self.contents)
 
+    def removeoutputerror(self):
+        &#39;&#39;&#39;Loop though output cells and delete any with &#39;error&#39; status&#39;&#39;&#39;
+        for cell in self.contents.cells:
+            if &#39;outputs&#39; in cell:
+                for output in cell[&#39;outputs&#39;]:
+                    if output[&#39;output_type&#39;] == &#39;error&#39;:
+                        cell[&#39;outputs&#39;] = []
+                 
     def removecells(self, searchstring=&#34;#ANSWER#&#34;, verbose=True):
         &#34;&#34;&#34;Remove with ```searchstring``` keyword (default #ANSWER#)&#34;&#34;&#34;
         newcells = []
@@ -449,10 +458,6 @@ class InstructorNB():
             print(f&#34;   {instructor_fn} --&gt; {student_fn}&#34;)
             return
                   
-        
-        self.writenotebook(student_fn)
-
-
         # Make a link for review
         IP.display(HTML(f&#34;&lt;a href={student_fn} target=\&#34;blank\&#34;&gt;{student_fn}&lt;/a&gt;&#34;))
 
@@ -697,6 +702,9 @@ requires some time before the name is stored in the global namespace as <code>th
     nb = InstructorNB(filename=filename)
     
     studentfile = nb.makestudent(tags=tags, studentfolder=studentfolder)
+    
+    nb.writenotebook(studentfile)
+    
     return studentfile</code></pre>
 </details>
 </dd>
@@ -843,9 +851,8 @@ body and resurcers from teh html_export file</p></div>
 </summary>
 <pre><code class="python">def writenotebook(filename, nb):
     &#34;&#34;&#34;Writes out the notebook object&#34;&#34;&#34;
-    text = nbformat.writes(nb)
-    with open(filename, mode=&#34;w&#34;) as file:
-        file.write(text)</code></pre>
+    with open(filename, &#39;w&#39;, encoding=&#39;utf-8&#39;) as file:
+        nbformat.write(nb, file)</code></pre>
 </details>
 </dd>
 </dl>
@@ -911,6 +918,14 @@ body and resurcers from teh html_export file</p></div>
             filename = self.filename
         writenotebook(filename, self.contents)
 
+    def removeoutputerror(self):
+        &#39;&#39;&#39;Loop though output cells and delete any with &#39;error&#39; status&#39;&#39;&#39;
+        for cell in self.contents.cells:
+            if &#39;outputs&#39; in cell:
+                for output in cell[&#39;outputs&#39;]:
+                    if output[&#39;output_type&#39;] == &#39;error&#39;:
+                        cell[&#39;outputs&#39;] = []
+                 
     def removecells(self, searchstring=&#34;#ANSWER#&#34;, verbose=True):
         &#34;&#34;&#34;Remove with ```searchstring``` keyword (default #ANSWER#)&#34;&#34;&#34;
         newcells = []
@@ -1028,10 +1043,6 @@ body and resurcers from teh html_export file</p></div>
             print(f&#34;   {instructor_fn} --&gt; {student_fn}&#34;)
             return
                   
-        
-        self.writenotebook(student_fn)
-
-
         # Make a link for review
         IP.display(HTML(f&#34;&lt;a href={student_fn} target=\&#34;blank\&#34;&gt;{student_fn}&lt;/a&gt;&#34;))
 
@@ -1149,10 +1160,6 @@ body and resurcers from teh html_export file</p></div>
         print(f&#34;   {instructor_fn} --&gt; {student_fn}&#34;)
         return
               
-    
-    self.writenotebook(student_fn)
-
-
     # Make a link for review
     IP.display(HTML(f&#34;&lt;a href={student_fn} target=\&#34;blank\&#34;&gt;{student_fn}&lt;/a&gt;&#34;))
 
@@ -1268,6 +1275,24 @@ body and resurcers from teh html_export file</p></div>
     self.contents.cells = newcells</code></pre>
 </details>
 </dd>
+<dt id="jupyterinstruct.InstructorNotebook.InstructorNB.removeoutputerror"><code class="name flex">
+<span>def <span class="ident">removeoutputerror</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Loop though output cells and delete any with 'error' status</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def removeoutputerror(self):
+    &#39;&#39;&#39;Loop though output cells and delete any with &#39;error&#39; status&#39;&#39;&#39;
+    for cell in self.contents.cells:
+        if &#39;outputs&#39; in cell:
+            for output in cell[&#39;outputs&#39;]:
+                if output[&#39;output_type&#39;] == &#39;error&#39;:
+                    cell[&#39;outputs&#39;] = []</code></pre>
+</details>
+</dd>
 <dt id="jupyterinstruct.InstructorNotebook.InstructorNB.replacecell"><code class="name flex">
 <span>def <span class="ident">replacecell</span></span>(<span>self, searchstring='###TOC###', cellfile='Footer.ipynb')</span>
 </code></dt>
@@ -1369,6 +1394,7 @@ body and resurcers from teh html_export file</p></div>
 <li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.removeafter" href="#jupyterinstruct.InstructorNotebook.InstructorNB.removeafter">removeafter</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.removebefore" href="#jupyterinstruct.InstructorNotebook.InstructorNB.removebefore">removebefore</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.removecells" href="#jupyterinstruct.InstructorNotebook.InstructorNB.removecells">removecells</a></code></li>
+<li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.removeoutputerror" href="#jupyterinstruct.InstructorNotebook.InstructorNB.removeoutputerror">removeoutputerror</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.replacecell" href="#jupyterinstruct.InstructorNotebook.InstructorNB.replacecell">replacecell</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.stripoutput" href="#jupyterinstruct.InstructorNotebook.InstructorNB.stripoutput">stripoutput</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.writenotebook" href="#jupyterinstruct.InstructorNotebook.InstructorNB.writenotebook">writenotebook</a></code></li>
