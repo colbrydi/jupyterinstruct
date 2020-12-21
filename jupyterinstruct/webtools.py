@@ -7,6 +7,49 @@ import shutil
 from IPython.display import Markdown
 from jupyterinstruct.nbfilename import nbfilename
 
+import pandas
+
+
+def makecsvschedule(csvfile = 'CMSE314-001-NLA-S21_Schedule.csv', 
+                    assignmentsfolder = './mth314-s21-student/assignments/'):
+    
+    df = pandas.read_csv(csvfile)
+    sections= ["Section 001", "Section 002", "Section 003", "Section 004"]
+    times = ["Tu Th 10:20AM - 11:40AM", "M W 12:40PM - 2:00PM", "Tu Th 1:00PM - 2:20PM", "M W 12:40PM - 2:00PM"]
+
+    webfolder = Path(assignmentsfolder)
+
+    output = ""
+    files = set()
+
+    for file in webfolder.glob('*.ipynb'):
+        files.add(str(file.name))
+    
+    schedulefiles = []
+
+    for section, tm in zip(sections, times):
+        schedule = f"# MTH314 {section} Schedule ({tm})\n\n"
+        schedule += "| Date | Assignment | Link to Notebook |\n"
+        schedule += "|------|------------|------------------|\n"
+        for i, row in df.iterrows():
+            file = row['Number']
+            if isinstance(file,str):
+                if 'ipynb' in file:
+                    nbfile = nbfilename(file)
+                    if nbfile.prefix.isdigit():
+                        nbfile.isInstructor = False
+                        if str(nbfile) in files:
+                            schedule += f"| {row[section]} | [{nbfile.basename()}]({nbfile.basename()}.html) | [ipynb]({str(nbfile)}) |\n"
+                        else:
+                            schedule += f"| {row[section]} | {nbfile.basename()} | ipynb | \n"
+
+        name = section.replace(' ','_')
+        schedulefile = f"{assignmentsfolder}{name}.md" 
+        with open(schedulefile, "w") as file_object:
+                file_object.write(schedule)      
+        schedulefiles.append(schedulefile) 
+    return schedulefiles
+                    
 
 def makedateschedule(assignment_folder='assignments'):
     '''Make an index.md file inside the assignment_folder with references to html and ipynb files'''
@@ -23,7 +66,7 @@ def makedateschedule(assignment_folder='assignments'):
     InstructorFiles = I_path.glob(f"*.ipynb")
 
     schedule = ""
-    schedule += "| Date | Assignment Number | Type | Topic | Link to Notebook |\n"
+    schedule += "| Due Date | Assignment Number | Type | Topic | Link to Notebook |\n"
     schedule += "|------|--------|------|-------|----------|\n"
 
     for file in sorted(InstructorFiles):
@@ -45,13 +88,13 @@ def makedateschedule(assignment_folder='assignments'):
             else:
                 schedule += f"| {nbfile.getlongdate()}, 2021   | {nbfile.basename()[0:4]} | {filetype} | {nbfile.basename()[5:].replace('_',' ')} |\n"
                 
-    indexfile = Path(assignment_folder,'index.md')
+    indexfile = Path(assignment_folder,'Schedule.md')
                      
     # Read in the file
     with open(indexfile, 'w') as file:
         file.write(schedule)
         
-    return schedule
+    return str(indexfile) 
 
 def publish(notebook, outfolder='./', execute=True):
 
@@ -85,14 +128,18 @@ def publish(notebook, outfolder='./', execute=True):
         file.write(body)
     return destination
 
-def publish2folder(notebook, website_folder='./', assignment_folder='assignments', datefile=None):
+def publish2folder(notebook, website_folder='./',  csvfile=None):
     '''Copy the notebook to the website_folder/assignment_folder and make an html copy of it. 
     Automatically generate the index.md schedule file'''
     
-    destination = publish(notebook, str(Path(website_folder,assignment_folder)))
+    destination = publish(notebook, str(Path(website_folder)))
     
-    if datefile == None:
+    if csvfile == None:
+        print("generating schedule from file dates")
         output = makedateschedule(website_folder)
+    else:
+        print(f"generating schedule from csv file {csvfile}")
+        output =  makecsvschedule(csvfile, website_folder)
         
      #Make a link for review
     return Markdown(f"[{destination}]({destination})\n\n{output}")
