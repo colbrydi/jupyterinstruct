@@ -332,7 +332,7 @@ class InstructorNB():
         if found >= 0:
             self.contents.cells = self.contents.cells[found+1:]
         return
-
+    
     def removeafter(self, searchstring="#STARTFOOTER#"):
         """Remove all cells efore cell with ```searchstring``` keyword (default #START_FOOTER#)"""
         index = 0
@@ -341,6 +341,31 @@ class InstructorNB():
                 self.contents.cells = self.contents.cells[:index]
                 return
             index = index+1
+    
+    
+    def incertbefore(self, searchstring="###STARTHEADER###", notebook="", verbose=True):
+        """Incert cells from notebook before all cells that have  ```searchstring``` keyword"""
+        incertbook = readnotebook(notebook)
+        newcells = []
+        for cell in self.contents.cells:
+            if searchstring in cell['source']:
+                if verbose:
+                    print(f"\incerting {cell['source']}\n")
+                newcells = newcells + incertbook.cells    
+            newcells.append(cell)
+        self.contents.cells = newcells
+        
+    def incertafter(self, searchstring="###ENDHEADER###", notebook="", verbose=True):
+        """Incert cells from notebook after all cells that have  ```searchstring``` keyword"""
+        incertbook = readnotebook(notebook)
+        newcells = []
+        for cell in self.contents.cells:
+            newcells.append(cell)
+            if searchstring in cell['source']:
+                if verbose:
+                    print(f"\nincerting {cell['source']}\n")
+                newcells = newcells + incertbook.cells    
+        self.contents.cells = newcells
 
     def replacecell(self, searchstring="###TOC###", cellfile="Footer.ipynb"):
         """Replace a cell based on a search string with the contents of a file"""
