@@ -52,9 +52,9 @@ def makecsvschedule(csvfile = 'CMSE314-001-NLA-S21_Schedule.csv',
                     webname = f"{nbfile.basename()}.html"
                     
                     if webname in webfiles:
-                        schedule += f" {nbfile.basename()}]({webname}) |"
+                        schedule += f" [{nbfile.basename()}]({webname}) |"
                     else:
-                        schedule += f" {nbfile.basename()} |"
+                        schedule += f" [{nbfile.basename()} |"
                         
                     if str(nbfile) in files:
                         schedule += f" [ipynb]({str(nbfile)}) |\n"
@@ -66,7 +66,7 @@ def makecsvschedule(csvfile = 'CMSE314-001-NLA-S21_Schedule.csv',
                     schedule += f"| {row[section]} |"
                     
                     if webname in webfiles:
-                        schedule += f" {file}]({webname}) |       |\n"
+                        schedule += f" [{file}]({webname}) |       |\n"
                     else:
                         schedule += f" {file} |      |\n"
 
