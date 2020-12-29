@@ -12,7 +12,7 @@ import pandas
 
 def makecsvschedule(csvfile = 'CMSE314-001-NLA-S21_Schedule.csv', 
                     assignmentsfolder = './mth314-s21-student/assignments/',
-                    sections= ["Section 001", "Section 002", "Section 003", "Section 004"],
+                    sections= ["Section 001", "Section 002", "Section 003", "Section 004-005"],
                     times = ["Tu Th 10:20AM - 11:40AM", 
                              "M W 12:40PM - 2:00PM", 
                              "Tu Th 1:00PM - 2:20PM", 
@@ -24,8 +24,12 @@ def makecsvschedule(csvfile = 'CMSE314-001-NLA-S21_Schedule.csv',
 
     output = ""
     files = set()
+    mdfiles = set()
     webfiles= set()
 
+    
+    for file in webfolder.glob('*.md'):
+        mdfiles.add(str(file.name))
     
     for file in webfolder.glob('*.html'):
         webfiles.add(str(file.name))
@@ -37,7 +41,7 @@ def makecsvschedule(csvfile = 'CMSE314-001-NLA-S21_Schedule.csv',
     schedulefiles = []
 
     for section, tm in zip(sections, times):
-        schedule = f"# MTH314 {section} Schedule ({tm})\n\n"
+        schedule = f"# MTH314 {section} \n\n {tm}\n\n"
         schedule += "| Date | Assignment | Link to Notebook |\n"
         schedule += "|------|------------|------------------|\n"
         for i, row in df.iterrows():
@@ -61,14 +65,18 @@ def makecsvschedule(csvfile = 'CMSE314-001-NLA-S21_Schedule.csv',
                     else:
                         schedule += f"      |\n"
                 else:
-                    webname = f"{file}.html"
+                    webname = f"{file}.md"
                     
                     schedule += f"| {row[section]} |"
-                    
-                    if webname in webfiles:
+
+                    if webname in mdfiles:
                         schedule += f" [{file}]({webname}) |       |\n"
                     else:
-                        schedule += f" {file} |      |\n"
+                        webname = f"{file}.html"
+                        if webname in webfiles:
+                            schedule += f" [{file}]({webname}) |       |\n"
+                        else:
+                            schedule += f" {file} |      |\n"
 
 
         name = section.replace(' ','_')
