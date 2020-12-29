@@ -54,7 +54,7 @@ def makecsvschedule(csvfile = 'CMSE314-001-NLA-S21_Schedule.csv',
                     if webname in webfiles:
                         schedule += f" [{nbfile.basename()}]({webname}) |"
                     else:
-                        schedule += f" [{nbfile.basename()} |"
+                        schedule += f" {nbfile.basename()} |"
                         
                     if str(nbfile) in files:
                         schedule += f" [ipynb]({str(nbfile)}) |\n"
