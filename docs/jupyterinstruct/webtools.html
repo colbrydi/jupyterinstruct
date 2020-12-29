@@ -40,19 +40,28 @@ import pandas
 
 
 def makecsvschedule(csvfile = &#39;CMSE314-001-NLA-S21_Schedule.csv&#39;, 
-                    assignmentsfolder = &#39;./mth314-s21-student/assignments/&#39;):
+                    assignmentsfolder = &#39;./mth314-s21-student/assignments/&#39;,
+                    sections= [&#34;Section 001&#34;, &#34;Section 002&#34;, &#34;Section 003&#34;, &#34;Section 004&#34;],
+                    times = [&#34;Tu Th 10:20AM - 11:40AM&#34;, 
+                             &#34;M W 12:40PM - 2:00PM&#34;, 
+                             &#34;Tu Th 1:00PM - 2:20PM&#34;, 
+                             &#34;M W 12:40PM - 2:00PM&#34;]):
     
     df = pandas.read_csv(csvfile)
-    sections= [&#34;Section 001&#34;, &#34;Section 002&#34;, &#34;Section 003&#34;, &#34;Section 004&#34;]
-    times = [&#34;Tu Th 10:20AM - 11:40AM&#34;, &#34;M W 12:40PM - 2:00PM&#34;, &#34;Tu Th 1:00PM - 2:20PM&#34;, &#34;M W 12:40PM - 2:00PM&#34;]
 
     webfolder = Path(assignmentsfolder)
 
     output = &#34;&#34;
     files = set()
+    webfiles= set()
 
+    
+    for file in webfolder.glob(&#39;*.html&#39;):
+        webfiles.add(str(file.name))
+    
     for file in webfolder.glob(&#39;*.ipynb&#39;):
         files.add(str(file.name))
+
     
     schedulefiles = []
 
@@ -61,16 +70,35 @@ def makecsvschedule(csvfile = &#39;CMSE314-001-NLA-S21_Schedule.csv&#39;,
         schedule += &#34;| Date | Assignment | Link to Notebook |\n&#34;
         schedule += &#34;|------|------------|------------------|\n&#34;
         for i, row in df.iterrows():
-            file = row[&#39;Number&#39;]
+            file = row[&#39;Assignment&#39;]
             if isinstance(file,str):
                 if &#39;ipynb&#39; in file:
                     nbfile = nbfilename(file)
-                    if nbfile.prefix.isdigit():
-                        nbfile.isInstructor = False
-                        if str(nbfile) in files:
-                            schedule += f&#34;| {row[section]} | [{nbfile.basename()}]({nbfile.basename()}.html) | [ipynb]({str(nbfile)}) |\n&#34;
-                        else:
-                            schedule += f&#34;| {row[section]} | {nbfile.basename()} | ipynb | \n&#34;
+                    nbfile.isInstructor = False
+                    
+                    schedule += f&#34;| {row[section]} |&#34;
+                    
+                    webname = f&#34;{nbfile.basename()}.html&#34;
+                    
+                    if webname in webfiles:
+                        schedule += f&#34; {nbfile.basename()}]({webname}) |&#34;
+                    else:
+                        schedule += f&#34; {nbfile.basename()} |&#34;
+                        
+                    if str(nbfile) in files:
+                        schedule += f&#34; [ipynb]({str(nbfile)}) |\n&#34;
+                    else:
+                        schedule += f&#34;      |\n&#34;
+                else:
+                    webname = f&#34;{file}.html&#34;
+                    
+                    schedule += f&#34;| {row[section]} |&#34;
+                    
+                    if webname in webfiles:
+                        schedule += f&#34; {file}]({webname}) |       |\n&#34;
+                    else:
+                        schedule += f&#34; {file} |      |\n&#34;
+
 
         name = section.replace(&#39; &#39;,&#39;_&#39;)
         schedulefile = f&#34;{assignmentsfolder}{name}.md&#34; 
@@ -182,7 +210,7 @@ def publish2folder(notebook, website_folder=&#39;./&#39;,  csvfile=None):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="jupyterinstruct.webtools.makecsvschedule"><code class="name flex">
-<span>def <span class="ident">makecsvschedule</span></span>(<span>csvfile='CMSE314-001-NLA-S21_Schedule.csv', assignmentsfolder='./mth314-s21-student/assignments/')</span>
+<span>def <span class="ident">makecsvschedule</span></span>(<span>csvfile='CMSE314-001-NLA-S21_Schedule.csv', assignmentsfolder='./mth314-s21-student/assignments/', sections=['Section 001', 'Section 002', 'Section 003', 'Section 004'], times=['Tu Th 10:20AM - 11:40AM', 'M W 12:40PM - 2:00PM', 'Tu Th 1:00PM - 2:20PM', 'M W 12:40PM - 2:00PM'])</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -191,19 +219,28 @@ def publish2folder(notebook, website_folder=&#39;./&#39;,  csvfile=None):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def makecsvschedule(csvfile = &#39;CMSE314-001-NLA-S21_Schedule.csv&#39;, 
-                    assignmentsfolder = &#39;./mth314-s21-student/assignments/&#39;):
+                    assignmentsfolder = &#39;./mth314-s21-student/assignments/&#39;,
+                    sections= [&#34;Section 001&#34;, &#34;Section 002&#34;, &#34;Section 003&#34;, &#34;Section 004&#34;],
+                    times = [&#34;Tu Th 10:20AM - 11:40AM&#34;, 
+                             &#34;M W 12:40PM - 2:00PM&#34;, 
+                             &#34;Tu Th 1:00PM - 2:20PM&#34;, 
+                             &#34;M W 12:40PM - 2:00PM&#34;]):
     
     df = pandas.read_csv(csvfile)
-    sections= [&#34;Section 001&#34;, &#34;Section 002&#34;, &#34;Section 003&#34;, &#34;Section 004&#34;]
-    times = [&#34;Tu Th 10:20AM - 11:40AM&#34;, &#34;M W 12:40PM - 2:00PM&#34;, &#34;Tu Th 1:00PM - 2:20PM&#34;, &#34;M W 12:40PM - 2:00PM&#34;]
 
     webfolder = Path(assignmentsfolder)
 
     output = &#34;&#34;
     files = set()
+    webfiles= set()
 
+    
+    for file in webfolder.glob(&#39;*.html&#39;):
+        webfiles.add(str(file.name))
+    
     for file in webfolder.glob(&#39;*.ipynb&#39;):
         files.add(str(file.name))
+
     
     schedulefiles = []
 
@@ -212,16 +249,35 @@ def publish2folder(notebook, website_folder=&#39;./&#39;,  csvfile=None):
         schedule += &#34;| Date | Assignment | Link to Notebook |\n&#34;
         schedule += &#34;|------|------------|------------------|\n&#34;
         for i, row in df.iterrows():
-            file = row[&#39;Number&#39;]
+            file = row[&#39;Assignment&#39;]
             if isinstance(file,str):
                 if &#39;ipynb&#39; in file:
                     nbfile = nbfilename(file)
-                    if nbfile.prefix.isdigit():
-                        nbfile.isInstructor = False
-                        if str(nbfile) in files:
-                            schedule += f&#34;| {row[section]} | [{nbfile.basename()}]({nbfile.basename()}.html) | [ipynb]({str(nbfile)}) |\n&#34;
-                        else:
-                            schedule += f&#34;| {row[section]} | {nbfile.basename()} | ipynb | \n&#34;
+                    nbfile.isInstructor = False
+                    
+                    schedule += f&#34;| {row[section]} |&#34;
+                    
+                    webname = f&#34;{nbfile.basename()}.html&#34;
+                    
+                    if webname in webfiles:
+                        schedule += f&#34; {nbfile.basename()}]({webname}) |&#34;
+                    else:
+                        schedule += f&#34; {nbfile.basename()} |&#34;
+                        
+                    if str(nbfile) in files:
+                        schedule += f&#34; [ipynb]({str(nbfile)}) |\n&#34;
+                    else:
+                        schedule += f&#34;      |\n&#34;
+                else:
+                    webname = f&#34;{file}.html&#34;
+                    
+                    schedule += f&#34;| {row[section]} |&#34;
+                    
+                    if webname in webfiles:
+                        schedule += f&#34; {file}]({webname}) |       |\n&#34;
+                    else:
+                        schedule += f&#34; {file} |      |\n&#34;
+
 
         name = section.replace(&#39; &#39;,&#39;_&#39;)
         schedulefile = f&#34;{assignmentsfolder}{name}.md&#34; 

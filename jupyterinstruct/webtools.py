@@ -11,19 +11,28 @@ import pandas
 
 
 def makecsvschedule(csvfile = 'CMSE314-001-NLA-S21_Schedule.csv', 
-                    assignmentsfolder = './mth314-s21-student/assignments/'):
+                    assignmentsfolder = './mth314-s21-student/assignments/',
+                    sections= ["Section 001", "Section 002", "Section 003", "Section 004"],
+                    times = ["Tu Th 10:20AM - 11:40AM", 
+                             "M W 12:40PM - 2:00PM", 
+                             "Tu Th 1:00PM - 2:20PM", 
+                             "M W 12:40PM - 2:00PM"]):
     
     df = pandas.read_csv(csvfile)
-    sections= ["Section 001", "Section 002", "Section 003", "Section 004"]
-    times = ["Tu Th 10:20AM - 11:40AM", "M W 12:40PM - 2:00PM", "Tu Th 1:00PM - 2:20PM", "M W 12:40PM - 2:00PM"]
 
     webfolder = Path(assignmentsfolder)
 
     output = ""
     files = set()
+    webfiles= set()
 
+    
+    for file in webfolder.glob('*.html'):
+        webfiles.add(str(file.name))
+    
     for file in webfolder.glob('*.ipynb'):
         files.add(str(file.name))
+
     
     schedulefiles = []
 
@@ -32,16 +41,35 @@ def makecsvschedule(csvfile = 'CMSE314-001-NLA-S21_Schedule.csv',
         schedule += "| Date | Assignment | Link to Notebook |\n"
         schedule += "|------|------------|------------------|\n"
         for i, row in df.iterrows():
-            file = row['Number']
+            file = row['Assignment']
             if isinstance(file,str):
                 if 'ipynb' in file:
                     nbfile = nbfilename(file)
-                    if nbfile.prefix.isdigit():
-                        nbfile.isInstructor = False
-                        if str(nbfile) in files:
-                            schedule += f"| {row[section]} | [{nbfile.basename()}]({nbfile.basename()}.html) | [ipynb]({str(nbfile)}) |\n"
-                        else:
-                            schedule += f"| {row[section]} | {nbfile.basename()} | ipynb | \n"
+                    nbfile.isInstructor = False
+                    
+                    schedule += f"| {row[section]} |"
+                    
+                    webname = f"{nbfile.basename()}.html"
+                    
+                    if webname in webfiles:
+                        schedule += f" {nbfile.basename()}]({webname}) |"
+                    else:
+                        schedule += f" {nbfile.basename()} |"
+                        
+                    if str(nbfile) in files:
+                        schedule += f" [ipynb]({str(nbfile)}) |\n"
+                    else:
+                        schedule += f"      |\n"
+                else:
+                    webname = f"{file}.html"
+                    
+                    schedule += f"| {row[section]} |"
+                    
+                    if webname in webfiles:
+                        schedule += f" {file}]({webname}) |       |\n"
+                    else:
+                        schedule += f" {file} |      |\n"
+
 
         name = section.replace(' ','_')
         schedulefile = f"{assignmentsfolder}{name}.md" 

@@ -363,7 +363,7 @@ class InstructorNB():
         if found &gt;= 0:
             self.contents.cells = self.contents.cells[found+1:]
         return
-
+    
     def removeafter(self, searchstring=&#34;#STARTFOOTER#&#34;):
         &#34;&#34;&#34;Remove all cells efore cell with ```searchstring``` keyword (default #START_FOOTER#)&#34;&#34;&#34;
         index = 0
@@ -372,6 +372,31 @@ class InstructorNB():
                 self.contents.cells = self.contents.cells[:index]
                 return
             index = index+1
+    
+    
+    def incertbefore(self, searchstring=&#34;###STARTHEADER###&#34;, notebook=&#34;&#34;, verbose=True):
+        &#34;&#34;&#34;Incert cells from notebook before all cells that have  ```searchstring``` keyword&#34;&#34;&#34;
+        incertbook = readnotebook(notebook)
+        newcells = []
+        for cell in self.contents.cells:
+            if searchstring in cell[&#39;source&#39;]:
+                if verbose:
+                    print(f&#34;\incerting {cell[&#39;source&#39;]}\n&#34;)
+                newcells = newcells + incertbook.cells    
+            newcells.append(cell)
+        self.contents.cells = newcells
+        
+    def incertafter(self, searchstring=&#34;###ENDHEADER###&#34;, notebook=&#34;&#34;, verbose=True):
+        &#34;&#34;&#34;Incert cells from notebook after all cells that have  ```searchstring``` keyword&#34;&#34;&#34;
+        incertbook = readnotebook(notebook)
+        newcells = []
+        for cell in self.contents.cells:
+            newcells.append(cell)
+            if searchstring in cell[&#39;source&#39;]:
+                if verbose:
+                    print(f&#34;\nincerting {cell[&#39;source&#39;]}\n&#34;)
+                newcells = newcells + incertbook.cells    
+        self.contents.cells = newcells
 
     def replacecell(self, searchstring=&#34;###TOC###&#34;, cellfile=&#34;Footer.ipynb&#34;):
         &#34;&#34;&#34;Replace a cell based on a search string with the contents of a file&#34;&#34;&#34;
@@ -948,7 +973,7 @@ body and resurcers from teh html_export file</p></div>
         if found &gt;= 0:
             self.contents.cells = self.contents.cells[found+1:]
         return
-
+    
     def removeafter(self, searchstring=&#34;#STARTFOOTER#&#34;):
         &#34;&#34;&#34;Remove all cells efore cell with ```searchstring``` keyword (default #START_FOOTER#)&#34;&#34;&#34;
         index = 0
@@ -957,6 +982,31 @@ body and resurcers from teh html_export file</p></div>
                 self.contents.cells = self.contents.cells[:index]
                 return
             index = index+1
+    
+    
+    def incertbefore(self, searchstring=&#34;###STARTHEADER###&#34;, notebook=&#34;&#34;, verbose=True):
+        &#34;&#34;&#34;Incert cells from notebook before all cells that have  ```searchstring``` keyword&#34;&#34;&#34;
+        incertbook = readnotebook(notebook)
+        newcells = []
+        for cell in self.contents.cells:
+            if searchstring in cell[&#39;source&#39;]:
+                if verbose:
+                    print(f&#34;\incerting {cell[&#39;source&#39;]}\n&#34;)
+                newcells = newcells + incertbook.cells    
+            newcells.append(cell)
+        self.contents.cells = newcells
+        
+    def incertafter(self, searchstring=&#34;###ENDHEADER###&#34;, notebook=&#34;&#34;, verbose=True):
+        &#34;&#34;&#34;Incert cells from notebook after all cells that have  ```searchstring``` keyword&#34;&#34;&#34;
+        incertbook = readnotebook(notebook)
+        newcells = []
+        for cell in self.contents.cells:
+            newcells.append(cell)
+            if searchstring in cell[&#39;source&#39;]:
+                if verbose:
+                    print(f&#34;\nincerting {cell[&#39;source&#39;]}\n&#34;)
+                newcells = newcells + incertbook.cells    
+        self.contents.cells = newcells
 
     def replacecell(self, searchstring=&#34;###TOC###&#34;, cellfile=&#34;Footer.ipynb&#34;):
         &#34;&#34;&#34;Replace a cell based on a search string with the contents of a file&#34;&#34;&#34;
@@ -1095,6 +1145,52 @@ body and resurcers from teh html_export file</p></div>
     &#34;&#34;&#34;Append Header and Footer files to the current notebook&#34;&#34;&#34;
     header_footer(headerfile=headerfile,
                   footerfile=footerfile, nb=self.contents)</code></pre>
+</details>
+</dd>
+<dt id="jupyterinstruct.InstructorNotebook.InstructorNB.incertafter"><code class="name flex">
+<span>def <span class="ident">incertafter</span></span>(<span>self, searchstring='###ENDHEADER###', notebook='', verbose=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Incert cells from notebook after all cells that have
+<code>searchstring</code> keyword</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def incertafter(self, searchstring=&#34;###ENDHEADER###&#34;, notebook=&#34;&#34;, verbose=True):
+    &#34;&#34;&#34;Incert cells from notebook after all cells that have  ```searchstring``` keyword&#34;&#34;&#34;
+    incertbook = readnotebook(notebook)
+    newcells = []
+    for cell in self.contents.cells:
+        newcells.append(cell)
+        if searchstring in cell[&#39;source&#39;]:
+            if verbose:
+                print(f&#34;\nincerting {cell[&#39;source&#39;]}\n&#34;)
+            newcells = newcells + incertbook.cells    
+    self.contents.cells = newcells</code></pre>
+</details>
+</dd>
+<dt id="jupyterinstruct.InstructorNotebook.InstructorNB.incertbefore"><code class="name flex">
+<span>def <span class="ident">incertbefore</span></span>(<span>self, searchstring='###STARTHEADER###', notebook='', verbose=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Incert cells from notebook before all cells that have
+<code>searchstring</code> keyword</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def incertbefore(self, searchstring=&#34;###STARTHEADER###&#34;, notebook=&#34;&#34;, verbose=True):
+    &#34;&#34;&#34;Incert cells from notebook before all cells that have  ```searchstring``` keyword&#34;&#34;&#34;
+    incertbook = readnotebook(notebook)
+    newcells = []
+    for cell in self.contents.cells:
+        if searchstring in cell[&#39;source&#39;]:
+            if verbose:
+                print(f&#34;\incerting {cell[&#39;source&#39;]}\n&#34;)
+            newcells = newcells + incertbook.cells    
+        newcells.append(cell)
+    self.contents.cells = newcells</code></pre>
 </details>
 </dd>
 <dt id="jupyterinstruct.InstructorNotebook.InstructorNB.makeTOC"><code class="name flex">
@@ -1387,6 +1483,8 @@ body and resurcers from teh html_export file</p></div>
 <li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.checklinks" href="#jupyterinstruct.InstructorNotebook.InstructorNB.checklinks">checklinks</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.gen_thiscourse_py" href="#jupyterinstruct.InstructorNotebook.InstructorNB.gen_thiscourse_py">gen_thiscourse_py</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.headerfooter" href="#jupyterinstruct.InstructorNotebook.InstructorNB.headerfooter">headerfooter</a></code></li>
+<li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.incertafter" href="#jupyterinstruct.InstructorNotebook.InstructorNB.incertafter">incertafter</a></code></li>
+<li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.incertbefore" href="#jupyterinstruct.InstructorNotebook.InstructorNB.incertbefore">incertbefore</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.makeTOC" href="#jupyterinstruct.InstructorNotebook.InstructorNB.makeTOC">makeTOC</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.makestudent" href="#jupyterinstruct.InstructorNotebook.InstructorNB.makestudent">makestudent</a></code></li>
 <li><code><a title="jupyterinstruct.InstructorNotebook.InstructorNB.maketaglist" href="#jupyterinstruct.InstructorNotebook.InstructorNB.maketaglist">maketaglist</a></code></li>
