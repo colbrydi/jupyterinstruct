@@ -105,7 +105,13 @@ def validate(filename):
     extra_tags = set(re.findall(&#39;#\w+#&#39;, text))
     for tag in extra_tags:
         print(f&#34;   - ERROR: Extra Tag {tag}&#34;)
+        errorcount += 1
 
+    wrong_emphasis = set(re.findall(r&#39;\&lt;[^\&gt;\/]*\&gt;\*\*&#39;, text))
+    for emphasis in wrong_emphasis:
+        print(f&#34;   - ERROR: Wrong emphasis- {emphasis} ** should be first&#34;)
+        errorcount += 1
+              
     nb = nbformat.reads(text, as_version=4)  # ipynb version 4
 
     # may be needed for video verification
@@ -273,7 +279,13 @@ if __name__ == &#34;__main__&#34;:
     extra_tags = set(re.findall(&#39;#\w+#&#39;, text))
     for tag in extra_tags:
         print(f&#34;   - ERROR: Extra Tag {tag}&#34;)
+        errorcount += 1
 
+    wrong_emphasis = set(re.findall(r&#39;\&lt;[^\&gt;\/]*\&gt;\*\*&#39;, text))
+    for emphasis in wrong_emphasis:
+        print(f&#34;   - ERROR: Wrong emphasis- {emphasis} ** should be first&#34;)
+        errorcount += 1
+              
     nb = nbformat.reads(text, as_version=4)  # ipynb version 4
 
     # may be needed for video verification

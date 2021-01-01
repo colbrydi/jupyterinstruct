@@ -202,8 +202,9 @@ def nb2html(nb):
         body and resurcers from teh html_export file
     &#34;&#34;&#34;
     html_exporter = HTMLExporter()
-    #html_exporter.template_file = &#39;basic&#39;
-    (body, resources) = html_exporter.from_notebook_node(nb)
+    
+    html_exporter.template_name = &#39;classic&#39;
+    (body, resources) = html_exporter.from_notebook_node(nb.contents)
     return (body, resources)
 
 
@@ -423,7 +424,7 @@ class InstructorNB():
 
     def makeTOC(self):
         &#34;&#34;&#34;Print out an index for the current notebook. Currently this can be cut and pasted into the notebook&#34;&#34;&#34;
-        makeTOC(self.contents)
+        makeTOC(self)
 
     def mergetags(self, tags={}):
         &#34;&#34;&#34;Function to replace tags in the entire document&#34;&#34;&#34;
@@ -763,8 +764,9 @@ body and resurcers from teh html_export file</p></div>
         body and resurcers from teh html_export file
     &#34;&#34;&#34;
     html_exporter = HTMLExporter()
-    #html_exporter.template_file = &#39;basic&#39;
-    (body, resources) = html_exporter.from_notebook_node(nb)
+    
+    html_exporter.template_name = &#39;classic&#39;
+    (body, resources) = html_exporter.from_notebook_node(nb.contents)
     return (body, resources)</code></pre>
 </details>
 </dd>
@@ -1033,7 +1035,7 @@ body and resurcers from teh html_export file</p></div>
 
     def makeTOC(self):
         &#34;&#34;&#34;Print out an index for the current notebook. Currently this can be cut and pasted into the notebook&#34;&#34;&#34;
-        makeTOC(self.contents)
+        makeTOC(self)
 
     def mergetags(self, tags={}):
         &#34;&#34;&#34;Function to replace tags in the entire document&#34;&#34;&#34;
@@ -1204,7 +1206,7 @@ body and resurcers from teh html_export file</p></div>
 </summary>
 <pre><code class="python">def makeTOC(self):
     &#34;&#34;&#34;Print out an index for the current notebook. Currently this can be cut and pasted into the notebook&#34;&#34;&#34;
-    makeTOC(self.contents)</code></pre>
+    makeTOC(self)</code></pre>
 </details>
 </dd>
 <dt id="jupyterinstruct.InstructorNotebook.InstructorNB.makestudent"><code class="name flex">
