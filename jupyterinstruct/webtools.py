@@ -157,7 +157,7 @@ def publish(notebook, outfolder='./', execute=True):
     except Exception as e:
         print(f"   WARNING: Notebook preprocess Timeout (check for long running code)\n {e}")
     
-    (body, resources) = nb2html(nb.contents)
+    (body, resources) = nb2html(nb)
     
     # Read in the file
     with open(destination, 'w') as file:

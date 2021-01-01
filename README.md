@@ -13,7 +13,7 @@ The JupyterInstruct Python package is designed for INSTRUCTORS to organize and a
 
 ## Installation
 
-This package is currently under development and is not avaliable via pypy.  to install use the following command:
+This package is currently under development and is not avaliable via pipy.  to install use the following command:
 
 ```pip install git+https://github.com/colbrydi/jupyterinstruct```
 

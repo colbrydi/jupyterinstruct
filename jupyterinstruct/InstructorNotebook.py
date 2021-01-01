@@ -171,8 +171,9 @@ def nb2html(nb):
         body and resurcers from teh html_export file
     """
     html_exporter = HTMLExporter()
-    #html_exporter.template_file = 'basic'
-    (body, resources) = html_exporter.from_notebook_node(nb)
+    
+    html_exporter.template_name = 'classic'
+    (body, resources) = html_exporter.from_notebook_node(nb.contents)
     return (body, resources)
 
 
@@ -392,7 +393,7 @@ class InstructorNB():
 
     def makeTOC(self):
         """Print out an index for the current notebook. Currently this can be cut and pasted into the notebook"""
-        makeTOC(self.contents)
+        makeTOC(self)
 
     def mergetags(self, tags={}):
         """Function to replace tags in the entire document"""
