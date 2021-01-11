@@ -1,5 +1,5 @@
 '''The base notebook class object.
-Instuctor notebooks have extra content intended only for instructors. This class manages the extra content and enables instructors to generate student versions of the notebooks.  
+Instuctor notebooks have extra content intended only for instructors. This class manages the extra content and enables instructors to generate student versions of the notebooks.
 '''
 import IPython.core.display as IP
 import IPython.core.display as display
@@ -13,6 +13,9 @@ import re
 
 from pathlib import Path
 import os
+import io
+from sys import platform
+
 
 
 import nbformat
@@ -23,7 +26,7 @@ from jupyterinstruct.nbfilename import nbfilename
 
 def renamefile(oldname, newname, MAKE_CHANGES=False, force=False):
     """Function to rename a file using git and updates all links to the file and checks.
-    
+
     Parameters
     ----------
     oldname : string
@@ -35,7 +38,7 @@ def renamefile(oldname, newname, MAKE_CHANGES=False, force=False):
     force : boolean
         Ignore warnings and force the copy
     """
-   
+
     old_nbfile = nbfilename(oldname)
     if not oldname == str(old_nbfile):
         print(f"WARNING: old file {oldname} does not conform to naming standard")
@@ -51,18 +54,18 @@ def renamefile(oldname, newname, MAKE_CHANGES=False, force=False):
     if not newname == str(new_nbfile):
         print(f"ERROR: new file {newname} does not conform to naming standard")
         print(f"       using {str(new_nbfile)}")
-    
+
     #STEP 1. Move instructor file to new name
     cmd = f"git mv {oldname} {str(new_nbfile)} "
     if MAKE_CHANGES:
         os.system(cmd)
     else:
         print(f"TEST: {cmd}")
-        
+
     #Forcing new file to conform to the file standard
     new_nbfile.isInstructor = False
     newstudentversion = str(new_nbfile)
-    
+
     print(f" Replaceing {oldstudentversion} with {newstudentversion}")
 
     directory = Path('.')
@@ -83,7 +86,7 @@ def renamefile(oldname, newname, MAKE_CHANGES=False, force=False):
 
 def changeprefix(filename, datestr, MAKE_CHANGES=False, force=False):
     """Migrate a notebook from the filename to the new four digit date string
-    
+
     Parameters
     ----------
     filename : string
@@ -95,7 +98,7 @@ def changeprefix(filename, datestr, MAKE_CHANGES=False, force=False):
     force : boolean
         Ignore warnings and force the copy
     """
-    
+
     nbfile = nbfilename(filename)
     if not nbfile.isDate:
         print("ERROR: file not formated as a date file")
@@ -113,7 +116,7 @@ def changeprefix(filename, datestr, MAKE_CHANGES=False, force=False):
 
 def makestudent(filename, studentfolder='./', tags={}):
     """Make a student from an instructor noatebook
-    
+
     Parameters
     ----------
     filename : string
@@ -121,22 +124,22 @@ def makestudent(filename, studentfolder='./', tags={}):
     studentfolder : string
         Name of folder to save the student notebook
     tags: dictionary
-        Dictionary of Tag values (key) and replacment text (values). 
+        Dictionary of Tag values (key) and replacment text (values).
     """
     IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
                include=['application/javascript'])
 
     nb = InstructorNB(filename=filename)
-    
+
     studentfile = nb.makestudent(tags=tags, studentfolder=studentfolder)
-    
+
     nb.writenotebook(studentfile)
-    
+
     return studentfile
 
 
 def getname():
-    """Get the current notebook's name. This is actually a javascript command and 
+    """Get the current notebook's name. This is actually a javascript command and
     requires some time before the name is stored in the global namespace as ```this_notebook```
     """
     # TODO: Save the contents of the current notebook
@@ -148,7 +151,7 @@ def getname():
 
 
 def cleanNsave():
-    """Run javascript in the current notebook to clear all output and save the notebook."""    
+    """Run javascript in the current notebook to clear all output and save the notebook."""
     IP.display(IP.Javascript("IPython.notebook.clear_all_output()"),
                include=['application/javascript'])
     IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
@@ -160,7 +163,7 @@ getname()
 
 def nb2html(nb):
     """Helper function to convert a notebook to html for parsing
-    
+
     Parameters
     ----------
     nb : InstructorNotebook
@@ -171,7 +174,7 @@ def nb2html(nb):
         body and resurcers from teh html_export file
     """
     html_exporter = HTMLExporter()
-    
+
     html_exporter.template_name = 'classic'
     (body, resources) = html_exporter.from_notebook_node(nb.contents)
     return (body, resources)
@@ -179,7 +182,7 @@ def nb2html(nb):
 
 def generateTOCfromHTML(body):
     """Generate the Table of Contents from html headers
-    
+
     Parameters
     ----------
     body : string
@@ -219,9 +222,16 @@ def makeTOC(nb):
 
 def readnotebook(filename):
     """Reads in a notebook and returns as a nbformat object"""
-    with open(filename) as file:
-        text = file.read()
-        nb = nbformat.reads(text, as_version=4)
+    if platform ==  "win32":
+    # Windows
+        print('Executing windows version, assumes utf-8 encoding')
+        with open(filename,encoding="utf8") as file:
+            text = file.read()
+            nb = nbformat.reads(text, as_version=4)
+    else:
+        with open(filename) as file:
+            text = file.read()
+            nb = nbformat.reads(text, as_version=4)
     return nb
 
 
@@ -310,7 +320,7 @@ class InstructorNB():
                 for output in cell['outputs']:
                     if output['output_type'] == 'error':
                         cell['outputs'] = []
-                 
+
     def removecells(self, searchstring="#ANSWER#", verbose=True):
         """Remove with ```searchstring``` keyword (default #ANSWER#)"""
         newcells = []
@@ -333,7 +343,7 @@ class InstructorNB():
         if found >= 0:
             self.contents.cells = self.contents.cells[found+1:]
         return
-    
+
     def removeafter(self, searchstring="#STARTFOOTER#"):
         """Remove all cells efore cell with ```searchstring``` keyword (default #START_FOOTER#)"""
         index = 0
@@ -342,8 +352,8 @@ class InstructorNB():
                 self.contents.cells = self.contents.cells[:index]
                 return
             index = index+1
-    
-    
+
+
     def incertbefore(self, searchstring="###STARTHEADER###", notebook="", verbose=True):
         """Incert cells from notebook before all cells that have  ```searchstring``` keyword"""
         incertbook = readnotebook(notebook)
@@ -352,10 +362,10 @@ class InstructorNB():
             if searchstring in cell['source']:
                 if verbose:
                     print(f"\incerting {cell['source']}\n")
-                newcells = newcells + incertbook.cells    
+                newcells = newcells + incertbook.cells
             newcells.append(cell)
         self.contents.cells = newcells
-        
+
     def incertafter(self, searchstring="###ENDHEADER###", notebook="", verbose=True):
         """Incert cells from notebook after all cells that have  ```searchstring``` keyword"""
         incertbook = readnotebook(notebook)
@@ -365,7 +375,7 @@ class InstructorNB():
             if searchstring in cell['source']:
                 if verbose:
                     print(f"\nincerting {cell['source']}\n")
-                newcells = newcells + incertbook.cells    
+                newcells = newcells + incertbook.cells
         self.contents.cells = newcells
 
     def replacecell(self, searchstring="###TOC###", cellfile="Footer.ipynb"):
@@ -415,16 +425,16 @@ class InstructorNB():
 
     def makestudent(self, tags=None, studentfolder=''):
         """Make a Student Version of the notebook"""
-        
+
         instructor_fn = self.filename
-        
+
         instructorfile = nbfilename(instructor_fn)
 
         # TODO: check all links in the directory for name change.
         if not str(instructorfile) == instructor_fn:
             print(f"WARNING: Instructor file name is wrong {instructorfile} != {instructor_fn}")
-            
-        
+
+
         IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
                    include=['application/javascript'])
 
@@ -446,14 +456,14 @@ class InstructorNB():
         self.mergetags(tags)
 
         student_fn = f"{studentfolder}{studentfile}"
-        
-        
+
+
         if Path(instructor_fn) == Path(student_fn):
             print("ERROR: student file will overrite instructor. Aborting")
             print(f"   {instructor_fn} --> {student_fn}")
             return
-                  
+
         # Make a link for review
         IP.display(HTML(f"<a href={student_fn} target=\"blank\">{student_fn}</a>"))
 
-        return student_fn 
+        return student_fn

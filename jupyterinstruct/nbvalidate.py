@@ -25,6 +25,7 @@ from bs4 import BeautifulSoup
 from nbconvert import HTMLExporter
 from pathlib import Path
 from nbconvert.preprocessors import ExecutePreprocessor
+from sys import platform
 
 
 def checkurl(url):
@@ -33,7 +34,7 @@ def checkurl(url):
         request = requests.get(url, timeout=5)
     except Exception as e:
         return 1
-    
+
     output = 0
     if not request.status_code < 400:
         output = 1
@@ -48,13 +49,17 @@ def validate(filename):
     print(f"Validating Notebook {filename}")
 
     errorcount = 0
-    
+
     parts = Path(filename)
     foldername = parts.parent
 
     # Read in the file
-    with open(filename, 'r') as file:
-        text = file.read()
+    if platform ==  "win32":
+        with open(filename, 'r',encoding = 'utf8') as file:
+            text = file.read()
+    else:
+        with open(filename, 'r') as file:
+            text = file.read()
 
     # TODO: check for ###NAME### triple hash
     extra_tags = set(re.findall('#\w+#', text))
@@ -66,25 +71,25 @@ def validate(filename):
     for emphasis in wrong_emphasis:
         print(f"   - ERROR: Wrong emphasis- {emphasis} ** should be first")
         errorcount += 1
-              
+
     nb = nbformat.reads(text, as_version=4)  # ipynb version 4
 
     # may be needed for video verification
     try:
-        ep = ExecutePreprocessor(timeout=10, 
-                                 kernel_name='python3', 
+        ep = ExecutePreprocessor(timeout=10,
+                                 kernel_name='python3',
                                  allow_errors=True)
         ep.preprocess(nb)
     except Exception as e:
         print(truncate_string(f"   WARNING: Notebook preprocess Timeout (check for long running code)\n {e}"))
         errorcount += 1
-    
+
     # Process the notebook we loaded earlier
     (body, resources) = HTMLExporter().from_notebook_node(nb)
 
     # print(body)
     soup = BeautifulSoup(body, 'html.parser')
-    
+
     #Make a dictionary of in-file anchors for checking later.
     anchorlist = dict()
     links = soup.find_all('a', href=False)
