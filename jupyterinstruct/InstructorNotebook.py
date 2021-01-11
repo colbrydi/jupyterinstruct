@@ -222,16 +222,16 @@ def makeTOC(nb):
 
 def readnotebook(filename):
     """Reads in a notebook and returns as a nbformat object"""
-    if platform ==  "win32":
+#     iif platform ==  "win32":
     # Windows
-        print('Executing windows version, assumes utf-8 encoding')
-        with open(filename,encoding="utf8") as file:
-            text = file.read()
-            nb = nbformat.reads(text, as_version=4)
-    else:
-        with open(filename) as file:
-            text = file.read()
-            nb = nbformat.reads(text, as_version=4)
+#         print('Executing windows version, assumes utf-8 encoding')
+    with open(filename,encoding="utf8") as file:
+        text = file.read()
+        nb = nbformat.reads(text, as_version=4)
+#     else:
+#         with open(filename) as file:
+#             text = file.read()
+#             nb = nbformat.reads(text, as_version=4)
     return nb
 
 
