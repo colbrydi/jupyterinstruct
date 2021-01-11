@@ -54,4 +54,4 @@ Please check out the [Example.ipynb](https://colbrydi.github.io/jupyterinstruct/
 
 Also included in this git repository is a notebook demonstrating best practices for generating accessible content in Jupyter notebooks.
 
-- [Accessible Jupyter Content](Accessable_Jupyter_content_for_INSTRUCTORS) Warning: Link broken, check with Dirk to fix this
+- [Accessible Jupyter Content](Accessable_Jupyter_content_for_INSTRUCTORS) Warning: Link broken, check with Dirk to fix this.
