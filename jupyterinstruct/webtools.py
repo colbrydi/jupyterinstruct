@@ -81,7 +81,7 @@ def makecsvschedule(csvfile = 'CMSE314-001-NLA-S21_Schedule.csv',
 
         name = section.replace(' ','_')
         schedulefile = f"{assignmentsfolder}{name}.md" 
-        with open(schedulefile, "w") as file_object:
+        with open(schedulefile, "w",encoding = 'utf8') as file_object:
                 file_object.write(schedule)      
         schedulefiles.append(schedulefile) 
     return schedulefiles
@@ -127,7 +127,7 @@ def makedateschedule(assignment_folder='assignments'):
     indexfile = Path(assignment_folder,'Schedule.md')
                      
     # Read in the file
-    with open(indexfile, 'w') as file:
+    with open(indexfile, 'w',encoding = 'utf8') as file:
         file.write(schedule)
         
     return str(indexfile) 
@@ -160,7 +160,7 @@ def publish(notebook, outfolder='./', execute=True):
     (body, resources) = nb2html(nb)
     
     # Read in the file
-    with open(destination, 'w') as file:
+    with open(destination, 'w',encoding = 'utf8') as file:
         file.write(body)
     return destination
 

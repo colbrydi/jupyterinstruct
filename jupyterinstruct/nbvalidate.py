@@ -54,25 +54,22 @@ def validate(filename):
     foldername = parts.parent
 
     # Read in the file
-    if platform ==  "win32":
-        with open(filename, 'r',encoding = 'utf8') as file:
-            text = file.read()
-    else:
-        with open(filename, 'r') as file:
-            text = file.read()
+    with open(filename, 'r',encoding = 'utf8') as file:
+        jsontext = file.read()
+
 
     # TODO: check for ###NAME### triple hash
-    extra_tags = set(re.findall('#\w+#', text))
+    extra_tags = set(re.findall('#\w+#', jsontext))
     for tag in extra_tags:
         print(f"   - ERROR: Extra Tag {tag}")
         errorcount += 1
 
-    wrong_emphasis = set(re.findall(r'\<[^\>\/]*\>\*\*', text))
+    wrong_emphasis = set(re.findall(r'\<[^\>\/]*\>\*\*', jsontext))
     for emphasis in wrong_emphasis:
         print(f"   - ERROR: Wrong emphasis- {emphasis} ** should be first")
         errorcount += 1
 
-    nb = nbformat.reads(text, as_version=4)  # ipynb version 4
+    nb = nbformat.reads(jsontext, as_version=4)  # ipynb version 4
 
     # may be needed for video verification
     try:
