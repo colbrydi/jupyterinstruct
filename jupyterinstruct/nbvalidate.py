@@ -57,7 +57,6 @@ def validate(filename):
     with open(filename, 'r',encoding = 'utf8') as file:
         jsontext = file.read()
 
-
     # TODO: check for ###NAME### triple hash
     extra_tags = set(re.findall('#\w+#', jsontext))
     for tag in extra_tags:
@@ -81,6 +80,12 @@ def validate(filename):
         print(truncate_string(f"   WARNING: Notebook preprocess Timeout (check for long running code)\n {e}"))
         errorcount += 1
 
+    run_errors = nb.removeoutputerror()
+    
+    if run_errors > 0:
+        print(f"   WARNING: Notebook had {run_errors} runtime errors\n"))
+        errorcount += run_errors
+        
     # Process the notebook we loaded earlier
     (body, resources) = HTMLExporter().from_notebook_node(nb)
 

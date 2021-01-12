@@ -308,11 +308,14 @@ class InstructorNB():
 
     def removeoutputerror(self):
         '''Loop though output cells and delete any with 'error' status'''
+        totalerrors = 0
         for cell in self.contents.cells:
             if 'outputs' in cell:
                 for output in cell['outputs']:
                     if output['output_type'] == 'error':
                         cell['outputs'] = []
+                        totalerrors += 1
+        return totalerrors
 
     def removecells(self, searchstring="#ANSWER#", verbose=True):
         """Remove with ```searchstring``` keyword (default #ANSWER#)"""
