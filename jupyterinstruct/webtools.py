@@ -53,8 +53,11 @@ def makecsvschedule(csvfile = 'CMSE314-001-NLA-S21_Schedule.csv',
                     
                     schedule += f"| {row[section]} |"
                     
-                    webname = f"{nbfile.basename()}.html"
-                    
+                    if nbfile.isStudent:
+                        webname = f"{nbfile.basename()}-STUDENT.html"
+                    else:
+                        webname = f"{nbfile.basename()}.html"
+             
                     if webname in webfiles:
                         schedule += f" [{nbfile.basename()}]({webname}) |"
                     else:

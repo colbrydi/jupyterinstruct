@@ -23,6 +23,7 @@ class nbfilename():
         self.extention = 'ipynb'
         self.isInstructor = False
         self.isStudent = False
+        self.isStudent = False
         self.isInClass = False
         self.isPreClass = False
         self.isAssignment = False
@@ -43,7 +44,7 @@ class nbfilename():
 
         self.namestring = filename
 
-        attribute_list = ['INSTRUCTOR', 'STUDENT', 'in-class', 'pre-class']
+        #attribute_list = ['INSTRUCTOR', 'STUDENT', 'in-class', 'pre-class']
         self.parts = re.split('-|_| |\.', filename)
         
         if '' in self.parts:
@@ -74,6 +75,10 @@ class nbfilename():
                 self.isInstructor = True
                 del self.parts[-1]
 
+        if len(self.parts) > 0:
+            if self.parts[-1] == 'STUDENT':
+                self.isStudent = True
+                del self.parts[-1]        
                 
         if len(self.parts) > 3:
             if self.parts[-1] == 'assignment' or self.parts[-1] == 'class':
@@ -116,6 +121,9 @@ class nbfilename():
 
         if self.isInstructor:
             string = string + '-INSTRUCTOR'
+        
+        if self.isStudent:
+            string = string + '-STUDENT'
 
         string = string + "." + self.extention
         return string
