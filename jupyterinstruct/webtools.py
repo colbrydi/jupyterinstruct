@@ -135,7 +135,7 @@ def makedateschedule(assignment_folder='assignments'):
         
     return str(indexfile) 
 
-def publish(notebook, outfolder='./', execute=True):
+def publish(notebook, outfolder='./', execute=True, removeerrors=True):
 
     #Copy Notebookfile
     from_file = Path(notebook)
@@ -156,7 +156,8 @@ def publish(notebook, outfolder='./', execute=True):
                                  allow_errors=True)
         ep.preprocess(nb.contents)
 
-        nb.removeoutputerror()
+        if removeerrors:
+            nb.removeoutputerror()
     except Exception as e:
         print(f"   WARNING: Notebook preprocess Timeout (check for long running code)\n {e}")
     

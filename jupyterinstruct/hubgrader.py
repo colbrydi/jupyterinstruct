@@ -67,7 +67,8 @@ class gradernames():
         corefile = Path(filename)
 
         if not corefile.exists():
-            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), this_notebook)
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), 
+                                    _notebook)
 
         self.core_assignment_name = corefile.stem 
         
@@ -121,8 +122,24 @@ def importnb(this_notebook):
         HTML(f"<a href={gname.release_file} target=\"blank\">{gname.release_file}</a>"))
     return gname.release_file
 
+def quick_review_D2L(zipfile="nbTester_data.zip", folder='unziptemp'):
+    from jupyterinstruct import webtools
+    
+    destination_folder=Path(folder)
 
-def unpackD2L(filename, this_notebook, coursefolder='./', destination='upziptemp'):
+    unpackD2L(zipfile, destination=str(destination_folder))
+
+    files = destination_folder.glob('*.ipynb')
+    markdown = ""
+    for file in files:
+        htmlfile = webtools.publish(str(file), outfolder=str(destination_folder), execute=True, removeerrors=False)
+        markdown += f"- [{htmlfile}]({htmlfile})\n"
+    return markdown
+
+
+
+def unpackD2L(filename, destination='upziptemp'):
+    import warnings
     print("unpackD2L will be deprecated in the future and moved to a different package (See documentation for updates)")
     warnings.warn(
         "unpackD2L will be deprecated in the future and moved to a different package (See documentation for updates)",
@@ -134,42 +151,20 @@ def unpackD2L(filename, this_notebook, coursefolder='./', destination='upziptemp
     import zipfile
     import pathlib
 
-    ind = this_notebook.index("INST")-1
-    assignment = this_notebook[:ind]
-
     zfile = Path(filename)
+    destination_folder = Path(destination)
 
     print(f"Unzipping {filename}")
     with zipfile.ZipFile(filename, 'r') as zip_ref:
-        zip_ref.extractall(f"./{coursefolder}/{destination}")
+        zip_ref.extractall(str(destination_folder))
 
-    files = glob.glob(f'./{coursefolder}/{destination}/*.ipynb')
+    files = destination_folder.glob('*.ipynb')
 
-    SUBMITTED_ASSIGNMENT = f'./{coursefolder}/submitted/'
     for f in files:
-        name = f.split(' - ')
+        name = str(f).split(' - ')
         [first, last] = name[1].split(' ')
-        directory = name[1].replace(' ', '_')
+        newfile = Path(name[1].replace(' ', '_')+'.ipynb')
+        #print(destination_folder / newfile)
+        f.rename(Path(destination / newfile))
 
-        command = f"cd {coursefolder}; nbgrader db student add {directory} --last-name=${last} --first-name=${first}"
-        print(command)
-        returned_output = subprocess.check_output(command, shell=True)
 
-        myfolder = SUBMITTED_ASSIGNMENT+directory+'/'+assignment
-        pathlib.Path(myfolder).mkdir(parents=True, exist_ok=True)
-        pathlib.os.rename(f, f"{myfolder}/{assignment}_STUDENT.ipynb")
-
-#     command=f"cd {coursefolder}; ../upgrade.sh"
-#     print(command)
-#     returned_output = subprocess.check_output(command, shell=True)
-
-#     command=f"cd {coursefolder}; nbgrader autograde {assignment}"
-#     print(command)
-#     returned_output = subprocess.check_output(command, shell=True)
-
-#            echo "folder name is ${d}"
-#    name=`echo $d | cut -d '/' -f3`
-#    first=`echo $name | cut -d '_' -f1`
-#    last=`echo $name | cut -d '_' -f2`
-#    echo nbgrader db student add ${name} --last-name=${last} --first-name=${first}
-#    nbgrader db student add ${name} --last-name=${last} --first-name=${first}
