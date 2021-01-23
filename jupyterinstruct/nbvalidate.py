@@ -68,22 +68,32 @@ def validate(filename):
         print(f"   - ERROR: Wrong emphasis- {emphasis} ** should be first")
         errorcount += 1
 
+    #WARNING TO FUTURE PROGRAMMERS
+    # nb is not the instructor notebook class.  
     nb = nbformat.reads(jsontext, as_version=4)  # ipynb version 4
-
+    
     # may be needed for video verification
     try:
         ep = ExecutePreprocessor(timeout=10,
                                  kernel_name='python3',
                                  allow_errors=True)
         ep.preprocess(nb)
+        
     except Exception as e:
         print(truncate_string(f"   WARNING: Notebook preprocess Timeout (check for long running code)\n {e}"))
         errorcount += 1
-
-    run_errors = nb.removeoutputerror()
+    '''Loop though output cells and delete any with 'error' status'''
     
+    run_errors = 0
+    for cell in nb.cells:
+        if 'outputs' in cell:
+            for output in cell['outputs']:
+                if output['output_type'] == 'error':
+                    cell['outputs'] = []
+                    run_errors += 1
+                    
     if run_errors > 0:
-        print(f"   WARNING: Notebook had {run_errors} runtime errors\n"))
+        print(f"   WARNING: Notebook had {run_errors} runtime errors\n")
         errorcount += run_errors
         
     # Process the notebook we loaded earlier
