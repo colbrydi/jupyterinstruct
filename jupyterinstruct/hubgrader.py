@@ -17,6 +17,7 @@ import subprocess
 import shutil
 import time
 import pathlib
+from pathlib import Path
 
 class gradernames():
     """Create a class of names that follow the nbgrader naming convention:
@@ -136,7 +137,16 @@ def quick_review_D2L(zipfile="nbTester_data.zip", folder='unziptemp'):
         markdown += f"- [{htmlfile}]({htmlfile})\n"
     return markdown
 
+def expandfiles(assignment, source='upziptemp', destination='AutoGrader/submitted'):
+    sourcefolder = Path(source)
+    ipynbfiles = sourcefolder.glob('*.ipynb')
+    for thisfile in ipynbfiles:
+        print(thisfile.stem)
+        myfolder = Path(destination / Path(thisfile.stem))
+        myfolder.mkdir(parents=True, exist_ok=True)
+        thisfile.rename(myfolder / Path(assignment))
 
+    
 
 def unpackD2L(filename, destination='upziptemp'):
     import warnings
@@ -145,11 +155,9 @@ def unpackD2L(filename, destination='upziptemp'):
         "unpackD2L will be deprecated in the future and moved to a different package (See documentation for updates)",
         DeprecationWarning
     )
-    
-    from pathlib import Path
-    from urllib.request import urlretrieve
+ 
+    #from urllib.request import urlretrieve
     import zipfile
-    import pathlib
 
     zfile = Path(filename)
     destination_folder = Path(destination)
