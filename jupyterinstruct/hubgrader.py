@@ -16,7 +16,10 @@ import subprocess
 import shutil
 import time
 import pathlib
+import pandas
 from pathlib import Path
+from IPython.display import Markdown
+
 
 def makestudents(filename="students.csv"):
     """Generate student accounts in nbgrader from a CSV file exported from D2L"""
@@ -133,8 +136,7 @@ def importnb(this_notebook):
     print(f"Output: {returned_output.decode('utf-8')}")
 
     # Make a link for review
-    display(
-        HTML(f"<a href={gname.release_file} target=\"blank\">{gname.release_file}</a>"))
+    display( HTML(f"<a href={gname.release_file} target=\"blank\">{gname.release_file}</a>"))
     return gname.release_file
 
 def quick_review_D2L(zipfile="nbTester_data.zip", folder='unziptemp'):
@@ -151,11 +153,11 @@ def quick_review_D2L(zipfile="nbTester_data.zip", folder='unziptemp'):
         markdown += f"- [{htmlfile}]({htmlfile})\n"
     return markdown
 
-def D2L_2_nbgrader(zipfile, assignment, destination='AutoGrader/submitted', tempfolder='upziptemp'):
+def D2L_2_nbgrader(zipfile, assignment, destination='AutoGrader/submitted', tempfolder='unziptemp'):
     unpackD2L(zipfile, destination=tempfolder)
     expandfiles(assignment, source=tempfolder, destination=destination)
           
-def expandfiles(assignment, source='upziptemp', destination='AutoGrader/submitted'):
+def expandfiles(assignment, source='unziptemp', destination='AutoGrader/submitted'):
     nbfile = nbfilename(assignment)
     nbfile.isInstructor = False
     nbfile.isStudent = False
@@ -166,17 +168,12 @@ def expandfiles(assignment, source='upziptemp', destination='AutoGrader/submitte
         myfolder = Path(destination / Path(thisfile.stem) / Path(nbfile.basename()))
         myfolder.mkdir(parents=True, exist_ok=True)
         nbfile.isStudent = True
-        thisfile.rename(myfolder / Path(assignment + nbfile.basename()) )
+        newname = Path(myfolder / Path(str(nbfile)))
+        print(newname)                                     
+        thisfile.rename(newname)
     
 
-def unpackD2L(filename, destination='upziptemp'):
-    import warnings
-#     print("unpackD2L will be deprecated in the future and moved to a different package (See documentation for updates)")
-#     warnings.warn(
-#         "unpackD2L will be deprecated in the future and moved to a different package (See documentation for updates)",
-#         DeprecationWarning
-#     )
- 
+def unpackD2L(filename, destination='unziptemp'):
     #from urllib.request import urlretrieve
     import zipfile
 
@@ -190,11 +187,45 @@ def unpackD2L(filename, destination='upziptemp'):
     files = destination_folder.glob('*.ipynb')
 
     for f in files:
+        print(f)
         name = str(f).split(' - ')
         [first, last] = name[1].split(' ')
         newfile = Path(name[1].replace(' ', '_')+'.ipynb')
         #print(destination_folder / newfile)
         f.rename(Path(destination / newfile))
+
+def d2l_grades(nbgrader_assignment_name = 'HW1-Systems_of_linear_equations',
+               D2l_assignment_name = 'HW1-Test Points Grade <Numeric MaxPoints:100>',
+               tmpfile='tmp_nb_grader_grades.csv'):
+
+    #Generate Temporary Grade file
+    command = f"nbgrader export --to {tmpfile}"
+    returned_output = subprocess.check_output(command, shell=True)
+    print("GENERATING GRADES\n\n")
+
+    #Read Temporary Grade file
+    df = pandas.read_csv(tmpfile)
+
+    df = df.loc[df['assignment'] == nbgrader_assignment_name]
+    df['Email'] = df['email'].str.split('@').str[0]
+    df['Username'] = '#'+df['Email']
+    df[D2l_assignment_name] = df['raw_score']
+    df['End-of-Line Indicator'] = '#'
+    df.rename(columns = {'last_name':'Last Name', 'first_name':'First Name'}, inplace = True)
+
+    D2L_Columns = ['Username',
+                   'Last Name',
+                   'First Name',
+                   'Email',
+                   D2l_assignment_name,
+                   'End-of-Line Indicator']
+    
+    D2L_df = pandas.DataFrame(df,columns=D2L_Columns)
+
+    outfile = f'{nbgrader_assignment_name}.csv'
+    D2L_df.to_csv(outfile,index=False)
+    
+    return Markdown(f"[{outfile}]({outfile})")
 
           
 def sendfeedback(assignment_name, 
@@ -309,3 +340,27 @@ def sendfeedback(assignment_name,
                         print("Error: unable to send email to", toAddress)
                 print("\n\n")
     s.quit()
+
+                      
+def upload_D2L_submissions(instructorfile = 'HW1-Systems_of_linear_equations-INSTRUCTOR.ipynb', zipfile="./D2L/HW1-Test.zip"):
+    import thiscourse
+    from jupyterinstruct import InstructorNotebook
+    tags = thiscourse.tags()
+                      
+    nbfile = nbfilename(instructorfile)
+    nbfile.isInstructor = True;
+    nbfile.isStudent = False;
+
+    studentnotebook = InstructorNotebook.makestudent(str(nbfile), "./CMSE314/", tags)
+    nbstudentnb = importnb(studentnotebook)
+                      
+    D2L_2_nbgrader(zipfile, str(nbstudentnb.name))
+                      
+    #Generate Temporary Grade file
+    nbfile.isInstructor = False;
+    nbfile.isStudent = False;
+    command = f"echo pwd; cd AutoGrader; ls; nbgrader autograde {nbfile.basename()}"
+    returned_output = subprocess.check_output(command, shell=True)
+    print(f"Output: {returned_output.decode('utf-8')}")                      
+#     !cd "~/_CMSE314_F20/AutoGrader"; nbgrader generate_feedback HW1-Systems_of_linear_equations                  
+                      
