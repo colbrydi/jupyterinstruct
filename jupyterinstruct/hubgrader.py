@@ -170,7 +170,7 @@ def expandfiles(assignment, source='unziptemp', destination='AutoGrader/submitte
         nbfile.isStudent = True
         newname = Path(myfolder / Path(str(nbfile)))
         print(newname)                                     
-        thisfile.rename(newname)
+        thisfile.replace(newname)
     
 
 def unpackD2L(filename, destination='unziptemp'):
@@ -192,7 +192,7 @@ def unpackD2L(filename, destination='unziptemp'):
         [first, last] = name[1].split(' ')
         newfile = Path(name[1].replace(' ', '_')+'.ipynb')
         #print(destination_folder / newfile)
-        f.rename(Path(destination / newfile))
+        f.replace(Path(destination / newfile))
 
 def d2l_grades(nbgrader_assignment_name = 'HW1-Systems_of_linear_equations',
                D2l_assignment_name = 'HW1-Test Points Grade <Numeric MaxPoints:100>',
