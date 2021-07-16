@@ -7,8 +7,7 @@ from bs4 import BeautifulSoup
 import datetime
 import calendar
 import re
-from pathlib import Path, PosixPath
-
+from pathlib import Path, PurePath
 
 class nbfilename():
     """Class to work with instructor filenames of the following format:
@@ -39,7 +38,7 @@ class nbfilename():
         if not filename:
             filename = self.input_name
 
-        if (type(filename) == PosixPath):
+        if isinstance(filename, PurePath):
             filename = filename.name
 
         self.namestring = filename
