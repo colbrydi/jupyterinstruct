@@ -6,11 +6,29 @@ Command line tools for workign with jupyter notebooks.
 - publishnb -o OUTPUTFOLDER NOTEBOOKNAME - Publish notebook to a website.
 - renamenb OLDFILENAME NEWFILENAME - Rename a notebook
 - makestudentnb -o OUTPUTFOLDER NOTEBOOKNAME - Make a student version of the notebook
-
+- makenbindex NOTEBOOKNAME - Make a markdown index from a notebook
          
 """
 import argparse
 import sys
+
+def makenbindex():
+    """ Make a markdown index from the jupyter notebook 
+    print to screen."""
+    from jupyterinstruct.InstructorNotebook import renamefile
+
+    parser = argparse.ArgumentParser(description='rename notebook')
+
+    parser.add_argument('input', help=' input filenames')
+
+    args = parser.parse_args()
+
+    print('\n\n')
+    print(args)
+    print('\n\n')
+    from jupyterinstruct import InstructorNotebook as inb
+    notebook = inb.InstructorNB(args.input)
+    notebook.makeTOC()
 
 def renamenb():
     """Rename Instructor notebook using git and fix all 

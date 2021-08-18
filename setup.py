@@ -29,6 +29,7 @@ setuptools.setup(
             'publishnb=jupyterinstruct.console_commands:publish',
             'renamenb=jupyterinstruct.console_commands:rename',
             'makestudentnb=jupyterinstruct.console_commands:makestudent',
+            'makenbindex=jupyterinstruct.console_commands:makenbindex',
          ],
     },
     packages=[
