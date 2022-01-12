@@ -143,7 +143,7 @@ class nbfilename():
         self.month = new_date.month
         self.year = new_date.year
 
-    def setDate(self, datestr=None, YEAR=2021):
+    def setDate(self, datestr=None, YEAR=2022):
         """Set the date based on the prefix or a new datestring"""
         if not datestr:
             datestr = self.prefix

@@ -3,7 +3,7 @@ Command line tools for workign with jupyter notebooks.
 
 - jupyterinstruct - list of all of the command line tools.
 - validatenb NOTEBOOKNAME - Validate a notebook for errors.
-- publishnb -o OUTPUTFOLDER NOTEBOOKNAME - Publish notebook to a website.
+- publishnb -w OUTPUTFOLDER NOTEBOOKNAME - Publish notebook to a website.
 - renamenb OLDFILENAME NEWFILENAME - Rename a notebook
 - makestudentnb -o OUTPUTFOLDER NOTEBOOKNAME - Make a student version of the notebook
 - makenbindex NOTEBOOKNAME - Make a markdown index from a notebook
@@ -48,23 +48,29 @@ def renamenb():
     
     renamefile(args.input, args.output)
     
-def makestudentnb():
+def makestudentnb(thisfile='.'):
     """Make a student version of an instructor notebook. """
     from jupyterinstruct.InstructorNotebook import makestudent
-    
+    import sys
+
+    sys.path+='.'
+
     parser = argparse.ArgumentParser(description='Make a student version.')
 
-    parser.add_argument('-outputfolder', '-w', metavar='outputfolder', 
+    parser.add_argument('-outputfolder', '-o', metavar='outputfolder', 
                         default='./',
                         help=' Name of the destination Folder')
     parser.add_argument('files', help=' inputfilenames', nargs='+')
 #     parser.add_argument('-coursefile', '-c', metavar='coursefile',
 #                         default='thiscourse.py',
 #                         help=' Course file which creates tags')
-    
+    print('') 
+    print('Importing tags') 
     try:
-        import thiscourse.py
-        tags = thiscourse.tags
+        import thiscourse
+        tags = thiscourse.tags()
+        print('Tags from this course')
+        print(tags)
     except:
         print('thiscourse not found')
         tags = {}

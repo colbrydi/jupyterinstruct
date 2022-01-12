@@ -26,9 +26,9 @@ setuptools.setup(
         'console_scripts': [
             'jupyterinstruct=jupyterinstruct.console_commands:listcommands',
             'validatenb=jupyterinstruct.console_commands:validatenb',
-            'publishnb=jupyterinstruct.console_commands:publish',
+            'publishnb=jupyterinstruct.console_commands:publishnb',
             'renamenb=jupyterinstruct.console_commands:rename',
-            'makestudentnb=jupyterinstruct.console_commands:makestudent',
+            'makestudentnb=jupyterinstruct.console_commands:makestudentnb',
             'makenbindex=jupyterinstruct.console_commands:makenbindex',
          ],
     },
