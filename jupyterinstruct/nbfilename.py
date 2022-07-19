@@ -134,8 +134,9 @@ class nbfilename():
         datediff = new_date - old_date
         return datediff.days
 
-    def adjustdays(self, days=0):
+    def adjustdays(self, days=0, year=2023):
         """Ajust the date strig based on number of days. Don't forget to add years"""
+        self.year = year
         old_date = datetime.datetime(self.year, self.month, self.day)
         datediff = datetime.timedelta(days=days)
         new_date = old_date+datediff
