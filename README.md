@@ -1,7 +1,7 @@
 # JupyterInstruct
 Written by [Dirk Colbry](http://colbrydi.github.io/)
 
-<img alt="JupyterInstruct logo with a cartoon Jupyter writing on a green chalkboard. Image created by Tamara Colbry" src="https://raw.githubusercontent.com/colbrydi/jupyterinstruct/master/docs/images/JupyterInstruct_icon.png" style="float:right" width=300px>
+<img alt="JupyterInstruct logo with a cartoon Jupyter writing on a green chalkboard. Image created by Catt Colbry" src="https://raw.githubusercontent.com/colbrydi/jupyterinstruct/master/docs/images/JupyterInstruct_icon.png" style="float:right" width=300px>
 
 The JupyterInstruct Python package is designed for INSTRUCTORS to organize and adjust course curriculum. Each assignment is given it's own jupyter notebook and all student reading, videos, images are included in the notebook.  Each notebook also contains notes for instructors that will be automatically removed. The main design goals for this project include:
 
