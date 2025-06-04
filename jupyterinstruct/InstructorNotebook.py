@@ -1,15 +1,14 @@
 '''The base notebook class object.
 Instuctor notebooks have extra content intended only for instructors. This class manages the extra content and enables instructors to generate student versions of the notebooks.
 '''
-import IPython.core.display as IP
-import IPython.core.display as display
-from IPython.core.display import Javascript, HTML
+import IPython.display as IP
 
 from nbconvert import HTMLExporter
 from bs4 import BeautifulSoup
 import datetime
 import calendar
 import re
+from IPython.display import HTML, display
 
 from pathlib import Path
 import os
@@ -38,10 +37,12 @@ def renamefile(oldname, newname, MAKE_CHANGES=False, force=False):
     force : boolean
         Ignore warnings and force the copy
     """
-
-    old_nbfile = nbfilename(oldname)
-    if not oldname == str(old_nbfile):
-        print(f"WARNING: old file {oldname} does not conform to naming standard")
+    oldname = Path(oldname)
+    newname = Path(newname)
+    
+    old_nbfile = nbfilename(oldname.name)
+    if not oldname.name == str(old_nbfile):
+        print(f"WARNING: old file {oldname.name}!={str(old_nbfile)} does not conform to naming standard")
         if not force:
             print(f"   Set force=True to change anyway")
             return
@@ -50,13 +51,13 @@ def renamefile(oldname, newname, MAKE_CHANGES=False, force=False):
         old_nbfile.isInstructor = False
         oldstudentversion = str(old_nbfile)
 
-    new_nbfile = nbfilename(newname)
-    if not newname == str(new_nbfile):
-        print(f"ERROR: new file {newname} does not conform to naming standard")
+    new_nbfile = nbfilename(newname.name)
+    if not newname.name == str(new_nbfile):
+        print(f"ERROR: new file {newname.name}!={str(new_nbfile)} - does not conform to naming standard")
         print(f"       using {str(new_nbfile)}")
 
     #STEP 1. Move instructor file to new name
-    cmd = f"git mv {oldname} {str(new_nbfile)} "
+    cmd = f"git mv {oldname} {newname} "
     if MAKE_CHANGES:
         os.system(cmd)
     else:
@@ -399,12 +400,45 @@ class InstructorNB():
 
     def makeTOC(self):
         """Print out an index for the current notebook. Currently this can be cut and pasted into the notebook"""
-        makeTOC(self)
+        makeTOC(self)          
 
+    def replaceIndex(self, source_string):
+        """Search source_string and replace"""
+        # Check if the INDEX placeholder is present
+        if '###INDEX###' in source_string:
+            filter = f'###INDEX###(\S+\.ipynb)'
+            
+            # Extract the filename pattern after the placeholder
+            match = re.search(filter, source_string)
+        
+            if match:
+                partial_filename = match.group(1)# e.g., 'example_notebook.ipynb'
+                print(f"Partial filename: {partial_filename}")
+                
+                # Search current directory for matching file
+                for fname in os.listdir('.'):
+                    if fname.endswith(partial_filename):
+                        # Extract the missing index part
+                        index_part = fname.replace(f"{partial_filename}", "")
+                        # Replace the placeholder in the original string
+                        source_string = source_string.replace('###INDEX###', index_part)
+                        break
+            else:
+                print(f"ERROR - having trouble filtering INDEX {source_string}")
+            if '###INDEX###' in source_string:
+                source_string = self.replaceIndex(source_string)
+        return source_string
+        
+    
     def mergetags(self, tags={}):
         """Function to replace tags in the entire document"""
         for cell in self.contents.cells:
             source_string = cell['source']
+
+            #Spend time with INDEX links
+            if f'###INDEX###' in source_string:
+                source_string = self.replaceIndex(source_string)
+                
             for key in tags:
                 if (key in source_string):
                     if key == 'LINKS':
@@ -430,7 +464,6 @@ class InstructorNB():
         if not str(instructorfile) == instructor_fn:
             print(f"WARNING: Instructor file name is wrong {instructorfile} != {instructor_fn}")
 
-
         IP.display(IP.Javascript("IPython.notebook.save_notebook()"),
                    include=['application/javascript'])
 
@@ -440,6 +473,7 @@ class InstructorNB():
             tags['DUE_DATE'] = studentfile.getlongdate()
             tags['MMDD'] = studentfile.prefix
 
+        
         self.removecells(searchstring="#ANSWER#",verbose=False)
         self.stripoutput()
 

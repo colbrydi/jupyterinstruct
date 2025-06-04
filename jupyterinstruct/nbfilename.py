@@ -134,7 +134,7 @@ class nbfilename():
         datediff = new_date - old_date
         return datediff.days
 
-    def adjustdays(self, days=0, year=2023):
+    def adjustdays(self, days=0, year=2024):
         """Ajust the date strig based on number of days. Don't forget to add years"""
         self.year = year
         old_date = datetime.datetime(self.year, self.month, self.day)
@@ -144,7 +144,7 @@ class nbfilename():
         self.month = new_date.month
         self.year = new_date.year
 
-    def setDate(self, datestr=None, YEAR=2022):
+    def setDate(self, datestr=None, YEAR=2024):
         """Set the date based on the prefix or a new datestring"""
         if not datestr:
             datestr = self.prefix
