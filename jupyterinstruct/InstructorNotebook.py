@@ -406,8 +406,7 @@ class InstructorNB():
         """Search source_string and replace"""
         # Check if the INDEX placeholder is present
         if '###INDEX###' in source_string:
-            filter = f'###INDEX###(\S+\.ipynb)'
-            
+            filter = r'###INDEX###(\S+?)(?=\))'
             # Extract the filename pattern after the placeholder
             match = re.search(filter, source_string)
         
@@ -417,7 +416,8 @@ class InstructorNB():
                 
                 # Search current directory for matching file
                 for fname in os.listdir('.'):
-                    if fname.endswith(partial_filename):
+                    if partial_filename in fname:
+                        fname = fname.split('.')[0]
                         # Extract the missing index part
                         index_part = fname.replace(f"{partial_filename}", "")
                         # Replace the placeholder in the original string
