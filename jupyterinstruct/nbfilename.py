@@ -38,8 +38,11 @@ class nbfilename():
         if not filename:
             filename = self.input_name
 
+        # Always parse just the filename, even when a path string is provided.
         if isinstance(filename, PurePath):
             filename = filename.name
+        else:
+            filename = Path(filename).name
 
         self.namestring = filename
 

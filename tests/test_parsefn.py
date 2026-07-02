@@ -30,6 +30,14 @@ def test_INSTRUCTOR_fn():
     assert(x.isInstructor)
     assert(not x.isInClass)
     assert(not x.isPreClass)
+
+
+def test_date_fn_with_subfolder_path_str():
+    filename = "./Schedule/0112_My_File.ipynb"
+    x = nbfilename(filename)
+    assert(x.isDate)
+    assert(x.prefix == "0112")
+    assert(x.title == "My_File")
     
 def test_in_class_fn():
     filename = "0130_Software_Review_in-class-assignment-INSTRUCTOR.ipynb"
